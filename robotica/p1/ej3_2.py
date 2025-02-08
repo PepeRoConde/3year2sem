@@ -1,4 +1,4 @@
-from robobopy.Robobo import Robobo, Wheels
+from robobopy.Robobo import Robobo
 from robobosim.RoboboSim import RoboboSim
 import time
 
