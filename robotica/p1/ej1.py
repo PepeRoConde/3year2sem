@@ -22,7 +22,7 @@ TIME = 1
 # Conection
 robobo = Robobo('localhost')
 robobo.connect()
-# robobo.resetSimulation() -> Comprobar como furrula esto
+
 # MOVEMENT
 robobo.moveWheels(SPEED,SPEED)
 
