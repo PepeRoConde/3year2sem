@@ -1,0 +1,52 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{graphicx} 
+\usepackage{tikz}
+\begin{document}
+
+\title{\vspace{-70pt}\begingroup  
+    \centering
+    \includegraphics[width=0.6\textwidth]{Imaxes/Simbolo_logo_cor transp.png}\\
+    \large Grado en Intelixencia Artificial\\
+    \large Sistemas Multiaxente\\[0.5em]
+    \large \textbf{Práctica 1: Mundo virtual y comportamiento individual}\par 
+\endgroup}
+\author{Nombre Apellido Apellido2 \\ Nombre Apellido Apellido2 \\ Grupo de clase (martes o viernes)}
+
+\date{}
+\maketitle
+\vspace{-30pt}
+
+
+\section*{\large Mundo Virtual}
+Resaltad los aspectos más relevantes de vuestro mundo virtual, como decisiones sobre el diseño de habitaciones, pasillos, puertas u otros elementos clave.
+
+Si deseáis participar en la competición al mejor entorno, debéis incluir una imagen de vuestro escenario.
+\section*{\large Arquitectura individual}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.2]
+\tikzstyle{every node}+=[inner sep=0pt]
+\draw [black] (13.9,-32.8) circle (3);
+\draw (13.9,-32.8) node {$inicio$};
+\draw [black] (30.8,-32.8) circle (3);
+\draw (30.8,-32.8) node {$persecución$};
+\draw [black] (30.8,-32.8) circle (2.4);
+\draw [black] (48.9,-32.8) circle (3);
+\draw (48.9,-32.8) node {$alerta$};
+\draw [black] (48.9,-32.8) circle (2.4);
+\draw [black] (16.9,-32.8) -- (27.8,-32.8);
+\fill [black] (27.8,-32.8) -- (27,-32.3) -- (27,-33.3);
+\draw [black] (47.01,-35.117) arc (-47.34405:-132.65595:10.567);
+\fill [black] (47.01,-35.12) -- (46.08,-35.29) -- (46.76,-36.03);
+\draw [black] (32.867,-30.638) arc (128.61685:51.38315:11.189);
+\fill [black] (32.87,-30.64) -- (33.8,-30.53) -- (33.18,-29.75);
+\end{tikzpicture}
+\end{center}
+
+Presentad una breve justificación de la arquitectura utilizada en cada uno de vuestros agentes (reactiva, deliberativa, híbrida, BDI, etc.), explicando las razones de vuestra elección.
+\section*{\large Sensores}
+
+Describid y justificad la elección de cada uno de los sensores que habéis decidido incluir, explicando su función y relevancia dentro del sistema.
+\section*{\large Actuadores}
+Describid y justificad la elección de cada uno de los actuadores que habéis decidido incluir, explicando su función y relevancia dentro del sistema.
+\end{document}
