@@ -62,9 +62,9 @@ if __name__ == "__main__":
             t += 1
             sleep(1)
             print(f't: {t}')
-                #ultimoQR = None
-                #robobo.moveWheelsByTime(10,-10,0.5)
-                sleep(1)
+            #ultimoQR = None
+            #robobo.moveWheelsByTime(10,-10,0.5)
+            sleep(1)
     except KeyboardInterrupt:
         robobo.stopMotors()
         robobo.disconnect()
