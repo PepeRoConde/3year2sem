@@ -1,80 +1,62 @@
 from robobopy.Robobo import Robobo
 from robobosim.RoboboSim import RoboboSim
-from robobopy.utils.IR import IR
-from robobopy.utils.BlobColor import BlobColor
 import time
 
 SPEED = 5 
 TIME = 2
-VERY_SHORT = 25 
 IP = 'localhost'
+NEW_DETECTION = 5 
 
-def moveToAColor():
+last_red_detection_time = 0
 
-    robobo.moveWheels(SPEED,SPEED)
-    while robobo.readIRSensor(IR.FrontC) < VERY_SHORT and \
-            robobo.readIRSensor(IR.FrontRR) < VERY_SHORT and \
-            robobo.readIRSensor(IR.FrontLL) < VERY_SHORT:
-        print("Distance Front: ", robobo.readIRSensor(IR.FrontC))
-        print("Distance Right: ", robobo.readIRSensor(IR.FrontRR))
-        print("Distance Left: ", robobo.readIRSensor(IR.FrontLL))
-        time.sleep(1)
-    robobo.stopMotors()
-    robobo.disconnect()
-    sim.disconnect()
+def runAwayFromRed():
+    robobo.sayText("Rojo")
+    robobo.moveWheelsByTime(-SPEED, -SPEED, 1)
+    robobo.moveWheels(SPEED, -SPEED)
+
 
 def blobDetectedCallback():
+    global last_red_detection_time
+    blobs = robobo.readAllColorBlobs()
+    if not blobs:
+        return
 
-    color = BlobColor.GREEN
-    print("A color has been detected")
-    robobo.stopMotors()
+    current_time = time.time()
+    for key in blobs:
+        blob = blobs[key]
+        print(key)
+        # Solo se considera el blob si tiene tamaño mayor a 0
+        if blob.size <= 0:
+            continue
 
-    color_blob = robobo.readColorBlob(color)
-    positionX = color_blob.posx 
-    area = color_blob.size
-
-    # robobo.sayText(f"The object is at {area} distance, and it's in the f{positionX},f{positionY} position.")
-    if positionX < 50:
-        orientation = "right"
-    elif positionX > 75:
-        orientation = "left"
-    else:
-        orientation = "front"
-    robobo.sayText(f"Area: {area}, Orientation: {orientation}")
-    # Definir centro de la imagen para alinear el objeto
-    while not (50 < positionX < 100):
-        print(positionX)
-        if positionX < 75:
-            robobo.sayText("Moving Right")
-            robobo.moveWheelsByTime(-10, 10, 0.5)  # Girar a la izquierda
-        elif positionX > 75:
-            robobo.sayText("Moving Left")
-            robobo.moveWheelsByTime(10, -10, 0.5)  # Girar a la derecha
- 
-        color_blob = robobo.readColorBlob(color)
-        positionX = color_blob.posx 
-        area = color_blob.size
-           
-    print("Moving")
-    moveToAColor()
+        # Si es rojo, se ejecuta la acción de huida
+        if key == 'red':
+            if current_time - last_red_detection_time < NEW_DETECTION:
+                continue
+            last_red_detection_time = current_time
+            robobo.stopMotors()
+            runAwayFromRed()
+            break
+        else:
+            robobo.sayText("Color: " + key)
+    robobo.resetColorBlobs()
 
 if __name__ == "__main__":
-    # Conection
     sim = RoboboSim(IP)
     sim.connect()
     sim.resetSimulation()
 
     robobo = Robobo(IP)
     robobo.connect()
-    robobo.moveTiltTo(110, 5) 
-    robobo.setActiveBlobs(False,True,False,False)
+    robobo.moveTiltTo(110, 5)
+    robobo.setActiveBlobs(True, True, True, False)
     robobo.whenANewColorBlobIsDetected(blobDetectedCallback)
-    # Color Logic
-    try:
-        robobo.moveWheels(10, -10)  # Wheels, Degree, Speed
-        while True:
-            time.sleep(TIME) 
 
+    try:
+        robobo.moveWheels(5, -5)
+        while True:
+            time.sleep(TIME)
     except KeyboardInterrupt:
-            robobo.stopMotors()
-            sim.disconnect()
+        robobo.stopMotors()
+        sim.disconnect()
+
