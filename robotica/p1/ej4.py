@@ -1,3 +1,10 @@
+
+
+# usar read line
+# hacer acion particualr señal
+# match case
+
+
 from robobopy.Robobo import Robobo, Wheels
 from robobosim.RoboboSim import RoboboSim
 from time import sleep
@@ -26,6 +33,7 @@ def qrDetectedCallback():
         print(f'pan: {pan}, tilt: {tilt}, x: {qr.x}, y: {qr.y}, p1: {qr.p1}, p2: {qr.p2}, p3: {qr.p3}, distancia: {qr.distance}, id: {qr.id}')
         if qr.x < 250 and pan < 160: pan += 1 # en el caso de que queramos acercarnos, intentamos centrar el centro del QR al punto (250,300).
         elif pan > -160: pan -= 1 
+        # iniciar 300 variable
         if qr.y < 300 and tilt > 4: tilt -= 3
         elif tilt < 106: tilt += 3
         robobo.movePanTo(pan, 100)
@@ -46,13 +54,14 @@ if __name__ == "__main__":
     robobo.connect()
     t = 0
     
+    robobo.whenAQRCodeIsDetected(qrDetectedCallback)
+    
     try:
+        robobo.moveWheels(SPEED, SPEED)
         while True:
             t += 1
             sleep(1)
             print(f't: {t}')
-            robobo.moveWheels(SPEED, SPEED)
-            if robobo.whenAQRCodeIsDetected(qrDetectedCallback) == None:
                 #ultimoQR = None
                 #robobo.moveWheelsByTime(10,-10,0.5)
                 sleep(1)

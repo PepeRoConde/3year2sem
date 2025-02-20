@@ -1,3 +1,6 @@
+# inspirar en el ej5 y funcion mover en el callback
+
+
 from robobopy.Robobo import Robobo
 from robobosim.RoboboSim import RoboboSim
 from robobopy.utils.IR import IR
