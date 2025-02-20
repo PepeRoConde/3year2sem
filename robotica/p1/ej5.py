@@ -25,8 +25,7 @@ def moveToAColor():
 
 def blobDetectedCallback():
 
-
-    color = BlobColor.RED
+    color = BlobColor.GREEN
     print("A color has been detected")
     robobo.stopMotors()
 
@@ -36,20 +35,20 @@ def blobDetectedCallback():
 
     # robobo.sayText(f"The object is at {area} distance, and it's in the f{positionX},f{positionY} position.")
     if positionX < 50:
-        orientation = "left"
-    elif positionX > 75:
         orientation = "right"
+    elif positionX > 75:
+        orientation = "left"
     else:
         orientation = "front"
-    robobo.sayText(f"Area: {area}, Distance: {orientation}")
+    robobo.sayText(f"Area: {area}, Orientation: {orientation}")
     # Definir centro de la imagen para alinear el objeto
-    while positionX not in range(50,100):
+    while not (50 < positionX < 100):
         print(positionX)
         if positionX < 75:
-            robobo.sayText("Moving Left")
+            robobo.sayText("Moving Right")
             robobo.moveWheelsByTime(-10, 10, 0.5)  # Girar a la izquierda
         elif positionX > 75:
-            robobo.sayText("Moving Right")
+            robobo.sayText("Moving Left")
             robobo.moveWheelsByTime(10, -10, 0.5)  # Girar a la derecha
  
         color_blob = robobo.readColorBlob(color)
@@ -69,7 +68,7 @@ if __name__ == "__main__":
     robobo = Robobo(IP)
     robobo.connect()
     robobo.moveTiltTo(110, 5) 
-    robobo.setActiveBlobs(True,False,False,False)
+    robobo.setActiveBlobs(False,True,False,False)
     robobo.whenANewColorBlobIsDetected(blobDetectedCallback)
     # Color Logic
     try:
