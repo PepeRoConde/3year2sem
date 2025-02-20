@@ -1,4 +1,4 @@
-# inspirar en el ej5 y funcion mover en el callback
+# inspirar en el ej5 y funcion mover en el callbac
 
 
 from robobopy.Robobo import Robobo
@@ -37,11 +37,11 @@ if __name__ == "__main__":
     robobo = Robobo('localhost')
     robobo.connect()
 
-while True:
-    sleep(1)
-    avanzar(cuidado)
-    if veeBlob('green'):
-        cuidado = True
-    if cilindroEstaCerca():
-        robobo.stopMotors()
-        break
+    while True:
+        sleep(1)
+        avanzar(cuidado)
+        if veeBlob('green'):
+            cuidado = True
+        if cilindroEstaCerca():
+            robobo.stopMotors()
+            break
