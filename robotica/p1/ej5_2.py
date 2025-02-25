@@ -1,65 +1,62 @@
 from robobopy.Robobo import Robobo
 from robobosim.RoboboSim import RoboboSim
-from robobopy.utils.IR import IR
 import time
-import math
 
-'''
-- Añadir logica de giros
-- Comprobar que las distancia es correcta
-- Comprobar funcionamiento general 
-'''
+SPEED = 5 
+TIME = 2
+IP = 'localhost'
+NEW_DETECTION = 5 
 
-SPEED = 5
-TIME = 0.1
-DISTANCE = 15
-IP = "localhost"
+last_red_detection_time = 0
+
+def runAwayFromRed():
+    robobo.sayText("Rojo")
+    robobo.moveWheelsByTime(-SPEED, -SPEED, 1)
+    robobo.moveWheels(SPEED, -SPEED)
 
 
-def moveToAColor():
-    robobo.moveWheels(SPEED, SPEED)
+def blobDetectedCallback():
+    global last_red_detection_time
+    blobs = robobo.readAllColorBlobs()
+    if not blobs:
+        return
 
-    # Movement logic
-    while True:
-        front = robobo.readIRSensor(IR.FrontC)
-        frontR = robobo.readIRSensor(IR.FrontRR)
-        frontL = robobo.readIRSensor(IR.FrontLL)
+    current_time = time.time()
+    for key in blobs:
+        blob = blobs[key]
+        print(key)
+        # Solo se considera el blob si tiene tamaño mayor a 0
+        if blob.size <= 0:
+            continue
 
-        min_distance = min(front, frontR, frontL)
-        if min_distance < DISTANCE:
+        # Si es rojo, se ejecuta la acción de huida
+        if key == 'red':
+            if current_time - last_red_detection_time < NEW_DETECTION:
+                continue
+            last_red_detection_time = current_time
             robobo.stopMotors()
+            runAwayFromRed()
             break
-        time.sleep(TIME)
-
-
-def blobDetectedCallback(color):
-    print("A color has been detected")
-    robobo.stopMotors()
-    positionX = robobo.readColorBlob(color).posx
-    positionY = robobo.readColorBlob(color).posy
-    area = robobo.readColorBlob(color).size
-    distance = robobo.readTiltPosition() * math.sqrt((positionX * positionY) / area)
-    robobo.sayText(
-        f"The object is at {distance} distance, and it's in the f{positionX},f{positionY} position."
-    )
-
-    # MIRAR QUE DEVUELVE positionX
-    if positionX != "front":
-        # Girar
-        pass
-    robobo.sayText("I'm going to move to the object.")
-
+        else:
+            robobo.sayText("Color: " + key)
+    robobo.resetColorBlobs()
 
 if __name__ == "__main__":
-    # Conection
     sim = RoboboSim(IP)
     sim.connect()
     sim.resetSimulation()
 
     robobo = Robobo(IP)
     robobo.connect()
+    robobo.moveTiltTo(110, 5)
+    robobo.setActiveBlobs(True, True, True, False)
+    robobo.whenANewColorBlobIsDetected(blobDetectedCallback)
 
-    # Color Logic
-    color = "red"
-    robobo.whenANewColorBlobIsDetected(blobDetectedCallback(color))
-    moveToAColor()
+    try:
+        robobo.moveWheels(5, -5)
+        while True:
+            time.sleep(TIME)
+    except KeyboardInterrupt:
+        robobo.stopMotors()
+        sim.disconnect()
+
