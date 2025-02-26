@@ -1,0 +1,3 @@
+- Los agentes deberia tener el tesoro en el pathing. 
+- Si el tesoro desaparece deben actualizar su pathing a otro tesoro, pero no pueden saber que el tesoro a desaparecido si no ven que no esta.
+- Si ven que todos los tesoros desaparecen entonces van a proteger la salida.
