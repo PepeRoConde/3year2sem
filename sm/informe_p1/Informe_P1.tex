@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,12.5pt]{article}
 \usepackage{graphicx} 
 \usepackage{tikz}
 \begin{document}
@@ -81,22 +81,29 @@ El mapa consta de:
 \end{center}
 
 \begin{itemize}
-	\item 1: Inicio, patrullar en unos puntos fijos.
-	\item 2: Persecución.
-	\item 3: Ir al último estado donde lo vio y patrullar ahí.
-	\item 4: Ir a cerrar las puertas.
-	\item 5: Ir a los últimos trofeos que quedan y patrullar ahí.
-	\item 6: Ir a la salida y patrullar ahí.
-	\item 7: Has tocado al Ladrón. Ganas la partida.
+	\item \textbf{1: Inicio.} patrullar en unos puntos fijos. Tarea de mantenimiento (se mantiene la hipótesis de que el ladrón no está por ahí).
+	\item \textbf{2: Persecución.} Tarea de logro (se debe lograr el alcanzarlo).
+	\item \textbf{3: Ir al último estado donde lo vio y patrullar ahí.} Tarea de logro (llegar al objetivo).
+	\item \textbf{4: Ir a cerrar las puertas.} Tarea de logro (llegar al objetivo).
+\item \textbf{5: Ir a los últimos trofeos que quedan y patrullar ahí.} Tarea compuesta de una parte de logro (llegar hasta los trofeos) y una de mantenimiento (que el ladrón no los consiga). Adicionalmente, si el trofeo en particular que se estaba patrullando desaparece (lo robó el ladrón), pero sigue habiendo trofeos, el agente irá a patrullar los trofeos restantes. Siendo por tanto un comnpromiso de mente abierta (no se aferrará al deseo de patrullar un trofeo que no existe).
+\item \textbf{6: Ir a la salida y patrullar ahí.} Tarea compuesta de una parte de logro (llegar hasta la salida) y una de mantenimiento (que el ladrón no salga). 
+\item \textbf{7: Has tocado al Ladrón.} Ganas la partida.
 \end{itemize}
 
 Nuestro agente es un agente con estados, de esta forma los perceptos pasados influyen en las acciones presentes (arriba se presenta un diagrama de estados que resume el comportamiento del agente). 
+
+Como en cualquier momento puede pasar de no ver a ver al  ladrón, y eso supondrá un cambio de estado (acciones), podemos decir que el agente es audaz.
+
+Por la forma en la que se ha presentado hasta ahora la arquitectura  del agente (Autómata de estados Finitos), esta es de subsunción, además la pila de prioridad podría construirse mediante el camino más corto de $2$ a otro estado (Por ejemplo, una pila sería $[2,3,4,6]$).
+
+No es, en cambio, híbrido porque aunque sí existe una representación simbólica del mundo (los estados), la acción que sucede a un percepto y un estado está completamente determinada y el agente no razona de ninguna forma. Esta decisión se basa en la hipótesis de que el mundo es suficientemente conocido de antemano como para no necesitar que el agente razone y que, solo al obedecer ordenes su comportamiento será bueno.
+
 \texttt{Presentad una breve justificación de la arquitectura utilizada en cada uno de vuestros agentes (reactiva, deliberativa, híbrida, BDI, etc.), explicando las razones de vuestra elección.}
 \section*{\large Sensores}
-    \centering \includegraphics[width=0.4\textwidth]{vision.png}\\
+\begin{center}{ \includegraphics[width=0.4\textwidth]{vision.png}}\end{center}\\
 \begin{itemize}
-	\item Vista: el agente cuenta con un cono de visión que le permite ver a una cierta distancia de él con un cierto ángulo con respecto a la normal. No le permite en cambio, ver a través de las paredes.
-	\item Oído: el agente cuenta con un radio de audición, aquello que suene dentro de esta región será percibido por el agente. Acompañamos esta habilidad sensórica del agente con la posibilidad de que el Ladrón haga ruído.
+	\item \textbf{Vista:} el agente cuenta con un cono de visión que le permite ver a una cierta distancia de él con un cierto ángulo con respecto a la normal. No le permite en cambio, ver a través de las paredes.
+	\item \textbf{Oído:} el agente cuenta con un radio de audición, aquello que suene dentro de esta región será percibido por el agente. Acompañamos esta habilidad sensórica del agente con la posibilidad de que el Ladrón haga ruído.
 \end{itemize}
 
 \texttt{Describid y justificad la elección de cada uno de los sensores que habéis decidido incluir, explicando su función y relevancia dentro del sistema.}
