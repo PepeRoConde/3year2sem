@@ -14,18 +14,18 @@ después pare. Usando cámara (para el blob) y el infrarojos
 """
 
 cuidado = False
-
+SPEED = 5
 
 def avanzar(cuidado):
     if cuidado:
-        velocidad = 3
+        velocidad = 5
     else:
-        velocidad = 6
+        velocidad = 10 
     print(velocidad)
     robobo.moveWheels(velocidad, velocidad)
 
 
-def veeBlob(color):
+def veeBlob():
     blob = robobo.readColorBlob(BlobColor.GREEN)
     if blob is None:
         return False
@@ -46,20 +46,22 @@ def cilindroEstaCerca():
         robobo.readIRSensor(IR.FrontRR),
         robobo.readIRSensor(IR.FrontLL),
     ):
-        return True
+        
+        robobo.moveWheels(-SPEED, SPEED)
+
     else:
-        return False
+        return
 
 
 if __name__ == "__main__":
     robobo = Robobo("localhost")
     robobo.connect()
-
+    robobo.setActiveBlobs(False, True, False, False)
+    robobo.moveWheels(SPEED, SPEED)
     while True:
         sleep(1)
         avanzar(cuidado)
-        if veeBlob('green'):
+
+        if veeBlob():
             cuidado = True
-        if cilindroEstaCerca():
-            robobo.stopMotors()
-            break
+        cilindroEstaCerca()

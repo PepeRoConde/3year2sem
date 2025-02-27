@@ -4,7 +4,7 @@ from robobopy.utils.LED import LED
 from robobopy.utils.Color import Color
 from robobopy.utils.Emotions import Emotions
 from robobopy.utils.Sounds import Sounds
-from robobosim.RoboboSim import RoboboSim
+
 
 """
 Cuando detecte un objeto se debe asustar (cara y sonido):
@@ -12,7 +12,7 @@ Cuando detecte un objeto se debe asustar (cara y sonido):
     - (luego) cara de realajado y sonido.
 """
 
-SHORT = 50
+SHORT = 40
 SPEED = 5
 TIME = 1
 
@@ -33,6 +33,7 @@ while (
     robobo.setLedColorTo(LED.All, Color.GREEN)
     print("Estamos bien, distancia: ", robobo.readIRSensor(IR.FrontC))
     robobo.wait(TIME)
+
 # estamos nerviosos
 robobo.setLedColorTo(LED.All, Color.RED)
 robobo.stopMotors()

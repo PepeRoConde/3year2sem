@@ -23,12 +23,13 @@ ultimoQR = None
 def peligro(izquierda):
     if izquierda:
         robobo.moveWheelsByTime(SPEED, 0, 5)
+        robobo.moveWheels(SPEED, SPEED)
     else:
         robobo.moveWheelsByTime(0, SPEED, 5)
+        robobo.moveWheels(SPEED, SPEED)
 
 def velocidad(velocidad):
-    SPEED = velocidad * .5
-
+    robobo.moveTiltTo(velocidad * 0.5, velocidad * 0.5)
 def peatones():
     robobo.sayText('Hola peatones!')
     robobo.wait(1)
@@ -42,17 +43,16 @@ def ceda():
     robobo.moveWheels(SPEED, SPEED)
 
 def rotonda():
-    robobo.moveWheels()
+    robobo.moveWheels(-SPEED, SPEED)
 
 def qrDetectedCallback():
-    t = 0
     '''
     devuelve True cuando ya estamos cerca suficiente (momento de ir a por otro QR),
     devuelve False cuando aun no estamos cerca suficiente (debemos acercarnos con calma).
     '''
     global pan, tilt, ultimoQR
     qr = robobo.readQR()
-    if ultimoQR == None: # nunca vio un QR, le asignamos el que está viendo ahora
+    if not ultimoQR: # nunca vio un QR, le asignamos el que está viendo ahora
         ultimoQR = qr.id
     if ultimoQR == qr.id: # si vemos el que estábamos viendo es porque estamos en el proceso de acercarnos, para ir controladamente paramos los motores.
         robobo.stopMotors()
@@ -95,8 +95,8 @@ if __name__ == "__main__":
     robobo.whenAQRCodeIsDetected(qrDetectedCallback)
     
     try:
-        robobo.moveWheels(SPEED, SPEED)
         while True:
+            robobo.moveWheels(SPEED, SPEED)
             sleep(1)
     except KeyboardInterrupt:
         robobo.stopMotors()
