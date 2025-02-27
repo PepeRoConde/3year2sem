@@ -16,6 +16,30 @@ SHORT = 40
 SPEED = 5
 TIME = 1
 
+def estamos_bien():
+    robobo.setLedColorTo(LED.All, Color.GREEN)
+    print("Estamos bien, distancia: ", robobo.readIRSensor(IR.FrontC))
+    robobo.wait(TIME)
+
+def estamos_nerviosos():
+    robobo.setLedColorTo(LED.All, Color.RED)
+    robobo.stopMotors()
+    robobo.moveWheels(-SPEED, -SPEED)
+    robobo.setEmotionTo(Emotions.SURPRISED)
+    robobo.playSound(Sounds.DISCOMFORT)
+    robobo.moveTiltTo(50, 15)
+
+def volvemos_a_estar_bien():
+    robobo.wait(5)
+    robobo.moveTiltTo(75, 4)
+    robobo.setEmotionTo(Emotions.NORMAL)
+    robobo.sayText("Ui, casi choco!")
+    robobo.playSound(Sounds.LAUGH)
+    robobo.stopMotors()
+    robobo.disconnect()
+
+########
+
 # Conection
 robobo = Robobo("localhost")
 robobo.connect()
@@ -30,22 +54,9 @@ while (
     and (robobo.readIRSensor(IR.FrontRR) < SHORT)
     and (robobo.readIRSensor(IR.FrontLL) < SHORT)
 ):
-    robobo.setLedColorTo(LED.All, Color.GREEN)
-    print("Estamos bien, distancia: ", robobo.readIRSensor(IR.FrontC))
-    robobo.wait(TIME)
+    estamos_bien()
 
-# estamos nerviosos
-robobo.setLedColorTo(LED.All, Color.RED)
-robobo.stopMotors()
-robobo.moveWheels(-SPEED, -SPEED)
-robobo.setEmotionTo(Emotions.SURPRISED)
-robobo.playSound(Sounds.DISCOMFORT)
-robobo.moveTiltTo(50, 15)
+estamos_nerviosos()
 
-robobo.wait(5)
-robobo.moveTiltTo(75, 4)
-robobo.setEmotionTo(Emotions.NORMAL)
-robobo.sayText("Ui, casi choco!")
-robobo.playSound(Sounds.LAUGH)
-robobo.stopMotors()
-robobo.disconnect()
+volvemos_a_estar_bien()
+
