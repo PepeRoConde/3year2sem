@@ -120,7 +120,6 @@ if __name__ == "__main__":
                 robobo.movePanTo(pan, 100)
                 robobo.moveTiltTo(tilt, 100)
 
-            print(ultimaVistaQR, pan, tilt)
             sleep(1)
     except KeyboardInterrupt:
         robobo.stopMotors()
