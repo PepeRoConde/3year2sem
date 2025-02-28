@@ -8,9 +8,11 @@ TIME = 0.1
 IP = 'localhost'
 
 def tapDetectedCallback():
-    print("A tap has been detected, stoping the robot...")
+    '''
+    Para el robot al tocarle
+    ''' 
+    # print("A tap has been detected, stoping the robot...")
     robobo.stopMotors()
-    time.sleep(5)
 
 if __name__ == "__main__":
     # Conection
@@ -25,14 +27,16 @@ if __name__ == "__main__":
     try:
         robobo.moveWheels(SPEED, SPEED)  
         while True:
-            # robobo.wait(2)  
             # robobo.sayText("Si me tocas la cara, dejaré de moverme.")
             tap = robobo.readTapSensor()
+            # Si es el ojo paramos el robot
             if tap.zone == 'eye':
                 robobo.whenATapIsDetected(tapDetectedCallback())  
+            # En el resto de zonas reactivamos el movimiento
             elif tap.zone != 'eye':
                 robobo.moveWheels(SPEED,SPEED)
             time.sleep(TIME)
+
     except KeyboardInterrupt:
         robobo.stopMotors()
         sim.disconnect()

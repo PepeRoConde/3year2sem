@@ -3,37 +3,47 @@ from robobopy.utils.IR import IR
 from robobosim.RoboboSim import RoboboSim
 import time
 
-VERY_SHORT_FRONT = 15  # Umbral para sensores frontales
-# SLOW_SPEED = 10        # Velocidad reducida antes de frenar
-SPEED = 30
+VERY_SHORT = 15  # Umbral para sensores frontales
+SPEED = 5 
 TIME = 0.01
 IP = 'localhost'
 
-# Conection
-sim = RoboboSim(IP)
-sim.connect()
-sim.resetSimulation()
+def avoid_falling(speed, distance):
+    '''
+    Evita la caida al llegar a una distancia indicada utilizando sensores
+    '''
+    robobo.moveWheels(speed, speed)
 
-robobo = Robobo(IP)
-robobo.connect()
+    while True:
+        front_l = robobo.readIRSensor(IR.FrontL)
+        front_r = robobo.readIRSensor(IR.FrontR)
 
-# MOVEMENT
-robobo.moveWheels(SPEED,SPEED)
-# robobo.moveWheelsByDegrees(Wheels.BOTH, TURN_DEGREES, TURN_SPEED)   # Gira en el lugar
-while True:
-    front_l = robobo.readIRSensor(IR.FrontL)
-    front_r = robobo.readIRSensor(IR.FrontR)
+        min_front = min(front_l, front_r)
 
-    min_front = min(front_l, front_r)
+        print(f"Front: {front_l}, {front_r}")
+        # Reducción de velocidad antes de parar
+        # if min_front < (VERY_SHORT_FRONT * 2):
+        #     robobo.moveWheels(SLOW_SPEED, SLOW_SPEED)
 
-    print(f"Front: {front_l}, {front_r}")
-    # Reducción de velocidad antes de parar
-    # if min_front < (VERY_SHORT_FRONT * 2):
-    #     robobo.moveWheels(SLOW_SPEED, SLOW_SPEED)
+        # Parada antes de que las ruedas traseras queden en el aire
+        if min_front < distance:
+            robobo.stopMotors()
+            break
 
-    # Parada antes de que las ruedas traseras queden en el aire
-    if min_front < VERY_SHORT_FRONT:
-        robobo.stopMotors()
-        break
+        time.sleep(0.1)  
 
-    time.sleep(0.1)  
+
+if __name__ == "__main__":
+    # Conection
+    sim = RoboboSim(IP)
+    sim.connect()
+    sim.resetSimulation()
+
+    robobo = Robobo(IP)
+    robobo.connect()
+
+    try:
+        avoid_falling(SPEED, VERY_SHORT)
+    except KeyboardInterrupt:
+            robobo.stopMotors()
+            sim.disconnect()
