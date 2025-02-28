@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     pan = 0
     tilt = 90
-    SPEED = 3
+    SPEED =5 
     xCENTRO = 250
     xDESFASE = 30
     yCENTRO = 300
