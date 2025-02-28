@@ -34,13 +34,6 @@ def veeBlob():
 
 
 def cilindroEstaCerca():
-    print(
-        "dis",
-        robobo.readIRSensor(IR.FrontLL),
-        robobo.readIRSensor(IR.FrontRR),
-        robobo.readIRSensor(IR.FrontC),
-        min(robobo.readIRSensor(IR.FrontRR), robobo.readIRSensor(IR.FrontLL)),
-    )
     if 1000 < max(
         robobo.readIRSensor(IR.FrontC),
         robobo.readIRSensor(IR.FrontRR),
