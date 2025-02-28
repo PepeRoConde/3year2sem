@@ -1,31 +1,29 @@
-# inspirar en el ej5 y funcion mover en el callbac
-
-
 from robobopy.Robobo import Robobo
 from robobosim.RoboboSim import RoboboSim
 from robobopy.utils.IR import IR
 from robobopy.utils.BlobColor import BlobColor
-from time import sleep
+import time
 
-"""
-Hacer que (con el gancho o _pusher_) coja un cilindro y 
-después pare. Usando cámara (para el blob) y el infrarojos
-(para la proximitud).
-"""
-
-cuidado = False
 SPEED = 5
+IP = 'localhost'
+TIME = 0.1
 
-def avanzar(cuidado):
-    if cuidado:
-        velocidad = 5
+def move_forward(warning):
+    '''
+    Ajusta la velocidad de las ruedas en funcion del peligro
+    '''
+    if warning:
+        speed = 5
     else:
-        velocidad = 10 
-    print(velocidad)
-    robobo.moveWheels(velocidad, velocidad)
+        speed = 10 
+    # print(speed)
+    robobo.moveWheels(speed, speed)
 
 
-def veeBlob():
+def seesBlob():
+    '''
+    Comprueba si esta viendo el blob
+    '''
     blob = robobo.readColorBlob(BlobColor.GREEN)
     if blob is None:
         return False
@@ -33,28 +31,42 @@ def veeBlob():
         return True
 
 
-def cilindroEstaCerca():
-    if 1000 < max(
+def blob_is_close(speed, distance=1000):
+    '''
+    Si esta tocando al blob, gira hacia la derecha para mover el objeto
+    '''
+    if distance < max(
         robobo.readIRSensor(IR.FrontC),
         robobo.readIRSensor(IR.FrontRR),
         robobo.readIRSensor(IR.FrontLL),
     ):
         
-        robobo.moveWheels(-SPEED, SPEED)
+        robobo.moveWheels(-speed, speed)
 
     else:
         return
 
 
 if __name__ == "__main__":
-    robobo = Robobo("localhost")
+    sim = RoboboSim(IP)
+    sim.connect()
+    sim.resetSimulation()
+
+    robobo = Robobo(IP)
     robobo.connect()
+
+    robobo.moveTiltTo(110, 5)
+    # Activamos el blob verde
     robobo.setActiveBlobs(False, True, False, False)
     robobo.moveWheels(SPEED, SPEED)
-    while True:
-        sleep(1)
-        avanzar(cuidado)
 
-        if veeBlob():
+    warning = False
+    while True:
+        # Nos movemos ajustando la speed
+        move_forward(warning)
+        # Si vemos el blob nos ponemos en modo alarma
+        if seesBlob():
             cuidado = True
-        cilindroEstaCerca()
+        # Si estamos tocando el blob giramos para moverlo
+        blob_is_close(SPEED)
+        time.sleep(TIME)
