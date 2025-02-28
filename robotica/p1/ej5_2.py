@@ -7,38 +7,48 @@ TIME = 2
 IP = 'localhost'
 NEW_DETECTION = 5 
 
+# Evitamos estar constantemente viendo el mismo color con un counter
 last_red_detection_time = 0
 
-def runAwayFromRed():
-    robobo.sayText("Rojo")
+def runAwayFromRed(color_name):
+    '''
+    Dice el nombre del color y se aleja de el durante un tiempo. 
+    Depues gira para evitar verlo otra vez
+    '''
+    robobo.sayText(color_name)
     robobo.moveWheelsByTime(-SPEED, -SPEED, 1)
     robobo.moveWheels(SPEED, -SPEED)
 
 
 def blobDetectedCallback():
+    '''
+    Si detecta el color rojo huye de el, con el resto dice el color.
+    '''
     global last_red_detection_time
+    
+    CENTER_X = 50
+    MARGIN = 15  # Rango 35-65 (30% del centro)
     blobs = robobo.readAllColorBlobs()
+    
     if not blobs:
         return
 
     current_time = time.time()
     for key in blobs:
         blob = blobs[key]
-        print(key)
-        # Solo se considera el blob si tiene tamaño mayor a 0
-        if blob.size <= 0:
-            continue
+        if blob.size <= 0 or abs(blob.posx - CENTER_X) > MARGIN:
+            continue  # Ignorar blobs no centrados
 
-        # Si es rojo, se ejecuta la acción de huida
         if key == 'red':
             if current_time - last_red_detection_time < NEW_DETECTION:
                 continue
             last_red_detection_time = current_time
             robobo.stopMotors()
-            runAwayFromRed()
+            runAwayFromRed(key)
             break
         else:
-            robobo.sayText("Color: " + key)
+            robobo.sayText(f"{key}")
+    
     robobo.resetColorBlobs()
 
 if __name__ == "__main__":
@@ -49,6 +59,7 @@ if __name__ == "__main__":
     robobo = Robobo(IP)
     robobo.connect()
     robobo.moveTiltTo(110, 5)
+    # Activamos toods los colores
     robobo.setActiveBlobs(True, True, True, False)
     robobo.whenANewColorBlobIsDetected(blobDetectedCallback)
 
