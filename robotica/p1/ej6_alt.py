@@ -1,90 +1,70 @@
 from robobopy.Robobo import Robobo
-from robobosim.RoboboSim import RoboboSim
 from robobopy.utils.IR import IR
-from robobopy.utils.BlobColor import BlobColor
+from robobosim.RoboboSim import RoboboSim
 import time
 
 SPEED = 5 
 TIME = 2
-VERY_SHORT = 25 
 IP = 'localhost'
+NEW_DETECTION = 5 
 
-def moveToAColor():
-
-    robobo.moveWheels(SPEED,SPEED)
-    while robobo.readIRSensor(IR.FrontC) < VERY_SHORT and \
-            robobo.readIRSensor(IR.FrontRR) < VERY_SHORT and \
-            robobo.readIRSensor(IR.FrontLL) < VERY_SHORT:
-        print("Distance Front: ", robobo.readIRSensor(IR.FrontC))
-        print("Distance Right: ", robobo.readIRSensor(IR.FrontRR))
-        print("Distance Left: ", robobo.readIRSensor(IR.FrontLL))
-        time.sleep(1)
-    robobo.stopMotors()
-    robobo.disconnect()
-    sim.disconnect()
+# Evitamos estar constantemente viendo el mismo color con un counter
+last_red_detection_time = 0
 
 def blobDetectedCallback():
-
-    color = BlobColor.GREEN
-    print("A color has been detected")
-    robobo.stopMotors()
-
-    color_blob = robobo.readColorBlob(color)
-    positionX = color_blob.posx 
-    area = color_blob.size
-
-    # robobo.sayText(f"The object is at {area} distance, and it's in the f{positionX},f{positionY} position.")
-    if positionX < 50:
-        orientation = "right"
-    elif positionX > 75:
-        orientation = "left"
-    else:
-        orientation = "front"
-    robobo.sayText(f"Area: {area}, Orientation: {orientation}")
-    # Definir centro de la imagen para alinear el objeto
-    while not (50 < positionX < 100):
-        print(positionX)
-        if positionX < 75:
-            robobo.sayText("Moving Right")
-            robobo.moveWheelsByTime(-10, 10, 0.5)  # Girar a la izquierda
-        elif positionX > 75:
-            robobo.sayText("Moving Left")
-            robobo.moveWheelsByTime(10, -10, 0.5)  # Girar a la derecha
- 
-        color_blob = robobo.readColorBlob(color)
-        positionX = color_blob.posx 
-        area = color_blob.size
-           
-    print("Moving")
-    moveToAColor()
-    # coger el objeto
-    if 1000 < max(
-        robobo.readIRSensor(IR.FrontC),
-        robobo.readIRSensor(IR.FrontRR),
-        robobo.readIRSensor(IR.FrontLL),
-    ):
-        
-        robobo.moveWheels(-SPEED, SPEED)
-        print('Grabbing')
+    '''
+    Si detecta el color rojo huye de el, con el resto dice el color.
+    '''
+    global last_red_detection_time
     
+    CENTER_X = 50
+    MARGIN = 15  # Rango 35-65 (30% del centro)
+    blobs = robobo.readAllColorBlobs()
+    
+    if not blobs:
+        return
+
+    current_time = time.time()
+    for key in blobs:
+        blob = blobs[key]
+        if blob.size <= 0 or abs(blob.posx - CENTER_X) > MARGIN:
+            continue  # Ignorar blobs no centrados
+
+        if key == 'green':
+            if current_time - last_red_detection_time < NEW_DETECTION:
+                continue
+            last_red_detection_time = current_time
+            if 1000 < max(
+                robobo.readIRSensor(IR.FrontC),
+                robobo.readIRSensor(IR.FrontRR),
+                robobo.readIRSensor(IR.FrontLL),
+            ):
+
+                robobo.stopMotors()
+                robobo.moveWheels(-SPEED, SPEED)
+            break
+        else:
+            robobo.sayText(f"{key}")
+    
+    robobo.resetColorBlobs()
 
 if __name__ == "__main__":
-    # Conection
     sim = RoboboSim(IP)
     sim.connect()
     sim.resetSimulation()
 
     robobo = Robobo(IP)
     robobo.connect()
-    robobo.moveTiltTo(110, 5) 
-    robobo.setActiveBlobs(False,True,False,False)
+    robobo.moveTiltTo(110, 5)
+    # Activamos toods los colores
+    robobo.setActiveBlobs(True, True, True, False)
     robobo.whenANewColorBlobIsDetected(blobDetectedCallback)
-    # Color Logic
-    try:
-        robobo.moveWheels(10, -10)  # Wheels, Degree, Speed
-        while True:
-            time.sleep(TIME) 
 
+    try:
+        robobo.moveWheels(3, 3)
+        while True:
+            time.sleep(TIME)
     except KeyboardInterrupt:
-            robobo.stopMotors()
-            sim.disconnect()
+        robobo.stopMotors()
+        sim.disconnect()
+
