@@ -7,46 +7,56 @@ import time
 # USAR UN PI -> PRECISION SIN OSCILACIONES GRADNES
 
 
-SPEED = 5 
-TIME = 2
-VERY_SHORT = 25 
+TIME = 0.5
 ROTATION_SPEED = 10
 IP = 'localhost'
 
-KP = 0.1
-KD = 0.1
+KP = 0.2
+KD = 0.2
 KI = 0.05
 Iav = 0 # para el control del AVance
 Ict = 0 # para el control del CenTro
-K_centrar = 0.4
+K_centrar = 0.3
 task_completed = False
 error_avanzar_previo = 0
 CENTER = 50
-ERROR_MARGIN = 30
+ERROR_MARGIN_center = 7
+ERROR_MARGIN_avance = 150 
+searchSpeed = 15
 
 def applyCorrection(speed, correction):
     return max(speed - correction, 5)
 
 
-def moveToAColor(goal):
+def moveToAColor(color_blob):
     '''
     Mueve el robot hasta llegar a una distancia indicada
     '''
     global Iav, error_avanzar_previo
-    speed = 15
+
+    #if color_blob.size <= 0:
+    #    return
+    speed = 25
     robobo.stopMotors()
     robobo.moveWheelsByTime(speed, speed, TIME)
     print("Distance: ", robobo.readIRSensor(IR.FrontC))
-    error_avanzar = goal - robobo.readIRSensor(IR.FrontC)
-    while error_avanzar > ERROR_MARGIN:
+    error_avanzar = robobo.readIRSensor(IR.FrontC)
+    # error avanzar es 0 si esta muy lejos y XXX si esta muy cerca,
+    # si esta suficientemente cerca, para
+    while error_avanzar < ERROR_MARGIN_avance: 
+        if abs(color_blob.posx - CENTER) > ERROR_MARGIN_center:
+            centerToAColor(color_blob)
         P = error_avanzar 
         D = error_avanzar - error_avanzar_previo
         Iav += error_avanzar
         correction = round(P * KP + D * KD + Iav * KI)
         speed = applyCorrection(speed, correction)
-        print(f'speed: {speed}, P: {P}, D: {D}, I: {Iav}, correction: {correction}')
+        #print(f'speed: {speed}, P: {P}, D: {D}, I: {Iav}, correction: {correction}, blb:{abs(color_blob.posx - CENTER)}')
         robobo.moveWheelsByTime(speed, speed, TIME)
         error_avanzar_previo = error_avanzar
+        error_avanzar = robobo.readIRSensor(IR.FrontC)
+    robobo.stopMotors()
+    sim.disconnect()
 
 
 def centerToAColor(color_blob):
@@ -55,16 +65,19 @@ def centerToAColor(color_blob):
     '''
     global Ict
 
+    #if color_blob.size <= 0:
+    #    return
+
     robobo.stopMotors()
-
-    error_centrar = color_blob.posx - CENTER
-    ROTATION_SPEED = K_centrar * error_centrar
-    if color_blob.posx < CENTER - ERROR_MARGIN:
-        robobo.moveWheelsByTime(-ROTATION_SPEED, ROTATION_SPEED, 0.3)  # Giro suave a la derecha
-
+    print(f'hola {color_blob.posx}')
+    error_centrar = color_blob.posx - CENTER # [0,100] - 50 = [-50,50]
+    ROTATION_SPEED = K_centrar * error_centrar # 0.1 * [-50,50] = [-5,5]
+    # si esta hacia la derecha, ROTATION_SPEED es positivo
+    if abs(error_centrar) > ERROR_MARGIN_center: 
+        print('rs', ROTATION_SPEED)
+        robobo.moveWheelsByTime(-ROTATION_SPEED, ROTATION_SPEED, TIME)
     else:
-        robobo.moveWheelsByTime(ROTATION_SPEED, -ROTATION_SPEED, 0.3)  # Giro suave a la izquierda
-    
+        return
     time.sleep(0.5)  
 
 def blobDetectedCallback():
@@ -84,13 +97,12 @@ def blobDetectedCallback():
     if task_completed:
         return
 
-
-    while abs(color_blob.posx - CENTER) > ERROR_MARGIN:
+    while abs(color_blob.posx - CENTER) > ERROR_MARGIN_center:
         color_blob = robobo.readColorBlob(color)
         centerToAColor(color_blob)
     # Si hay un color nos movemos a el
     if color_blob.size > 0:
-        moveToAColor(color_blob.posx)
+        moveToAColor(color_blob)
         task_completed = True
 
 if __name__ == "__main__":
@@ -105,9 +117,9 @@ if __name__ == "__main__":
     robobo.whenANewColorBlobIsDetected(blobDetectedCallback)  # Corrección clave
 
     try:
-        robobo.moveWheels(5, -5)  # Búsqueda giratoria
+        robobo.moveWheels(searchSpeed, -searchSpeed)  # Búsqueda giratoria
         while True:
-            time.sleep(0.1)  # Reducir carga de CPU
+            time.sleep(0.2)  # Reducir carga de CPU
     except KeyboardInterrupt:
         robobo.stopMotors()
         sim.disconnect()
