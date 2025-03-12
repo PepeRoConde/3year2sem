@@ -1,4 +1,6 @@
 # Enviroments
-rob_env/
-vision_env/
-maai_env/
+robotica/rob_env/
+vision/vision_env/
+maai/maai_env/
+vision/p1/data/
+vision/p1/material/
