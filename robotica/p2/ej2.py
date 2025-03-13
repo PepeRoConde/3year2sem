@@ -8,23 +8,26 @@ import time
 
 
 TIME = 0.5
-ROTATION_SPEED = 10
 IP = 'localhost'
 
-KP = 0.2
-KD = 0.2
+KPav = 0.2
+KPct = 0.25
+KD = 0.3
 KI = 0.05
 Iav = 0 # para el control del AVance
 Ict = 0 # para el control del CenTro
-K_centrar = 0.3
 task_completed = False
 error_avanzar_previo = 0
 CENTER = 50
 ERROR_MARGIN_center = 7
-ERROR_MARGIN_avance = 150 
+ERROR_MARGIN_avance = 190 
 searchSpeed = 15
+speedAvance = 35
 
 def applyCorrection(speed, correction):
+    '''
+    Gestiona el caso en que la correccin llevaria a la parada. en ese caso que valga 5.
+    '''
     return max(speed - correction, 5)
 
 
@@ -32,29 +35,28 @@ def moveToAColor(color_blob):
     '''
     Mueve el robot hasta llegar a una distancia indicada
     '''
-    global Iav, error_avanzar_previo
+    global Iav, error_avanzar_previo, speedAvance
 
-    #if color_blob.size <= 0:
-    #    return
-    speed = 25
-    robobo.stopMotors()
-    robobo.moveWheelsByTime(speed, speed, TIME)
-    print("Distance: ", robobo.readIRSensor(IR.FrontC))
+    robobo.moveWheelsByTime(speedAvance, speedAvance, TIME)
     error_avanzar = robobo.readIRSensor(IR.FrontC)
-    # error avanzar es 0 si esta muy lejos y XXX si esta muy cerca,
+    # error avanzar es 0 si esta muy lejos y ~200 si esta muy cerca,
     # si esta suficientemente cerca, para
     while error_avanzar < ERROR_MARGIN_avance: 
+
         if abs(color_blob.posx - CENTER) > ERROR_MARGIN_center:
             centerToAColor(color_blob)
+
         P = error_avanzar 
         D = error_avanzar - error_avanzar_previo
         Iav += error_avanzar
-        correction = round(P * KP + D * KD + Iav * KI)
-        speed = applyCorrection(speed, correction)
-        #print(f'speed: {speed}, P: {P}, D: {D}, I: {Iav}, correction: {correction}, blb:{abs(color_blob.posx - CENTER)}')
+
+        correction = round(P * KPav + D * KD + Iav * KI)
+        speed = applyCorrection(speedAvance, correction)
         robobo.moveWheelsByTime(speed, speed, TIME)
+
         error_avanzar_previo = error_avanzar
         error_avanzar = robobo.readIRSensor(IR.FrontC)
+
     robobo.stopMotors()
     sim.disconnect()
 
@@ -65,20 +67,15 @@ def centerToAColor(color_blob):
     '''
     global Ict
 
-    #if color_blob.size <= 0:
-    #    return
-
     robobo.stopMotors()
-    print(f'hola {color_blob.posx}')
     error_centrar = color_blob.posx - CENTER # [0,100] - 50 = [-50,50]
-    ROTATION_SPEED = K_centrar * error_centrar # 0.1 * [-50,50] = [-5,5]
-    # si esta hacia la derecha, ROTATION_SPEED es positivo
+    speedCenter = KPct * error_centrar # 0.1 * [-50,50] = [-5,5]
+    # si esta hacia la derecha, speedCenter es positivo
     if abs(error_centrar) > ERROR_MARGIN_center: 
-        print('rs', ROTATION_SPEED)
-        robobo.moveWheelsByTime(-ROTATION_SPEED, ROTATION_SPEED, TIME)
+        print('rs', speedCenter)
+        robobo.moveWheelsByTime(-speedCenter, ROTATION_SPEED, TIME)
     else:
         return
-    time.sleep(0.5)  
 
 def blobDetectedCallback():
     '''
@@ -112,14 +109,14 @@ if __name__ == "__main__":
 
     robobo = Robobo(IP)
     robobo.connect()
-    robobo.moveTiltTo(110, 5)
-    robobo.setActiveBlobs(True, False, False, False)
+    robobo.moveTiltTo(110, 5) # posición inicial
+    robobo.setActiveBlobs(True, True, False, False) 
     robobo.whenANewColorBlobIsDetected(blobDetectedCallback)  # Corrección clave
 
     try:
         robobo.moveWheels(searchSpeed, -searchSpeed)  # Búsqueda giratoria
         while True:
-            time.sleep(0.2)  # Reducir carga de CPU
+            time.sleep(0.1)  # Reducir carga de CPU
     except KeyboardInterrupt:
         robobo.stopMotors()
         sim.disconnect()
