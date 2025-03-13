@@ -5,7 +5,8 @@ import time
 VERY_SHORT_FRONT = 15  # Umbral para sensores frontales
 SPEED = 5 
 TIME = 0.1
-IP = 'localhost'
+IP = '10.20.28.140'
+#IP = 'localhost'
 
 def tapDetectedCallback():
     '''
@@ -16,9 +17,9 @@ def tapDetectedCallback():
 
 if __name__ == "__main__":
     # Conection
-    sim = RoboboSim(IP)
-    sim.connect()
-    sim.resetSimulation()
+    #sim = RoboboSim(IP)
+    #sim.connect()
+    #sim.resetSimulation()
 
     robobo = Robobo(IP)
     robobo.connect()

@@ -6,8 +6,9 @@ import time
 
 SPEED = 5 
 TIME = 2
-VERY_SHORT = 25 
-IP = 'localhost'
+VERY_SHORT = 45 
+IP = '10.20.28.140'
+#IP = 'localhost'
 task_completed = False
 
 def moveToAColor(speed, distance):
@@ -21,7 +22,8 @@ def moveToAColor(speed, distance):
         print("Distance Front: ", robobo.readIRSensor(IR.FrontC))
         time.sleep(1)
     robobo.stopMotors()
-    sim.disconnect()
+    print('para')
+    #sim.disconnect()
 
 def blobDetectedCallback():
     '''
@@ -29,7 +31,7 @@ def blobDetectedCallback():
     '''
     global task_completed
 
-    color = BlobColor.RED
+    color = BlobColor.GREEN
     color_blob = robobo.readColorBlob(color)
     
     if color_blob.size <= 0:
@@ -55,14 +57,14 @@ def blobDetectedCallback():
         task_completed = True
 
 if __name__ == "__main__":
-    sim = RoboboSim(IP)
-    sim.connect()
-    sim.resetSimulation()
+    #sim = RoboboSim(IP)
+    #sim.connect()
+    #sim.resetSimulation()
 
     robobo = Robobo(IP)
     robobo.connect()
-    robobo.moveTiltTo(110, 5)
-    robobo.setActiveBlobs(True, False, False, False)
+    robobo.moveTiltTo(90, 5)
+    robobo.setActiveBlobs(True, True, False, False)
     robobo.whenANewColorBlobIsDetected(blobDetectedCallback)  # Corrección clave
 
     try:

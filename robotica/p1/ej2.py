@@ -8,10 +8,11 @@ from robobopy.utils.Sounds import Sounds
 import time
 
 
-SHORT = 40
+SHORT = 30
 SPEED = 5
-TIME = 1
-IP = 'localhost'
+TIME = .1
+IP = '10.20.28.140'
+#IP = 'localhost'
 
 def normal_state():
     '''
@@ -27,7 +28,7 @@ def run_away(speed):
     '''
     robobo.setLedColorTo(LED.All, Color.RED)
     robobo.stopMotors()
-    robobo.moveWheels(-speed, -speed)
+    robobo.moveWheelsByTime(-speed, -speed,4)
     robobo.setEmotionTo(Emotions.SURPRISED)
     robobo.playSound(Sounds.DISCOMFORT)
     robobo.moveTiltTo(50, 15)
@@ -36,7 +37,6 @@ def return_to_normal_state():
     '''
     Paso a estado normal despues de haber sido asustado
     '''
-    time.sleep(5)
     robobo.moveTiltTo(75, 4)
     robobo.setEmotionTo(Emotions.NORMAL)
     robobo.sayText("Oops, almost crashed!")
@@ -46,9 +46,9 @@ def return_to_normal_state():
 
 if __name__ == "__main__":
     # Conection
-    sim = RoboboSim(IP)
-    sim.connect()
-    sim.resetSimulation()
+    #sim = RoboboSim(IP)
+    #sim.connect()
+    #sim.resetSimulation()
 
     # Connection
     robobo = Robobo(IP)

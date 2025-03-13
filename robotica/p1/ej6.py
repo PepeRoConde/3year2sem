@@ -4,8 +4,9 @@ from robobopy.utils.IR import IR
 from robobopy.utils.BlobColor import BlobColor
 import time
 
-SPEED = 5
-IP = 'localhost'
+SPEED = 1
+IP = '10.20.28.140'
+#IP = 'localhost'
 TIME = 0.1
 
 def move_forward(warning):
@@ -13,9 +14,9 @@ def move_forward(warning):
     Ajusta la velocidad de las ruedas en funcion del peligro
     '''
     if warning:
-        speed = 5
+        speed = 1
     else:
-        speed = 10 
+        speed = 1
     # print(speed)
     robobo.moveWheels(speed, speed)
 
@@ -35,33 +36,36 @@ def blob_is_close(speed, distance=1000):
     '''
     Si esta tocando al blob, gira hacia la derecha para mover el objeto
     '''
+    global var
     if distance < max(
         robobo.readIRSensor(IR.FrontC),
         robobo.readIRSensor(IR.FrontRR),
         robobo.readIRSensor(IR.FrontLL),
     ):
         
-        robobo.moveWheels(-speed, speed)
+        robobo.moveWheelsByTime(-speed, speed, 5)
+        var =True
 
     else:
-        return
+        var = False
 
 
 if __name__ == "__main__":
-    sim = RoboboSim(IP)
-    sim.connect()
-    sim.resetSimulation()
+    #sim = RoboboSim(IP)
+    #sim.connect()
+    #sim.resetSimulation()
 
     robobo = Robobo(IP)
     robobo.connect()
 
-    robobo.moveTiltTo(110, 5)
+    robobo.moveTiltTo(90, 5)
     # Activamos el blob verde
     robobo.setActiveBlobs(False, True, False, False)
-    robobo.moveWheels(SPEED, SPEED)
+    #robobo.moveWheels(SPEED, SPEED)
 
     warning = False
-    while True:
+    var = False
+    while not var:
         # Nos movemos ajustando la speed
         move_forward(warning)
         # Si vemos el blob nos ponemos en modo alarma
@@ -69,4 +73,5 @@ if __name__ == "__main__":
             cuidado = True
         # Si estamos tocando el blob giramos para moverlo
         blob_is_close(SPEED)
+
         time.sleep(TIME)

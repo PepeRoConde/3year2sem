@@ -4,7 +4,8 @@ import time
 
 SPEED = 5 
 TIME = 2
-IP = 'localhost'
+IP = '10.20.28.140'
+#IP = 'localhost'
 NEW_DETECTION = 5 
 
 # Evitamos estar constantemente viendo el mismo color con un counter
@@ -16,7 +17,7 @@ def runAwayFromRed(color_name):
     Depues gira para evitar verlo otra vez
     '''
     robobo.sayText(color_name)
-    robobo.moveWheelsByTime(-SPEED, -SPEED, 1)
+    robobo.moveWheelsByTime(-SPEED, -SPEED, 3)
     robobo.moveWheels(SPEED, -SPEED)
 
 
@@ -39,7 +40,7 @@ def blobDetectedCallback():
         if blob.size <= 0 or abs(blob.posx - CENTER_X) > MARGIN:
             continue  # Ignorar blobs no centrados
 
-        if key == 'red':
+        if key == 'green':
             if current_time - last_red_detection_time < NEW_DETECTION:
                 continue
             last_red_detection_time = current_time
@@ -52,13 +53,13 @@ def blobDetectedCallback():
     robobo.resetColorBlobs()
 
 if __name__ == "__main__":
-    sim = RoboboSim(IP)
-    sim.connect()
-    sim.resetSimulation()
+    #sim = RoboboSim(IP)
+    #sim.connect()
+    #sim.resetSimulation()
 
     robobo = Robobo(IP)
     robobo.connect()
-    robobo.moveTiltTo(110, 5)
+    robobo.moveTiltTo(90, 5)
     # Activamos toods los colores
     robobo.setActiveBlobs(True, True, True, False)
     robobo.whenANewColorBlobIsDetected(blobDetectedCallback)

@@ -4,7 +4,8 @@ from robobosim.RoboboSim import RoboboSim
 VERY_SHORT_FRONT = 15  # Umbral para sensores frontales
 SPEED = 5 
 TIME = 0.1
-IP = 'localhost'
+IP = '10.20.28.140'
+#IP = 'localhost'
 
 def tapDetectedCallback():
     '''
@@ -12,25 +13,27 @@ def tapDetectedCallback():
     '''
     print("A tap has been detected, stoping the robot...")
     robobo.stopMotors()
-    sim.disconnect()
+    #sim.disconnect()
     exit()
 
 if __name__ == "__main__":
     # Conection
-    sim = RoboboSim(IP)
-    sim.connect()
-    sim.resetSimulation()
+    #sim = RoboboSim(IP)
+    #sim.connect()
+    #sim.resetSimulation()
 
     robobo = Robobo(IP)
     robobo.connect()
     
-    # MOVEMENT
+    Robobo.resetTapSensor()
+   # MOVEMENT
+    robobo.whenATapIsDetected(tapDetectedCallback)  
     try:
         robobo.moveWheels(SPEED, SPEED)  
         while True:
             robobo.sayText("Si me tocas la cara, dejaré de moverme.")
-            robobo.whenATapIsDetected(tapDetectedCallback())  
-            robobo.wait(TIME)  
+            #robobo.wait(TIME)  
+            time.sleep(2)
 
     except KeyboardInterrupt:
         robobo.stopMotors()
