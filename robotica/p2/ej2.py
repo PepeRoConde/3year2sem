@@ -4,6 +4,8 @@ from robobopy.utils.IR import IR
 from robobopy.utils.BlobColor import BlobColor
 import time
 
+
+
 TIME = 0.5
 IP = 'localhost'
 
@@ -39,7 +41,7 @@ def moveToAColor(color_blob):
 
     if error_avanzar >= ERROR_MARGIN_avance:
         robobo.moveTiltTo(190, 5)
-        blob_is_close(10, distance=ERROR_MARGIN_avance)
+        blob_is_close(distance=ERROR_MARGIN_avance)
         # task_completed = True
         return
 
@@ -48,11 +50,6 @@ def moveToAColor(color_blob):
         # robobo.stopMotors()
         return
         
-    # Nos aseguramos que el color esté centrado
-    if abs(color_blob.posx - CENTER) > ERROR_MARGIN_center:
-        centerToAColor(color_blob)
-        return  # Volvemos para garantizar que esté centrado antes de avanzar
-    
     # Calculamos la corrección para el avance
     P = error_avanzar
     D = error_avanzar - error_avanzar_previo
@@ -126,7 +123,7 @@ def blobDetectedCallback():
     # Luego nos movemos hacia él
     moveToAColor(color_blob)
 
-def blob_is_close(speed, distance=1000):
+def blob_is_close(speed=10, distance=1000):
     '''
     Si esta tocando al blob, gira hacia la derecha para mover el objeto
     '''
@@ -161,12 +158,10 @@ if __name__ == "__main__":
     robobo.setActiveBlobs(True, True, False, False)  # Mantén los blobs activados como en tu versión original
     robobo.whenANewColorBlobIsDetected(blobDetectedCallback)
 
-
     try:
         robobo.moveWheels(searchSpeed, -searchSpeed)  # Búsqueda giratoria
         while not task_completed:
             time.sleep(0.1)  # Reducir carga de CPU
-            # print(f"Task status: {task_completed}")  # Debug output
         print("Task completed! Robot has pushed the blob.")
     except KeyboardInterrupt:
         robobo.stopMotors()

@@ -1,4 +1,3 @@
-
 from robobopy.Robobo import Robobo
 from robobosim.RoboboSim import RoboboSim
 from robobopy.utils.IR import IR
@@ -7,16 +6,11 @@ import time
 
 # USAR UN PI -> PRECISION SIN OSCILACIONES GRADNES
 
-
 TIME = 0.5
 IP = 'localhost'
 
 KPav = 0.2 
 KPct = 0.25
-KD = 0 # ej 1: se deja a cero porque equivale a usar sólo control proporcional
-KI = 0 # ej 1: se deja a cero porque equivale a usar sólo control proporcional
-Iav = 0 # para el control del AVance
-Ict = 0 # para el control del CenTro
 task_completed = False
 error_avanzar_previo = 0
 CENTER = 50
@@ -51,23 +45,15 @@ def moveToAColor(color_blob):
         robobo.stopMotors()
         return
         
-    # Nos aseguramos que el color esté centrado
-    if abs(color_blob.posx - CENTER) > ERROR_MARGIN_center:
-        centerToAColor(color_blob)
-        return  # Volvemos para garantizar que esté centrado antes de avanzar
     
     # Calculamos la corrección para el avance
     P = error_avanzar
-    D = error_avanzar - error_avanzar_previo
-    Iav += error_avanzar
 
-    correction = round(P * KPav + D * KD + Iav * KI)
+    correction = round(P * KPav)
     speed = applyCorrection(speedAvance, correction)
     
     # Movemos el robot hacia adelante
     robobo.moveWheels(speed, speed)
-    
-    error_avanzar_previo = error_avanzar
 
 def centerToAColor(color_blob):
     '''
@@ -144,6 +130,7 @@ if __name__ == "__main__":
         robobo.moveWheels(searchSpeed, -searchSpeed)  # Búsqueda giratoria
         while not task_completed:
             time.sleep(0.1)  # Reducir carga de CPU
+        print("Task completed! Robot has pushed the blob.")
     except KeyboardInterrupt:
         robobo.stopMotors()
         sim.disconnect()
