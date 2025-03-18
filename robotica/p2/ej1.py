@@ -4,8 +4,6 @@ from robobopy.utils.IR import IR
 from robobopy.utils.BlobColor import BlobColor
 import time
 
-# USAR UN PI -> PRECISION SIN OSCILACIONES GRADNES
-
 TIME = 0.5
 IP = 'localhost'
 

@@ -4,8 +4,6 @@ from robobopy.utils.IR import IR
 from robobopy.utils.BlobColor import BlobColor
 import time
 
-
-
 TIME = 0.5
 IP = 'localhost'
 
@@ -123,7 +121,7 @@ def blobDetectedCallback():
     # Luego nos movemos hacia él
     moveToAColor(color_blob)
 
-def blob_is_close(speed=10, distance=1000):
+def blob_is_close(speed=5, distance=1000):
     '''
     Si esta tocando al blob, gira hacia la derecha para mover el objeto
     '''
@@ -134,10 +132,11 @@ def blob_is_close(speed=10, distance=1000):
         robobo.readIRSensor(IR.FrontLL),
     )
     
+    # Al mover el blob deberia tambien moverse el robot para que estea mas pegado
     if ir_value > distance:
         print(f"Blob detected at distance {ir_value}, pushing now")
         # First push forward a bit to make contact
-        robobo.moveWheelsByTime(15, 15, 1)
+        robobo.moveWheelsByTime(12, 12, 1.5)
         # Then rotate to move the object
         robobo.moveWheelsByTime(-speed, speed, 5)
         # DESCOMENTAR PARA QUE SOLO SE MUEVA UNA VEZ
@@ -155,13 +154,13 @@ if __name__ == "__main__":
     robobo = Robobo(IP)
     robobo.connect()
     robobo.moveTiltTo(120, 5) # posición inicial
-    robobo.setActiveBlobs(True, True, False, False)  # Mantén los blobs activados como en tu versión original
+    robobo.setActiveBlobs(True, False, False, False)  # Mantén los blobs activados como en tu versión original
     robobo.whenANewColorBlobIsDetected(blobDetectedCallback)
 
     try:
-        robobo.moveWheels(searchSpeed, -searchSpeed)  # Búsqueda giratoria
+        robobo.moveWheels(searchSpeed, -searchSpeed)  
         while not task_completed:
-            time.sleep(0.1)  # Reducir carga de CPU
+            time.sleep(0.1)  
         print("Task completed! Robot has pushed the blob.")
     except KeyboardInterrupt:
         robobo.stopMotors()

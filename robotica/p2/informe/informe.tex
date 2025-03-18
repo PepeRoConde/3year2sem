@@ -10,29 +10,33 @@
 \pagestyle{fancy}
 \lhead{Fundamentos de Robótica Intelixente}
 \rhead{614G030302425}
-\fancyfoot{}
-\lfoot{Pablo Chantada Saborido \& José Romero Conde}
-\fancyfoot[R]{}
+% \fancyfoot{}
+% \lfoot{Pablo Chantada Saborido \& José Romero Conde}
+% \fancyfoot[R]{}
 
 % The Main Document
 \begin{document}
-
 \begin{center}
- \LARGE\bfseries PRÁCTICA II
- \line(1,0){430}
+    \LARGE\bfseries PRÁCTICA II\\
+    \small Pablo Chantada Saborido \& José Romero Conde
+    \line(1,0){430}
 \end{center}
 
+
 \section*{Resolución de los ejercicios}
-Empezamos contando lo que tienen en común. En ambos casos todo el control del robot ocurre en la llamada \texttt{robobo.whenANewColorBlobIsDetected(blobDetectedCallback)}, y por tanto en la correspondiente función \texttt{blobDetectedCallback}, que es igual para los dos. Ahí, se centra el robot lo que haga falta para posteriormente avanzar. Ambas acciones se desglosan en correspondientes funciones \texttt{centerToAColor(blob)} y \texttt{moveToAColor(blob)}, la primera de ellas es compartida pero en la segunda ya difieren. 
+En ambos ejercicios, el control del robot ocurre en la llamada \texttt{robobo.whenANewColorBlobIsDetected(blobDetectedCallback)}, y por tanto en la correspondiente función \texttt{blobDetectedCallback}, esta es igual para ambos casos. Dentro de esta función, el robot centra el blob según el error de los sensores con el centro \textit{(se considera centro como el valor medio del rango [0,100])}. Añadimos además un leve margen de error para evitar bucles infinitos por precisión \footnote{El robot se queda moviendose de derecha a izquierda por no encontrar el valor exacto.}. 
+
+Este callback a su vez llama a otras dos funciones para manejar el comportamiento del robot: \texttt{centerToAColor(blob)} y \texttt{moveToAColor(blob)}, la principal diferencia se encuentra en el movimiento del robot \textit{(función moveToAColor(blob))}. 
 
 \subsection*{Ejercicio 1}
-Aquí \texttt{moveToAColor(blob)} implementa el control proporcional. Por tanto tenemos un coeficiente \texttt{KPav}
-y una variable \texttt{P} que es igual al sensor IR frontal. Con esto calculamos la corrección $\varepsilon$ de forma que \[ v_t := v_{t-1} - \varepsilon_t \] siendo $v_t$ la velocidad del robot en el instante $t$.
-\subsection*{Ejercicio 2}
-En dos cosas difiere del anterior. En primer lugar si bien anterior cuando \texttt{P} (la variable que carga el error actual) era menor que un cierto valor, la ejecución se paraba, ahora se llama a otra subrutina \texttt{blob\_is\_close(speed, distance)} que se encarga de girar el blob si esque estamos seguros de estar cerca, para luego para la ejecución. 
+En este caso \texttt{moveToAColor(blob)} se implementa el control proporcional. Por tanto, tenemos un coeficiente \texttt{KPav}
+y una variable \texttt{P} que es igual al sensor IR frontal. Con esto, calculamos la corrección $\varepsilon$ de forma que \[ v_t := v_{t-1} - \varepsilon_t \] siendo $v_t$ la velocidad del robot en el instante $t$.
 
-La segunda cosa en la que difieren es la estategia de control, ahora cargamos con dos variables más (y sus correspondientes dos coeficientes), que se definen de la siguiente forma \[I_t = \sum_{i \in [0,t]} P_i \] \[D_t = P_t - P_{t-1}\] con esto, definimos la nueva corrección: \[\varepsilon_t := P_t\times K_p + I_t \times K_I + D_t \times K_D\]
+\subsection*{Ejercicio 2}
+En el anterior caso cuando \texttt{P} \textit{(la variable que carga el error actual)} era menor que un cierto valor, la ejecución se paraba; ahora se llama a otra subrutina \texttt{blob\_is\_close(speed, distance)} que se encarga de mover el blob si estamos seguros de estar cerca; por último, se detiene la ejecución. 
+
+El otro aspecto en el que difieren es la estrategia de control, ahora cargamos con dos variables más (y sus coeficientes), que se definen de la siguiente forma \[I_t = \sum_{i \in [0,t]} P_i \] \[D_t = P_t - P_{t-1}\] con esto, definimos la nueva corrección, que usamos para el movimiento del robot para que el blob esté constantemente centrado: \[\varepsilon_t := P_t\times K_p + I_t \times K_I + D_t \times K_D\]
 \section*{Ajuste de controladores}
-Se han ajustato manualmente cambiado los valores en el programa y viendo el comportamiento en el simulador.
+Los valores de los controladores han sido ajustados manualmente, viendo el comportamiento en el simulador. Únicamente se han usado los mapas indicados en la guía; en otros escenarios podría ser necesario un ajuste a estos.
 \end{document}
 
