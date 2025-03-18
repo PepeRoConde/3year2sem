@@ -1,5 +1,10 @@
 import torch
 import torchvision
+import os
+from torch.utils.data import Dataset
+from torchvision import transforms
+from PIL import Image
+import random
 import torch.nn as nn
 import torchvision.models as models
 import torchvision.transforms as transforms 
@@ -13,7 +18,7 @@ from sklearn.metrics import f1_score
 import torch.optim as optim
 import matplotlib.pyplot as plt
 
-class BoatClassifier:
+class ShipClassifier:
     def __init__(self, pretrained=True):
         self.model = None
         self.create_model(pretrained)
@@ -47,7 +52,7 @@ class BoatClassifier:
         self.model = model
         return model
 
-    def train_model(self, train_loader, optimizer=None, criterion=None, num_epochs=5, patience=2):
+    def train_model(self, train_loader, optimizer=None, criterion=None, num_epochs=3, patience=2):
         """
         Entrena el modelo de clasificacion binaria de barcos
 
@@ -63,7 +68,7 @@ class BoatClassifier:
             history: Diccionario con las metricas del modelo
         """
         if self.model is None:
-            return "Please create a model (BoatClassifier.create_model()) before training"
+            return "Please create a model (ShipClassifier.create_model()) before training"
         if optimizer is None:
             optimizer = optim.Adam(self.model.parameters(), lr=0.001)
         
@@ -136,7 +141,7 @@ class BoatClassifier:
                 current_corrects += torch.sum(predicted == labels.data)  
                 total_samples += inputs.size(0)
                 
-                if i % 20 == 0:
+                if i % 100 == 0:
                     print(f"  Batch {i}: Loss: {loss.item():.4f}, Acc: {batch_acc.item():.4f}")
             
             # Estadisiticas por epoch
@@ -183,7 +188,7 @@ class BoatClassifier:
         """
 
         if self.model is None:
-            return "Please create a model (BoatClassifier.create_model()) before training"
+            return "Please create a model (ShipClassifier.create_model()) before training"
 
         # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
@@ -230,7 +235,7 @@ class BoatClassifier:
             path: direccion para guardar el modelo
         """
         if self.model is None:
-            return "Please create a model (BoatClassifier.create_model()) before training"
+            return "Please create a model (ShipClassifier.create_model()) before training"
 
         torch.save(self.model.state_dict(), path)
         print(f"Model saved to {path}")
@@ -243,7 +248,7 @@ class BoatClassifier:
             path: direcion donde se encuentra el modelo
         """
         if self.model is None:
-            return "Please create a model (BoatClassifier.create_model()) before training"
+            return "Please create a model (ShipClassifier.create_model()) before training"
 
         self.model.load_state_dict(torch.load(path))
         print(f"Model loaded from {path}")
@@ -278,6 +283,150 @@ class BoatClassifier:
         plt.tight_layout()
         plt.show()
 
+class PadToSize(object):
+    """Custom transform to pad images to a target size."""
+    def __init__(self, target_size):
+        self.target_size = target_size
+
+    def __call__(self, image):
+        width, height = image.size
+        target_width, target_height = self.target_size
+
+        left = (target_width - width) // 2
+        top = (target_height - height) // 2
+
+        padded_image = Image.new("RGB", (target_width, target_height), (0, 0, 0))
+        padded_image.paste(image, (left, top))
+
+        return padded_image
+
+
+class ShipDataset(Dataset):
+    def __init__(self, root_dir, train=True, dataAugmentation=False, docked=False, transform=None, train_ratio=0.8):
+        """
+        Args:
+            root_dir (string): Directory containing the image folders
+            dataAugmentation (bool): Whether to apply data augmentation and include cropped ship images
+            docked (bool): Whether to include docked status in labels
+            transform (callable, optional): Optional additional transform to be applied
+        """
+        self.root_dir = root_dir
+        self.train = train
+        self.dataAugmentation = dataAugmentation
+        self.docked = docked
+        self.base_transform = transforms.Compose([
+            PadToSize((224,224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+
+        self.crop_transform = transforms.Compose([
+            transforms.RandomCrop(224),  # Adjust size as needed
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+
+        self.additional_transform = transform
+
+        # Collect image paths and labels
+        self.images = []
+        self.labels = []
+
+        # 1. No-ship images (images/ns-xxx.jpg)
+        no_ship_dir = os.path.join(root_dir, "images")
+        for filename in os.listdir(no_ship_dir):
+            if filename.startswith("ns-") and filename.endswith(".jpg"):
+                img_path = os.path.join(no_ship_dir, filename)
+                if self.docked:
+                    self.images.append((img_path, "no_ship"))
+                    self.labels.append((0, 0))
+                else:
+                    self.images.append((img_path, "no_ship"))
+                    self.labels.append(0)
+
+        # 2. Cropped-ship images (only if dataAugmentation is True)
+        if self.dataAugmentation:
+            cropped_dir = os.path.join(root_dir, "cropedImages")
+            for filename in os.listdir(cropped_dir):
+                if filename.startswith("s-") and filename.endswith(".jpg"):
+                    img_path = os.path.join(cropped_dir, filename)
+                    if self.docked:
+                        is_docked = 1 if "docked" in filename else 0
+                        self.images.append((img_path, "cropped_ship"))
+                        self.labels.append((1, is_docked))
+                    else:
+                        self.images.append((img_path, "cropped_ship"))
+                        self.labels.append(1)
+
+        # 3. Regular ship images (images/s-xxx-docked.jpg)
+        for filename in os.listdir(no_ship_dir):
+            if filename.startswith("s-") and filename.endswith(".jpg"):
+                img_path = os.path.join(no_ship_dir, filename)
+                if self.docked:
+                    is_docked = 1 if "docked" in filename else 0
+                    self.images.append((img_path, "regular_ship"))
+                    self.labels.append((1, is_docked))
+                else:
+                    self.images.append((img_path, "regular_ship"))
+                    self.labels.append(1)
+
+        no_ship_count = sum(1 for img, type in self.images if type == "no_ship")
+        cropped_ship_count = sum(1 for img, type in self.images if type == "cropped_ship")
+        regular_ship_count = sum(1 for img, type in self.images if type == "regular_ship")
+        
+        no_ship_split = int(no_ship_count * train_ratio)
+        cropped_ship_split = int(cropped_ship_count * train_ratio)
+        regular_ship_split = int(regular_ship_count * train_ratio)
+        
+        # Create indices for each category
+        no_ship_indices = [i for i, (_, type) in enumerate(self.images) if type == "no_ship"]
+        cropped_ship_indices = [i for i, (_, type) in enumerate(self.images) if type == "cropped_ship"]
+        regular_ship_indices = [i for i, (_, type) in enumerate(self.images) if type == "regular_ship"]
+        
+        # Select validation indices
+        if self.train:
+            no_ship_indices = no_ship_indices[:no_ship_split]
+            cropped_ship_indices = cropped_ship_indices[:cropped_ship_split]
+            regular_ship_indices = regular_ship_indices[:regular_ship_split]
+        else:
+            no_ship_indices = no_ship_indices[no_ship_split:]
+            cropped_ship_indices = cropped_ship_indices[cropped_ship_split:]
+            regular_ship_indices = regular_ship_indices[regular_ship_split:]
+        
+        # Combine all indices
+        valid_indices = no_ship_indices + cropped_ship_indices + regular_ship_indices
+        
+        # Filter images and labels
+        self.images = [self.images[i] for i in valid_indices]
+        self.labels = [self.labels[i] for i in valid_indices]
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        img_path, img_type = self.images[idx]
+        label = self.labels[idx]
+
+        # Load the image
+        image = Image.open(img_path).convert('RGB')
+
+        # Apply appropriate transforms
+        if self.dataAugmentation:
+            if img_type == "no_ship" or img_type == "regular_ship":
+                # Apply crop transform for no-ship and regular-ship images
+                image = self.crop_transform(image)
+            else:
+                # Cropped ship images already processed
+                image = self.base_transform(image)
+        else:
+            # No data augmentation, just apply base transform
+            image = self.base_transform(image)
+
+        # Apply any additional transforms if provided
+        if self.additional_transform:
+            image = self.additional_transform(image)
+
+        return image, label
 
 if __name__ == "__main__":
     transform = transforms.Compose([
@@ -286,16 +435,22 @@ if __name__ == "__main__":
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
 
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                           download=True, transform=transform)
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                          download=True, transform=transform)
+    # los dejo por tener ahi
+    #trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+    #                                       download=True, transform=transform)
+    #testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+    #                                      download=True, transform=transform)
+
+    dataAugmentation = True
+
+    trainset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2', train=True, dataAugmentation=dataAugmentation)
+    testset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2', train=False, dataAugmentation=dataAugmentation)
 
     # DataLoaders
-    trainloader = DataLoader(trainset, batch_size=32, shuffle=True, num_workers=2)
-    testloader = DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
+    trainloader = DataLoader(trainset, batch_size=128, shuffle=True, num_workers=2)
+    testloader = DataLoader(testset, batch_size=128, shuffle=False, num_workers=2)
 
-    classifier = BoatClassifier(pretrained=True)
+    classifier = ShipClassifier(pretrained=True)
     # Guardar el modelo
     if classifier.model is None:
         print("Error: Model was not created properly.")
@@ -316,10 +471,10 @@ if __name__ == "__main__":
         train_loader=trainloader,
         optimizer=optimizer,
         criterion=criterion,
-        num_epochs=2,
+        num_epochs=8,
         patience=3
     )
 
     test_acc, test_accuracies, f1 = classifier.test_model(testloader)
     classifier.plot_metrics(history, test_acc)
-    classifier.save_model("./")
+    classifier.save_model("modelParams")
