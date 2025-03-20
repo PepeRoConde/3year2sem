@@ -8,10 +8,10 @@ TIME = 0.5
 IP = 'localhost'
 
 # Constantes de control PID ajustadas para movimiento más suave
-KPav = 0.05  # Reducido para movimiento más suave
-KPct = 0.08  # Reducido para giros más suaves
-KD = 0.5     # Aumentado para mayor amortiguación
-KI = 0.02    # Reducido para evitar oscilaciones
+KPav = 0.05  
+KPct = 0.08 
+KD = 0.2    
+KI = 0.02  
 Iav = 0      # para el control del AVance
 Ict = 0      # para el control del CenTro
 task_completed = False
