@@ -10,14 +10,14 @@ if [ -d "$ENV_DIR" ]; then
 fi
 
 echo "Creating Python environment: $ENV_DIR"
-python3 -m venv "$ENV_DIR"
+python3.11 -m venv "$ENV_DIR"
 
 # Activar el entorno virtual para instalar los paquetes necesarios
 source "$ENV_DIR/bin/activate"
 
 # Librerías de FLPN
 echo "Installing dependencies for $ENV_DIR"
-pip install numpy matplotlib scikit-learn seaborn
+pip install numpy matplotlib scikit-learn seaborn tensorflow 
 echo "Environment created successfully"
 
 # Añadir el entorno al .gitignore si no está presente
