@@ -4,6 +4,7 @@ from robobopy.utils.IR import IR
 from robobopy.utils.BlobColor import BlobColor
 import time
 
+
 TIME = 0.5
 IP = 'localhost'
 
@@ -13,7 +14,7 @@ task_completed = False
 error_avanzar_previo = 0
 CENTER = 50
 ROTATION_SPEED = 10
-ERROR_MARGIN_center = 13 
+ERROR_MARGIN_center = 10 
 ERROR_MARGIN_avance = 80 
 searchSpeed = 10 
 speedAvance = 15
@@ -55,32 +56,36 @@ def moveToAColor(color_blob):
 
 def centerToAColor(color_blob):
     '''
-    Centra el blob usando control proporcional
+    Centra el blob usando control proporcional para la velocidad de giro
     '''
-    global Ict
     
     # Si el blob no es visible, retornamos
     if color_blob.size <= 0:
-        return
+        return False
     
     print(f"Centrando blob en posición {color_blob.posx}")
     
     error_centrar = color_blob.posx - CENTER  # [0,100] - 50 = [-50,50]
     
-    # Si está hacia la derecha, error_centrar es positivo
+    # Si está fuera del margen de error, aplicamos control proporcional al giro
     if abs(error_centrar) > ERROR_MARGIN_center:
-        if error_centrar > 0:  # Blob está a la derecha
-            print(f"Blob a la derecha, error: {error_centrar}")
-            robobo.moveWheelsByTime(5, -5, 0.3)  # Giro a la izquierda
-        else:  # Blob está a la izquierda
-            print(f"Blob a la izquierda, error: {error_centrar}")
-            robobo.moveWheelsByTime(-5, 5, 0.3)  # Giro a la derecha
+        # Calculamos la velocidad de giro proporcionalmente al error
+        # Cuanto mayor sea el error, mayor será la velocidad de giro
+        turn_speed = min(abs(error_centrar) * KPct, ROTATION_SPEED)
+        turn_speed = max(turn_speed, 3)  # Velocidad mínima para garantizar movimiento
         
-        # Pequeña pausa para evitar movimientos bruscos
-        time.sleep(0.2)
+        if error_centrar > 0:  # Blob está a la derecha
+            print(f"Blob a la derecha, error: {error_centrar}, velocidad: {turn_speed}")
+            robobo.moveWheels(turn_speed, -turn_speed)  # Giro a la izquierda
+        else:  # Blob está a la izquierda
+            print(f"Blob a la izquierda, error: {error_centrar}, velocidad: {turn_speed}")
+            robobo.moveWheels(-turn_speed, turn_speed)  # Giro a la derecha
+        
+        return False  # No está centrado todavía
     else:
         print("Blob centrado")
         robobo.stopMotors()
+        return True  # Está centrado
 
 
 def blobDetectedCallback():
@@ -107,11 +112,12 @@ def blobDetectedCallback():
     print(f"Blob detectado: Tamaño {color_blob.size}, Posición X: {color_blob.posx}")
     
     # Primero centramos el blob
-    if abs(color_blob.posx - CENTER) > ERROR_MARGIN_center:
-        centerToAColor(color_blob)
+    is_centered = centerToAColor(color_blob)
     
-    # Luego nos movemos hacia él
-    moveToAColor(color_blob)
+    # Solo nos movemos hacia él si está centrado
+    if is_centered:
+        moveToAColor(color_blob)
+
 
 if __name__ == "__main__":
     sim = RoboboSim(IP)

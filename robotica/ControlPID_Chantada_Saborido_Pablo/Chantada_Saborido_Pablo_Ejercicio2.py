@@ -29,7 +29,6 @@ current_left_speed = 0
 current_right_speed = 0
 acceleration_rate = 0.8  # Tasa de aceleración (0-1)
 
-# Constante para manejar la inversión de la cámara
 CAMERA_INVERTED = True  # Establecemos que la cámara está en espejo
 
 def smooth_move(target_left, target_right):
