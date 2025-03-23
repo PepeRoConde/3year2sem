@@ -31,7 +31,10 @@ class ShipClassifier:
             pretrained (bool): usar preentrenamiento o no
         """
 
-        model = models.efficientnet_b0(pretrained=pretrained)
+        if pretrained:
+            model = models.efficientnet_b0(weights='DEFAULT')
+        else: 
+            model = models.efficientnet_b0()
         
         # SEGUN EL PREENTRENAMIENTO QUE HAGAMOS TENEMOS QUE CAMBIAR LA CAPA ORIGINAL
         # original_conv = model.features[0][0]
@@ -40,17 +43,24 @@ class ShipClassifier:
         # En esta implementacion congelamos los pesos para hacer transfer learning
         for param in model.features.parameters():
             param.requires_grad = False
-        # Usar el preentrenamiento
-        # if pretrained:
-        #     with torch.no_grad():
-        #         # Average the weights across the 3 RGB channels to create weights for 1 channel
-        #         model.features[0][0].weight.data = original_conv.weight.data.sum(dim=1, keepdim=True)
-        
+            
         # Modificamos para usar dos clases (barco/no barco)
-        model.classifier[1] = nn.Linear(in_features=1280, out_features=2)
+        model.classifier[1] = nn.Linear(in_features=1280, out_features=32)
+        
+        self.new_dense_layer = nn.Linear(32, 16)  
+        self.relu = nn.ReLU()  
+        self.final_layer = nn.Linear(16, 2)  
         
         self.model = model
+
         return model
+        
+    def forward(self, x):
+        x = self.model(x)  # Pass through EfficientNet's feature extractor and classifier
+        x = self.new_dense_layer(x)  # Pass through the new dense layer
+        x = self.relu(x)  # Apply ReLU activation
+        x = self.final_layer(x)  # Final output layer
+        return x
 
     def train_model(self, train_loader, optimizer=None, criterion=None, num_epochs=3, patience=2):
         """
@@ -117,7 +127,8 @@ class ShipClassifier:
                 # Forward
                 if device.type == 'cuda':
                     with autocast(device_type='cuda'): 
-                        outputs = self.model(inputs)
+                        #outputs = self.model(inputs)
+                        outputs = self.forward(iputs)
                         loss = criterion(outputs, labels)  # Calculo de loss
                 else:
                     outputs = self.model(inputs) 
@@ -253,7 +264,7 @@ class ShipClassifier:
         self.model.load_state_dict(torch.load(path))
         print(f"Model loaded from {path}")
         
-    def plot_metrics(self, history, test_acc):
+    def plot_metrics(self, history, test_acc, dataAugmentation, pretrained):
         '''
         Grafica los resultados del entrenamiento y test
         
@@ -262,6 +273,7 @@ class ShipClassifier:
             test_acc: ultimo valor de accuracy en el test
         '''
         plt.figure(figsize=(12, 5))
+        plt.title(f'Aumento de datos {dataAugmentation}, Preentrenado {pretrained}')
 
         # Gráfico de pérdida
         plt.subplot(1, 2, 1)
@@ -283,22 +295,27 @@ class ShipClassifier:
         plt.tight_layout()
         plt.show()
 
-class PadToSize(object):
-    """Custom transform to pad images to a target size."""
-    def __init__(self, target_size):
-        self.target_size = target_size
+class RandomLargestSquareCrop(object):
+    def __init__(self):
+        pass
+    def __call__(self, img):
 
-    def __call__(self, image):
-        width, height = image.size
-        target_width, target_height = self.target_size
-
-        left = (target_width - width) // 2
-        top = (target_height - height) // 2
-
-        padded_image = Image.new("RGB", (target_width, target_height), (0, 0, 0))
-        padded_image.paste(image, (left, top))
-
-        return padded_image
+        width, height = img.size
+        min_dim = min(width, height)
+        
+        if width > height:
+            left = random.randint(0, width - min_dim)
+            top = 0
+        elif height > width:
+            left = 0
+            top = random.randint(0, height - min_dim)
+        else:
+            left = 0
+            top = 0
+        
+        img = img.crop((left, top, left + min_dim, top + min_dim))
+        
+        return img
 
 
 class ShipDataset(Dataset):
@@ -315,12 +332,24 @@ class ShipDataset(Dataset):
         self.dataAugmentation = dataAugmentation
         self.docked = docked
         self.base_transform = transforms.Compose([
-            PadToSize((224,224)),
+            RandomLargestSquareCrop(),
+            transforms.Resize((224,224)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
+        self.augmentation_transform = transforms.Compose([
+            transforms.RandomHorizontalFlip(),    
+            transforms.ColorJitter(brightness=0.2, contrast=0.1, saturation=0.2, hue=0.1),
+            transforms.RandomAffine(degrees=7, translate=(0.05, 0.05), scale=(0.95, 1.05), shear=2),
+            transforms.GaussianBlur(kernel_size=3, sigma=(1, 1)),
+            transforms.RandomGrayscale(p=0.15),  # 10% chance to apply grayscale
+        ])
+
         self.crop_transform = transforms.Compose([
+
+            RandomLargestSquareCrop(),
+            transforms.Resize((350,350)),
             transforms.RandomCrop(224),  # Adjust size as needed
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
@@ -359,16 +388,17 @@ class ShipDataset(Dataset):
                         self.labels.append(1)
 
         # 3. Regular ship images (images/s-xxx-docked.jpg)
-        for filename in os.listdir(no_ship_dir):
-            if filename.startswith("s-") and filename.endswith(".jpg"):
-                img_path = os.path.join(no_ship_dir, filename)
-                if self.docked:
-                    is_docked = 1 if "docked" in filename else 0
-                    self.images.append((img_path, "regular_ship"))
-                    self.labels.append((1, is_docked))
-                else:
-                    self.images.append((img_path, "regular_ship"))
-                    self.labels.append(1)
+        if not self.dataAugmentation:
+            for filename in os.listdir(no_ship_dir):
+                if filename.startswith("s-") and filename.endswith(".jpg"):
+                    img_path = os.path.join(no_ship_dir, filename)
+                    if self.docked:
+                        is_docked = 1 if "docked" in filename else 0
+                        self.images.append((img_path, "regular_ship"))
+                        self.labels.append((1, is_docked))
+                    else:
+                        self.images.append((img_path, "regular_ship"))
+                        self.labels.append(1)
 
         no_ship_count = sum(1 for img, type in self.images if type == "no_ship")
         cropped_ship_count = sum(1 for img, type in self.images if type == "cropped_ship")
@@ -414,10 +444,10 @@ class ShipDataset(Dataset):
         if self.dataAugmentation:
             if img_type == "no_ship" or img_type == "regular_ship":
                 # Apply crop transform for no-ship and regular-ship images
-                image = self.crop_transform(image)
+                image = self.crop_transform(self.augmentation_transform(image))
             else:
                 # Cropped ship images already processed
-                image = self.base_transform(image)
+                image = self.base_transform(self.augmentation_transform(image))
         else:
             # No data augmentation, just apply base transform
             image = self.base_transform(image)
@@ -442,19 +472,20 @@ if __name__ == "__main__":
     #                                      download=True, transform=transform)
 
     dataAugmentation = True
+    pretrained = False
 
     trainset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2', train=True, dataAugmentation=dataAugmentation)
     testset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2', train=False, dataAugmentation=dataAugmentation)
 
     # DataLoaders
-    trainloader = DataLoader(trainset, batch_size=128, shuffle=True, num_workers=2)
-    testloader = DataLoader(testset, batch_size=128, shuffle=False, num_workers=2)
+    trainloader = DataLoader(trainset, batch_size=512, shuffle=True, num_workers=2)
+    testloader = DataLoader(testset, batch_size=512, shuffle=False, num_workers=2)
 
-    classifier = ShipClassifier(pretrained=True)
+    classifier = ShipClassifier(pretrained=pretrained)
     # Guardar el modelo
     if classifier.model is None:
         print("Error: Model was not created properly.")
-        classifier.create_model(pretrained=True)
+        classifier.create_model(pretrained=pretrained)
         
         if classifier.model is None:
             print("Error: Failed to create model. Exiting.")
@@ -464,17 +495,17 @@ if __name__ == "__main__":
     classifier.model.classifier[1] = nn.Linear(in_features=1280, out_features=10)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD([param for param in classifier.model.parameters() if param.requires_grad], 
-                          lr=0.001, momentum=0.9)
+    optimizer = optim.AdamW([param for param in classifier.model.parameters() if param.requires_grad], 
+                          lr=0.001)
 
     model, history = classifier.train_model(
         train_loader=trainloader,
         optimizer=optimizer,
         criterion=criterion,
-        num_epochs=8,
+        num_epochs=2,
         patience=3
     )
 
     test_acc, test_accuracies, f1 = classifier.test_model(testloader)
-    classifier.plot_metrics(history, test_acc)
+    classifier.plot_metrics(history, test_acc, dataAugmentation=dataAugmentation, pretrained=pretrained)
     classifier.save_model("modelParams")
