@@ -45,11 +45,16 @@ class ShipClassifier:
             param.requires_grad = False
             
         # Modificamos para usar dos clases (barco/no barco)
-        model.classifier[1] = nn.Linear(in_features=1280, out_features=32)
+        model.classifier[1] = nn.Linear(in_features=1280, out_features=64)
         
-        self.new_dense_layer = nn.Linear(32, 16)  
-        self.relu = nn.ReLU()  
-        self.final_layer = nn.Linear(16, 2)  
+        #self.new_dense_layer = nn.Linear(64, 16)  
+        #self.relu = nn.ReLU()  
+        #self.final_layer = nn.Linear(16, 2)  
+
+        model.classifier.append(nn.Linear(64, 16))
+        model.classifier.append(nn.ReLU())
+        model.classifier.append(nn.Linear(16, 3))
+        model.classifier.append(nn.Softmax())
         
         self.model = model
 
@@ -57,9 +62,9 @@ class ShipClassifier:
         
     def forward(self, x):
         x = self.model(x)  # Pass through EfficientNet's feature extractor and classifier
-        x = self.new_dense_layer(x)  # Pass through the new dense layer
-        x = self.relu(x)  # Apply ReLU activation
-        x = self.final_layer(x)  # Final output layer
+        #x = self.new_dense_layer(x)  # Pass through the new dense layer
+        #x = self.relu(x)  # Apply ReLU activation
+        #x = self.final_layer(x)  # Final output layer
         return x
 
     def train_model(self, train_loader, optimizer=None, criterion=None, num_epochs=3, patience=2):
@@ -331,6 +336,7 @@ class ShipDataset(Dataset):
         self.train = train
         self.dataAugmentation = dataAugmentation
         self.docked = docked
+        
         self.base_transform = transforms.Compose([
             RandomLargestSquareCrop(),
             transforms.Resize((224,224)),
@@ -368,7 +374,8 @@ class ShipDataset(Dataset):
                 img_path = os.path.join(no_ship_dir, filename)
                 if self.docked:
                     self.images.append((img_path, "no_ship"))
-                    self.labels.append((0, 0))
+                    #self.labels.append((0, 0))
+                    self.labels.append(0)
                 else:
                     self.images.append((img_path, "no_ship"))
                     self.labels.append(0)
@@ -380,9 +387,10 @@ class ShipDataset(Dataset):
                 if filename.startswith("s-") and filename.endswith(".jpg"):
                     img_path = os.path.join(cropped_dir, filename)
                     if self.docked:
-                        is_docked = 1 if "docked" in filename else 0
+                        is_docked = 2 if "docked" in filename else 2
                         self.images.append((img_path, "cropped_ship"))
-                        self.labels.append((1, is_docked))
+                        #self.labels.append((1, is_docked))
+                        self.labels.append(is_docked)
                     else:
                         self.images.append((img_path, "cropped_ship"))
                         self.labels.append(1)
@@ -393,9 +401,10 @@ class ShipDataset(Dataset):
                 if filename.startswith("s-") and filename.endswith(".jpg"):
                     img_path = os.path.join(no_ship_dir, filename)
                     if self.docked:
-                        is_docked = 1 if "docked" in filename else 0
-                        self.images.append((img_path, "regular_ship"))
-                        self.labels.append((1, is_docked))
+                        is_docked = 2 if "docked" in filename else 2
+                        self.images.append((img_path, "cropped_ship"))
+                        #self.labels.append((1, is_docked))
+                        self.labels.append(is_docked)
                     else:
                         self.images.append((img_path, "regular_ship"))
                         self.labels.append(1)
@@ -472,14 +481,15 @@ if __name__ == "__main__":
     #                                      download=True, transform=transform)
 
     dataAugmentation = True
-    pretrained = False
+    pretrained = True
+    docked = True
 
-    trainset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2', train=True, dataAugmentation=dataAugmentation)
-    testset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2', train=False, dataAugmentation=dataAugmentation)
+    trainset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2', train=True, dataAugmentation=dataAugmentation,docked=docked)
+    testset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2', train=False, dataAugmentation=False,docked=docked)
 
     # DataLoaders
-    trainloader = DataLoader(trainset, batch_size=512, shuffle=True, num_workers=2)
-    testloader = DataLoader(testset, batch_size=512, shuffle=False, num_workers=2)
+    trainloader = DataLoader(trainset, batch_size=512, shuffle=True, num_workers=8)
+    testloader = DataLoader(testset, batch_size=512, shuffle=False, num_workers=8)
 
     classifier = ShipClassifier(pretrained=pretrained)
     # Guardar el modelo
@@ -492,7 +502,7 @@ if __name__ == "__main__":
             exit(1)
 
     # Modificar para CIFAR10 la capa de salida
-    classifier.model.classifier[1] = nn.Linear(in_features=1280, out_features=10)
+
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW([param for param in classifier.model.parameters() if param.requires_grad], 
@@ -502,10 +512,20 @@ if __name__ == "__main__":
         train_loader=trainloader,
         optimizer=optimizer,
         criterion=criterion,
-        num_epochs=2,
+        num_epochs=15,
         patience=3
     )
 
     test_acc, test_accuracies, f1 = classifier.test_model(testloader)
     classifier.plot_metrics(history, test_acc, dataAugmentation=dataAugmentation, pretrained=pretrained)
     classifier.save_model("modelParams")
+
+    im2 = plt.imread('imagen2.jpg')
+    im3 = plt.imread('imagen3.jpg')
+    classifier.model.to('mps')
+    #classifier.new_dense_layer.to('mps')
+    #classifier.final_layer.to('mps')
+    im2 = torch.permute(torch.tensor(np.expand_dims(im2,0),dtype=torch.float32),(0,3,1,2)).to('mps')
+    im3 = torch.permute(torch.tensor(np.expand_dims(im3,0),dtype=torch.float32),(0,3,1,2)).to('mps')
+    
+    print(f'im2 {classifier.forward(im2)} im3 {classifier.forward(im3)}')
