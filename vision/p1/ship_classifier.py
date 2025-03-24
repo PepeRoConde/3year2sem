@@ -8,22 +8,25 @@ import random
 import torch.nn as nn
 import torchvision.models as models
 import torchvision.transforms as transforms 
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, WeightedRandomSampler
 from torch.amp.grad_scaler import GradScaler
 from torch.amp.autocast_mode import autocast
 import numpy as np
 import time
 from tqdm import tqdm
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, confusion_matrix
 import torch.optim as optim
 import matplotlib.pyplot as plt
+import seaborn as sns
+import argparse
+from collections import Counter
 
 class ShipClassifier:
-    def __init__(self, pretrained=True):
+    def __init__(self, pretrained=True, docked=True):
         self.model = None
-        self.create_model(pretrained)
+        self.create_model(pretrained, docked)
         
-    def create_model(self, pretrained=True):
+    def create_model(self, pretrained=True, docked=True):
         """
         Crea una EfficientNet para la clasificacion de barcos
         
@@ -35,25 +38,26 @@ class ShipClassifier:
             model = models.efficientnet_b0(weights='DEFAULT')
         else: 
             model = models.efficientnet_b0()
+
+        if docked:
+             n_outputs = 3
+        else:
+             n_outputs = 2
         
         # SEGUN EL PREENTRENAMIENTO QUE HAGAMOS TENEMOS QUE CAMBIAR LA CAPA ORIGINAL
         # original_conv = model.features[0][0]
         # model.features[0][0] = nn.Conv2d(1, 32, kernel_size=3, stride=2, padding=1, bias=False)
 
-        # En esta implementacion congelamos los pesos para hacer transfer learning
+        # En esta implementacion congelamos los pesos para hacer transfer learning
         for param in model.features.parameters():
             param.requires_grad = False
             
         # Modificamos para usar dos clases (barco/no barco)
         model.classifier[1] = nn.Linear(in_features=1280, out_features=64)
         
-        #self.new_dense_layer = nn.Linear(64, 16)  
-        #self.relu = nn.ReLU()  
-        #self.final_layer = nn.Linear(16, 2)  
-
         model.classifier.append(nn.Linear(64, 16))
         model.classifier.append(nn.ReLU())
-        model.classifier.append(nn.Linear(16, 3))
+        model.classifier.append(nn.Linear(16, n_outputs))
         model.classifier.append(nn.Softmax())
         
         self.model = model
@@ -61,10 +65,7 @@ class ShipClassifier:
         return model
         
     def forward(self, x):
-        x = self.model(x)  # Pass through EfficientNet's feature extractor and classifier
-        #x = self.new_dense_layer(x)  # Pass through the new dense layer
-        #x = self.relu(x)  # Apply ReLU activation
-        #x = self.final_layer(x)  # Final output layer
+        x = self.model(x)
         return x
 
     def train_model(self, train_loader, optimizer=None, criterion=None, num_epochs=3, patience=2):
@@ -90,9 +91,6 @@ class ShipClassifier:
         if criterion is None:
             criterion = nn.CrossEntropyLoss()
             
-        # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        # print(f"Using device: {'GPU' if device == torch.device('cuda:0') else 'CPU'}")    
-
         device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
         print(f"Using device: {'MPS' if device.type == 'mps' else 'CPU'}")
 
@@ -132,8 +130,7 @@ class ShipClassifier:
                 # Forward
                 if device.type == 'cuda':
                     with autocast(device_type='cuda'): 
-                        #outputs = self.model(inputs)
-                        outputs = self.forward(iputs)
+                        outputs = self.model(inputs)
                         loss = criterion(outputs, labels)  # Calculo de loss
                 else:
                     outputs = self.model(inputs) 
@@ -206,7 +203,6 @@ class ShipClassifier:
         if self.model is None:
             return "Please create a model (ShipClassifier.create_model()) before training"
 
-        # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
         print(f"Using device: {'MPS' if device.type == 'mps' else 'CPU'}")
 
@@ -241,7 +237,11 @@ class ShipClassifier:
         print(f'Test Accuracy: {test_acc:.4f}')
         f1 = f1_score(all_labels, all_preds, average='macro')
         print(f'F1 Score: {f1:.4f}')
-        return test_acc.item(), test_accuracies, f1
+
+        # Calcular la matriz de confusión
+        cm = confusion_matrix(all_labels, all_preds)
+        
+        return test_acc.item(), test_accuracies, f1, cm
     
     def save_model(self, path):
         """
@@ -269,7 +269,7 @@ class ShipClassifier:
         self.model.load_state_dict(torch.load(path))
         print(f"Model loaded from {path}")
         
-    def plot_metrics(self, history, test_acc, dataAugmentation, pretrained):
+    def plot_metrics(self, history, test_acc, dataAugmentation, pretrained, cm):
         '''
         Grafica los resultados del entrenamiento y test
         
@@ -298,6 +298,14 @@ class ShipClassifier:
         plt.legend()
 
         plt.tight_layout()
+        plt.show()
+
+        # Visualizar la matriz de confusión
+        plt.figure(figsize=(8, 6))
+        sns.heatmap(cm, annot=True, fmt='g', cmap='Blues', xticklabels=list(range(len(cm))), yticklabels=list(range(len(cm))))
+        plt.title('Confusion Matrix')
+        plt.xlabel('Predicted Labels')
+        plt.ylabel('True Labels')
         plt.show()
 
 class RandomLargestSquareCrop(object):
@@ -348,12 +356,10 @@ class ShipDataset(Dataset):
             transforms.RandomHorizontalFlip(),    
             transforms.ColorJitter(brightness=0.2, contrast=0.1, saturation=0.2, hue=0.1),
             transforms.RandomAffine(degrees=7, translate=(0.05, 0.05), scale=(0.95, 1.05), shear=2),
-            transforms.GaussianBlur(kernel_size=3, sigma=(1, 1)),
             transforms.RandomGrayscale(p=0.15), 
         ])
 
         self.crop_transform = transforms.Compose([
-
             RandomLargestSquareCrop(),
             transforms.Resize((350,350)),
             transforms.RandomCrop(224),  # Adjust size as needed
@@ -380,7 +386,6 @@ class ShipDataset(Dataset):
                 img_path = os.path.join(no_ship_dir, filename)
                 if self.docked:
                     self.images.append((img_path, "no_ship"))
-                    #self.labels.append((0, 0))
                     self.labels.append(0)
                 else:
                     self.images.append((img_path, "no_ship"))
@@ -395,7 +400,6 @@ class ShipDataset(Dataset):
                     if self.docked:
                         is_docked = 1 if filename.endswith("undocked.jpg") else 2
                         self.images.append((img_path, "cropped_ship"))
-                        #self.labels.append((1, is_docked))
                         self.labels.append(is_docked)
                     else:
                         self.images.append((img_path, "cropped_ship"))
@@ -409,7 +413,6 @@ class ShipDataset(Dataset):
                     if self.docked:
                         is_docked = 1 if filename.endswith("undocked.jpg") else 2
                         self.images.append((img_path, "cropped_ship"))
-                        #self.labels.append((1, is_docked))
                         self.labels.append(is_docked)
                     else:
                         self.images.append((img_path, "regular_ship"))
@@ -473,77 +476,212 @@ class ShipDataset(Dataset):
 
         return image, label
 
-if __name__ == "__main__":
-    transform = transforms.Compose([
-        transforms.Resize((224, 224)),  # EfficientNet B0 expects 224x224 images
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-    ])
+def plotgrid(classifier, trainset, cols=8, rows=4):
 
-    # los dejo por tener ahi
-    #trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
-    #                                       download=True, transform=transform)
-    #testset = torchvision.datasets.CIFAR10(root='./data', train=False,
-    #                                      download=True, transform=transform)
+    figure = plt.figure(figsize=(cols*2, rows*2))
+    view = np.random.permutation(cols * rows)
+    
+    for i, j in zip(range(1, cols * rows + 1), np.random.choice(np.arange(len(trainset)),cols * rows)):
+        sample, label = trainset[j]
+        im = torch.permute(torch.tensor(np.expand_dims(sample,0),dtype=torch.float32),(0,1,2,3)).to('mps')
 
-    dataAugmentation = True
-    pretrained = True
-    docked = True
-
-    trainset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2', train=True, dataAugmentation=dataAugmentation,docked=docked)
-    testset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2', train=False, dataAugmentation=False,docked=docked)
-
-    # DataLoaders
-    trainloader = DataLoader(trainset, batch_size=512, shuffle=True, num_workers=8)
-    testloader = DataLoader(testset, batch_size=512, shuffle=False, num_workers=8)
-
-    classifier = ShipClassifier(pretrained=pretrained)
-    # Guardar el modelo
-    if classifier.model is None:
-        print("Error: Model was not created properly.")
-        classifier.create_model(pretrained=pretrained)
+        sample = torch.Tensor.permute(sample,(1,2,0)).numpy()
+        sample -= np.min(sample)
+        sample /= np.max(sample)
+        figure.add_subplot(rows, cols, i)
+        x = torch.Tensor(sample).reshape((1,224,224,3))
+        #x = x.to('mps')
         
-        if classifier.model is None:
-            print("Error: Failed to create model. Exiting.")
-            exit(1)
+        #pred = np.round(scipy.special.softmax(classifier.model(im)[0].cpu().detach().numpy()),2)
+        pred = np.round(classifier.model(im)[0].cpu().detach().numpy(),2)
+        
+        plt.title(f'y {label} - ŷ {pred}')
+        #plt.title(label,pred)
+        plt.axis("off")
+        plt.imshow(sample, cmap="gray")
+    plt.show();
 
-    # Modificar para CIFAR10 la capa de salida
+def test_single_images(classifier, image_paths, device='mps', docked=True):
+    """
+    Test the classifier on individual images
+    
+    Args:
+        classifier: Trained ShipClassifier
+        image_paths: List of paths to images
+        device: Computation device
+    """
+    classifier.model.to(device)
+    classifier.model.eval()
+    
+    transform = transforms.Compose([
+        #transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+    
+    if docked:
+        labels = ["No Ship", "Ship (Undocked)", "Ship (Docked)"]
+    else:
+        labels = ["No Ship", "Ship"]
+    
+    for path in image_paths:
+        image = Image.open(path).convert('RGB')
+        image_tensor = transform(image).unsqueeze(0).to(device)
+        
+        with torch.no_grad():
+            output = classifier.model(image_tensor)
+            _, pred = torch.max(output, 1)
+            
+        print(f"Image: {path}")
+        print(f"Prediction: {labels[pred.item()]}")
+        print(f"Confidence: {torch.nn.functional.softmax(output, dim=1)[0]}")
+        print("-" * 30)
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Ship Classification Training Script')
+    
+    # Dataset parameters
+    parser.add_argument('--root_dir', type=str, default='/Users/pepe/carrera/3/2/vca/practicas/p2',
+                        help='Root directory containing the image folders')
+    parser.add_argument('--data_augmentation', action='store_true', 
+                        help='Apply data augmentation and include cropped ship images')
+    parser.add_argument('--docked', action='store_true',
+                        help='Include docked status in labels')
+    parser.add_argument('--train_ratio', type=float, default=0.8,
+                        help='Ratio of training data to total data')
+    
+    # Model parameters
+    parser.add_argument('--pretrained', action='store_true',
+                        help='Use pretrained weights for the model')
+    parser.add_argument('--model_path', type=str, default='modelParams',
+                        help='Path to save or load the model')
+    parser.add_argument('--load_model', action='store_true',
+                        help='Load a pretrained model instead of training')
+    
+    # Training parameters
+    parser.add_argument('--batch_size', type=int, default=512,
+                        help='Batch size for training and testing')
+    parser.add_argument('--num_workers', type=int, default=8,
+                        help='Number of workers for data loading')
+    parser.add_argument('--num_epochs', type=int, default=15,
+                        help='Number of epochs for training')
+    parser.add_argument('--patience', type=int, default=5,
+                        help='Patience for early stopping')
+    parser.add_argument('--learning_rate', type=float, default=0.001,
+                        help='Learning rate for optimizer')
+    
+    # Testing parameters
+    parser.add_argument('--test_images', nargs='+', default=[],
+                        help='List of image paths to test individually')
+    
+    return parser.parse_args()
 
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.AdamW([param for param in classifier.model.parameters() if param.requires_grad], 
-                          lr=0.001)
+if __name__ == "__main__":
+    args = parse_arguments()
 
-    model, history = classifier.train_model(
-        train_loader=trainloader,
-        optimizer=optimizer,
-        criterion=criterion,
-        num_epochs=50,
-        patience=3
+    '''
+    # Basic run with data augmentation and pretrained model
+    python ship_classifier.py --data_augmentation --pretrained
+    
+    # Change learning rate and batch size
+    python ship_classifier.py --learning_rate 0.0005 --batch_size 256
+    
+    # Run with docked classification and more epochs
+    python ship_classifier.py --docked --num_epochs 20 --patience 5
+    
+    # Load a previously trained model and test it
+    python ship_classifier.py --load_model --model_path my_saved_model
+    
+    # Test specific images with a trained model
+    python ship_classifier.py --load_model --test_images imagen2.jpg imagen3.jpg
+    '''
+    
+    # Print the configuration
+    print("\nRunning with the following configuration:")
+    print(f"Data Augmentation: {args.data_augmentation}")
+    print(f"Pretrained: {args.pretrained}")
+    print(f"Docked classification: {args.docked}")
+    print(f"Batch size: {args.batch_size}")
+    print(f"Number of epochs: {args.num_epochs}")
+    print(f"Learning rate: {args.learning_rate}")
+    print(f"Early stopping patience: {args.patience}\n")
+    
+    # Set up datasets
+    trainset = ShipDataset(
+        root_dir=args.root_dir, 
+        train=True, 
+        dataAugmentation=args.data_augmentation,
+        docked=args.docked,
+        train_ratio=args.train_ratio
+    )
+    
+    testset = ShipDataset(
+        root_dir=args.root_dir, 
+        train=False, 
+        dataAugmentation=False,  # No augmentation for test set
+        docked=args.docked,
+        train_ratio=args.train_ratio
     )
 
-    test_acc, test_accuracies, f1 = classifier.test_model(testloader)
-    classifier.plot_metrics(history, test_acc, dataAugmentation=dataAugmentation, pretrained=pretrained)
-    classifier.save_model("modelParams")
-
-    im2 = plt.imread('imagen2.jpg')
-    im3 = plt.imread('imagen3.jpg')
-    classifier.model.to('mps')
-    #classifier.new_dense_layer.to('mps')
-    #classifier.final_layer.to('mps')
-    im2 = torch.permute(torch.tensor(np.expand_dims(im2,0),dtype=torch.float32),(0,3,1,2)).to('mps')
-    im3 = torch.permute(torch.tensor(np.expand_dims(im3,0),dtype=torch.float32),(0,3,1,2)).to('mps')
+    class_counts = Counter(trainset.labels)
+    weights = [1.0 / class_counts[label] for label in trainset.labels]
+    sampler = WeightedRandomSampler(weights, len(weights))
     
-    print(f'im2 {classifier.forward(im2)} im3 {classifier.forward(im3)}')
-
-    ship_dir = os.path.join(root_dir, "images")
-    for filename in os.listdir(ship_dir):
-        if filename.startswith("ns-") and filename.endswith(".jpg"):
-            img_path = os.path.join(no_ship_dir, filename)
-            if self.docked:
-                self.images.append((img_path, "no_ship"))
-                #self.labels.append((0, 0))
-                self.labels.append(0)
-            else:
-                self.images.append((img_path, "no_ship"))
-                self.labels.append(0)
+    # Set up data loaders
+    trainloader = DataLoader(
+        trainset, 
+        batch_size=args.batch_size, 
+        num_workers=args.num_workers,
+        sampler=sampler
+    )
+    
+    testloader = DataLoader(
+        testset, 
+        batch_size=args.batch_size, 
+        num_workers=args.num_workers
+    )
+    
+    # Create classifier
+    classifier = ShipClassifier(pretrained=args.pretrained, 
+                                docked=args.docked)
+    
+    if args.load_model:
+        # Load a pre-trained model
+        classifier.load_model(args.model_path)
+        test_acc, test_accuracies, f1, cm = classifier.test_model(testloader)
+    else:
+        # Train the model
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.AdamW(
+            [param for param in classifier.model.parameters() if param.requires_grad], 
+            lr=args.learning_rate
+        )
+        
+        model, history = classifier.train_model(
+            train_loader=trainloader,
+            optimizer=optimizer,
+            criterion=criterion,
+            num_epochs=args.num_epochs,
+            patience=args.patience
+        )
+        
+        # Test and plot results
+        test_acc, test_accuracies, f1, cm = classifier.test_model(testloader)
+        classifier.plot_metrics(
+            history, 
+            test_acc, 
+            dataAugmentation=args.data_augmentation, 
+            pretrained=args.pretrained,
+            cm=cm)
+        
+        plotgrid(testset)
+        
+        # Save the model
+        classifier.save_model(args.model_path)
+    
+    # Test individual images if provided
+    if args.test_images:
+        classifier.load_model(args.model_path)
+        print("\nTesting individual images:")
+        device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+        test_single_images(classifier, args.test_images, device=device,docked=args.docked)
