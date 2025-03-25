@@ -23,54 +23,33 @@
 		\line(1,0){430}
 	\end{center}
 	
-	
-\section*{Modelo Baseline}
+\section*{Introducción}
+
+\section*{Clasificación Ship/No-ship}
+\subsection*{Modelo base}
 
 Describimos ahora nuestro modelo baseline, que nos valió para iterar y comparar resultados. El modelo se compone de los siguientes elementos:
 
 \begin{itemize}
-	\item Aumento de datos compuesto. (expñicar bien en algun suitio)
-	\item  \href{https://arxiv.org/pdf/1905.11946}{Efficienet}. La usamos como CNN de partida.
-	\item Un MLP de tres capas, sobre la salida de la red.
+	\item  \textbf{\href{https://arxiv.org/pdf/1905.11946}{Efficienet.}} La usamos como CNN de partida. Tiene como requirimiento que las imágenes sean de tamaño $(244,244,3)$, para ello implementamos un recortador automático de \emph{el cuadrado más grande} que llamamos desde los \texttt{DataLoader} de entrenamiento y test. Aunque esta forma es claramente subóptima nos pareció adeacuada para una primera aproximación. Mas adelante se comentarán los cambios
+	\item \textbf{Aumento de datos.} El aumento de datos en esta fase esencialmente consta de dos partes, por un lado, las transformaciones de \texttt{torchvision.transforms}. Nosotros usamos: volteos horizontales, fluctuaciones leves en el color, también leves trasnformaciones afines y conversión a blanco y negro con baja probabilidad. El segundo punto es que hemos recortado manualmente las imagenes de barcos de forma que queden cerntrados y sin fondo que estorbe, se han añadido estas images al conjunto de datos cuando se especificaba aumento de datos.
+	\item Un \textbf{MLP} de tres capas, sobre la salida de la red. La salida de la última capa \texttt{nn.Softmax()} tiene 2 o 3 neuronas según si se quería clasificar en \{barco, no barco\} o en \{barco, barco no amarrado, barco amarrado\}. 
 \end{itemize}
 
-blñablabla como se ve en la figurta
+\subsection*{Entrenamiento y evaluación}
 
+\section*{Clasificación Docked/Undocked}
 
+\section*{Resultados}
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.7\linewidth]{baselineCon}
-	\caption{}
-	\label{fig:baselinecon}
-\end{figure}
+\subsection*{Evaluación de modelos}
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.7\linewidth]{baselineSin}
-	\caption{}
-	\label{fig:baselinesin}
-\end{figure}
+\subsection*{Análisis de resultados}
+
+\section*{Conclusión}
 
 
 \section*{Cambios para el segundo ejercicio}
-
-blablabla
-
-\section*{ANEXO}
-	\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.6\linewidth]{imagenesCon}
-	\caption{Imagenes con aumento de datos}
-	\label{fig:imagenescon}
-\end{figure}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.6\linewidth]{imagenesSin}
-	\caption{Imagenes sin aumento de datos}
-	\label{fig:imagenessin}
-\end{figure}
 
 
 

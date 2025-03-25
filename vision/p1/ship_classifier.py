@@ -35,9 +35,9 @@ class ShipClassifier:
         """
 
         if pretrained:
-            model = models.efficientnet_b0(weights='DEFAULT')
+            model = models.efficientnet_b3(weights='DEFAULT')
         else: 
-            model = models.efficientnet_b0()
+            model = models.efficientnet_b3()
 
         if docked:
              n_outputs = 3
@@ -53,11 +53,11 @@ class ShipClassifier:
             param.requires_grad = False
             
         # Modificamos para usar dos clases (barco/no barco)
-        model.classifier[1] = nn.Linear(in_features=1280, out_features=64)
+        model.classifier[1] = nn.Linear(in_features=1536, out_features=n_outputs)
         
-        model.classifier.append(nn.Linear(64, 16))
-        model.classifier.append(nn.ReLU())
-        model.classifier.append(nn.Linear(16, n_outputs))
+        #model.classifier.append(nn.Linear(20, 16))
+        #model.classifier.append(nn.ReLU())
+        #model.classifier.append(nn.Linear(16, n_outputs))
         model.classifier.append(nn.Softmax())
         
         self.model = model
@@ -145,13 +145,15 @@ class ShipClassifier:
                 history['train_loss'].append(loss.item())
                 
                 # Calcular accuracy
-                _, predicted = torch.max(outputs, 1)
-                batch_acc = torch.sum(predicted == labels.data) / inputs.size(0)
+                _, preds = torch.max(outputs, 1)
+                #preds = torch.argmax(outputs)
+                
+                batch_acc = torch.sum(preds == labels.data) / inputs.size(0)
                 history['train_acc'].append(batch_acc.item())
                 
                 # Acumular estadisitcas
                 current_loss += loss.item() * inputs.size(0)  
-                current_corrects += torch.sum(predicted == labels.data)  
+                current_corrects += torch.sum(preds == labels.data)  
                 total_samples += inputs.size(0)
                 
                 if i % 100 == 0:
@@ -222,6 +224,7 @@ class ShipClassifier:
 
                 outputs = self.model(inputs)
                 _, preds = torch.max(outputs, 1)
+                #preds = torch.argmax(outputs)
 
                 batch_acc = torch.sum(preds == labels.data) / inputs.size(0)
                 test_accuracies.append(batch_acc.item())
@@ -406,17 +409,16 @@ class ShipDataset(Dataset):
                         self.labels.append(1)
 
         # 3. Regular ship images (images/s-xxx-docked.jpg)
-        if not self.dataAugmentation:
-            for filename in os.listdir(no_ship_dir):
-                if filename.startswith("s-") and filename.endswith(".jpg"):
-                    img_path = os.path.join(no_ship_dir, filename)
-                    if self.docked:
-                        is_docked = 1 if filename.endswith("undocked.jpg") else 2
-                        self.images.append((img_path, "cropped_ship"))
-                        self.labels.append(is_docked)
-                    else:
-                        self.images.append((img_path, "regular_ship"))
-                        self.labels.append(1)
+        for filename in os.listdir(no_ship_dir):
+            if filename.startswith("s-") and filename.endswith(".jpg"):
+                img_path = os.path.join(no_ship_dir, filename)
+                if self.docked:
+                    is_docked = 1 if filename.endswith("undocked.jpg") else 2
+                    self.images.append((img_path, "regular_ship"))
+                    self.labels.append(is_docked)
+                else:
+                    self.images.append((img_path, "regular_ship"))
+                    self.labels.append(1)
 
         no_ship_count = sum(1 for img, type in self.images if type == "no_ship")
         cropped_ship_count = sum(1 for img, type in self.images if type == "cropped_ship")
@@ -493,7 +495,7 @@ def plotgrid(classifier, trainset, cols=8, rows=4):
         #x = x.to('mps')
         
         #pred = np.round(scipy.special.softmax(classifier.model(im)[0].cpu().detach().numpy()),2)
-        pred = np.round(classifier.model(im)[0].cpu().detach().numpy(),2)
+        pred = np.argmax(classifier.model(im)[0].cpu().detach().numpy())
         
         plt.title(f'y {label} - ŷ {pred}')
         #plt.title(label,pred)
@@ -623,16 +625,16 @@ if __name__ == "__main__":
         train_ratio=args.train_ratio
     )
 
-    class_counts = Counter(trainset.labels)
-    weights = [1.0 / class_counts[label] for label in trainset.labels]
-    sampler = WeightedRandomSampler(weights, len(weights))
+   # class_counts = Counter(trainset.labels)
+   # weights = [1.0 / class_counts[label] for label in trainset.labels]
+   # sampler = WeightedRandomSampler(weights, len(weights))
     
     # Set up data loaders
     trainloader = DataLoader(
         trainset, 
         batch_size=args.batch_size, 
         num_workers=args.num_workers,
-        sampler=sampler
+       # sampler=sampler
     )
     
     testloader = DataLoader(
@@ -674,7 +676,7 @@ if __name__ == "__main__":
             pretrained=args.pretrained,
             cm=cm)
         
-        plotgrid(testset)
+        plotgrid(classifier,testset)
         
         # Save the model
         classifier.save_model(args.model_path)
