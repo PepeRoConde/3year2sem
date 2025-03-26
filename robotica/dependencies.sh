@@ -1,7 +1,14 @@
+
 #!/bin/bash
 
-# Definir el nombre del entorno virtual correctamente (sin espacios en la asignación)
+# Definir el nombre del entorno virtual
 ENV_DIR="rob_env"
+
+# Verificar si Python 3.11 está instalado
+if ! command -v python3.11 &> /dev/null; then
+  echo "Error: Python 3.11 no está instalado. Instálalo con 'brew install python@3.11' en macOS."
+  exit 1
+fi
 
 # Verificar si el entorno virtual ya existe
 if [ -d "$ENV_DIR" ]; then
@@ -9,15 +16,16 @@ if [ -d "$ENV_DIR" ]; then
   exit 0
 fi
 
-echo "Creating Python environment: $ENV_DIR"
-python3 -m venv "$ENV_DIR"
+echo "Creating Python 3.11 environment: $ENV_DIR"
+python3.11 -m venv "$ENV_DIR"
 
-# Activar el entorno virtual para instalar los paquetes necesarios
+# Activar el entorno virtual
 source "$ENV_DIR/bin/activate"
 
-# Librerías de FLPN
+# Instalar dependencias necesarias
 echo "Installing dependencies for $ENV_DIR"
-pip install robobopy robobosim
+pip install --upgrade pip
+pip install robobopy robobosim pynput
 
 echo "Environment created successfully"
 
