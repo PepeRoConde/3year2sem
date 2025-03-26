@@ -1,25 +1,11 @@
-import torch
-import torchvision
-import os
-from torch.utils.data import Dataset
-from torchvision import transforms
-from PIL import Image
-import random
-import torch.nn as nn
 import torchvision.models as models
-import torchvision.transforms as transforms 
-from torch.utils.data import DataLoader, WeightedRandomSampler
+import torch
+import torch.nn as nn
+import torch.optim as optim
 from torch.amp.grad_scaler import GradScaler
-from torch.amp.autocast_mode import autocast
 import numpy as np
 import time
 from tqdm import tqdm
-from sklearn.metrics import f1_score, confusion_matrix
-import torch.optim as optim
-import matplotlib.pyplot as plt
-import seaborn as sns
-import argparse
-from collections import Counter
 
 class ShipClassifier:
     def __init__(self, pretrained=True, docked=True):
@@ -68,7 +54,7 @@ class ShipClassifier:
         x = self.model(x)
         return x
 
-    def train_model(self, train_loader, optimizer=None, criterion=None, num_epochs=3, patience=5, lr_patience=2):
+    def train_model(self, train_loader, optimizer=None, criterion=None, num_epochs=3, patience=5, lr_patience=2, l2_lambda=1e-2):
         """
         Entrena el modelo de clasificacion binaria de barcos
     
@@ -146,6 +132,10 @@ class ShipClassifier:
                     outputs = self.model(inputs) 
                     loss = criterion(outputs, labels)  # Calculo de loss
                 
+                # L2 regularization
+                l2_norm = sum(p.pow(2).sum() for p in self.model.parameters())
+                loss += l2_lambda * l2_norm
+
                 # Backward + optimize
                 scaler.scale(loss).backward()  # Escalar gradientes
                 scaler.step(optimizer)  # Actualizar pesos
@@ -354,175 +344,7 @@ class ShipClassifier:
         plt.ylabel('True Labels')
         plt.show()
 
-class RandomLargestSquareCrop(object):
-    def __init__(self):
-        pass
-    def __call__(self, img):
-
-        width, height = img.size
-        min_dim = min(width, height)
-        
-        if width > height:
-            left = random.randint(0, width - min_dim)
-            top = 0
-        elif height > width:
-            left = 0
-            top = random.randint(0, height - min_dim)
-        else:
-            left = 0
-            top = 0
-        
-        img = img.crop((left, top, left + min_dim, top + min_dim))
-        
-        return img
-
-
-class ShipDataset(Dataset):
-    def __init__(self, root_dir, train=True, dataAugmentation=False, docked=False, transform=None, train_ratio=0.8):
-        """
-        Args:
-            root_dir (string): Directory containing the image folders
-            dataAugmentation (bool): Whether to apply data augmentation and include cropped ship images
-            docked (bool): Whether to include docked status in labels
-            transform (callable, optional): Optional additional transform to be applied
-        """
-        self.root_dir = root_dir
-        self.train = train
-        self.dataAugmentation = dataAugmentation
-        self.docked = docked
-        
-        self.base_transform = transforms.Compose([
-            RandomLargestSquareCrop(),
-            transforms.Resize((224,224)),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        ])
-
-        self.augmentation_transform = transforms.Compose([
-            transforms.RandomHorizontalFlip(),    
-            #transforms.ColorJitter(brightness=0.2, contrast=0.1, saturation=0.2, hue=0.1),
-            #transforms.RandomAffine(degrees=7, translate=(0.05, 0.05), scale=(0.95, 1.05), shear=2),
-            transforms.RandomGrayscale(p=0.15), 
-        ])
-
-        self.crop_transform = transforms.Compose([
-            RandomLargestSquareCrop(),
-            transforms.Resize((350,350)),
-            transforms.RandomCrop(224),  # Adjust size as needed
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        ])
-
-        self.additional_transform = transform
-
-        # Collect image paths and labels
-        self.images = []
-        self.labels = []
-
-        # codigo de etiquetas
-        # 0 - no barco
-        # 1 - barco (undocked)
-        # 2 - barco (docked)
-
-        
-        # 1. No-ship images (images/ns-xxx.jpg)
-        no_ship_dir = os.path.join(root_dir, "images")
-        for filename in os.listdir(no_ship_dir):
-            if filename.startswith("ns-") and filename.endswith(".jpg"):
-                img_path = os.path.join(no_ship_dir, filename)
-                if self.docked:
-                    self.images.append((img_path, "no_ship"))
-                    self.labels.append(0)
-                else:
-                    self.images.append((img_path, "no_ship"))
-                    self.labels.append(0)
-
-        # 2. Cropped-ship images (only if dataAugmentation is True)
-        
-        if self.dataAugmentation:
-            cropped_dir = os.path.join(root_dir, "cropedImages")
-            for filename in os.listdir(cropped_dir):
-                if filename.startswith("s-") and filename.endswith(".jpg"):
-                    img_path = os.path.join(cropped_dir, filename)
-                    if self.docked:
-                        is_docked = 1 if filename.endswith("undocked.jpg") else 2
-                        self.images.append((img_path, "cropped_ship"))
-                        self.labels.append(is_docked)
-                    else:
-                        self.images.append((img_path, "cropped_ship"))
-                        self.labels.append(1)
-
-        # 3. Regular ship images (images/s-xxx-docked.jpg)
-        for filename in os.listdir(no_ship_dir):
-            if filename.startswith("s-") and filename.endswith(".jpg"):
-                img_path = os.path.join(no_ship_dir, filename)
-                if self.docked:
-                    is_docked = 1 if filename.endswith("undocked.jpg") else 2
-                    self.images.append((img_path, "regular_ship"))
-                    self.labels.append(is_docked)
-                else:
-                    self.images.append((img_path, "regular_ship"))
-                    self.labels.append(1)
-
-        no_ship_count = sum(1 for img, type in self.images if type == "no_ship")
-        cropped_ship_count = sum(1 for img, type in self.images if type == "cropped_ship")
-        regular_ship_count = sum(1 for img, type in self.images if type == "regular_ship")
-        
-        no_ship_split = int(no_ship_count * train_ratio)
-        cropped_ship_split = int(cropped_ship_count * train_ratio)
-        regular_ship_split = int(regular_ship_count * train_ratio)
-        
-        # Create indices for each category
-        no_ship_indices = [i for i, (_, type) in enumerate(self.images) if type == "no_ship"]
-        cropped_ship_indices = [i for i, (_, type) in enumerate(self.images) if type == "cropped_ship"]
-        regular_ship_indices = [i for i, (_, type) in enumerate(self.images) if type == "regular_ship"]
-        
-        # Select validation indices
-        if self.train:
-            no_ship_indices = no_ship_indices[:no_ship_split]
-            cropped_ship_indices = cropped_ship_indices[:cropped_ship_split]
-            regular_ship_indices = regular_ship_indices[:regular_ship_split]
-        else:
-            no_ship_indices = no_ship_indices[no_ship_split:]
-            cropped_ship_indices = cropped_ship_indices[cropped_ship_split:]
-            regular_ship_indices = regular_ship_indices[regular_ship_split:]
-        
-        # Combine all indices
-        valid_indices = no_ship_indices + cropped_ship_indices + regular_ship_indices
-        
-        # Filter images and labels
-        self.images = [self.images[i] for i in valid_indices]
-        self.labels = [self.labels[i] for i in valid_indices]
-
-    def __len__(self):
-        return len(self.images)
-
-    def __getitem__(self, idx):
-        img_path, img_type = self.images[idx]
-        label = self.labels[idx]
-
-        # Load the image
-        image = Image.open(img_path).convert('RGB')
-
-        # Apply appropriate transforms
-        if self.dataAugmentation:
-            if img_type == "no_ship" or img_type == "regular_ship":
-                # Apply crop transform for no-ship and regular-ship images
-                image = self.crop_transform(self.augmentation_transform(image))
-            else:
-                # Cropped ship images already processed
-                image = self.base_transform(self.augmentation_transform(image))
-        else:
-            # No data augmentation, just apply base transform
-            image = self.base_transform(image)
-
-        # Apply any additional transforms if provided
-        if self.additional_transform:
-            image = self.additional_transform(image)
-
-        return image, label
-
-def plotgrid(classifier, trainset, cols=8, rows=4):
+def plotgrid(self, trainset, cols=8, rows=4):
 
     figure = plt.figure(figsize=(cols*2, rows*2))
     view = np.random.permutation(cols * rows)
@@ -541,13 +363,14 @@ def plotgrid(classifier, trainset, cols=8, rows=4):
         #x = x.to('mps')
         
         #pred = np.round(scipy.special.softmax(classifier.model(im)[0].cpu().detach().numpy()),2)
-        pred = np.round(classifier.model(im)[0].cpu().detach().numpy(),2)
+        pred = np.round(self.model(im)[0].cpu().detach().numpy(),2)
         preds.append(pred)
 
         plt.title(f'y {label} - ŷ {pred}')
         #plt.title(label,pred)
         plt.axis("off")
         plt.imshow(sample, cmap="gray")
+
     plt.show();
     labels = np.array(trainset.labels)
     match len(np.unique(labels)):
@@ -558,7 +381,7 @@ def plotgrid(classifier, trainset, cols=8, rows=4):
 
     plt.show();
 
-def test_single_images(classifier, image_paths, device='mps', docked=True):
+def test_single_images(self, image_paths, device='mps', docked=True):
     """
     Test the classifier on individual images
     
@@ -567,8 +390,8 @@ def test_single_images(classifier, image_paths, device='mps', docked=True):
         image_paths: List of paths to images
         device: Computation device
     """
-    classifier.model.to(device)
-    classifier.model.eval()
+    self.model.to(device)
+    self.model.eval()
     
     transform = transforms.Compose([
         #transforms.Resize((224, 224)),
@@ -586,184 +409,10 @@ def test_single_images(classifier, image_paths, device='mps', docked=True):
         image_tensor = transform(image).unsqueeze(0).to(device)
         
         with torch.no_grad():
-            output = classifier.model(image_tensor)
+            output = self.model(image_tensor)
             _, pred = torch.max(output, 1)
             
         print(f"Image: {path}")
         print(f"Prediction: {labels[pred.item()]}")
         print(f"Confidence: {torch.nn.functional.softmax(output, dim=1)[0]}")
         print("-" * 30)
-
-def parse_arguments():
-    parser = argparse.ArgumentParser(description='Ship Classification Training Script')
-    
-    # Dataset parameters
-    parser.add_argument('--root_dir', type=str, default='/Users/pepe/carrera/3/2/vca/practicas/p2',
-                        help='Root directory containing the image folders')
-    parser.add_argument('--data_augmentation', action='store_true', 
-                        help='Apply data augmentation and include cropped ship images')
-    parser.add_argument('--docked', action='store_true',
-                        help='Include docked status in labels')
-    parser.add_argument('--not_train', action='store_true',
-                        help='Not train the model, used in company of --test_images')
-    parser.add_argument('--train_ratio', type=float, default=0.8,
-                        help='Ratio of training data to total data')
-    
-    # Model parameters
-    parser.add_argument('--pretrained', action='store_true',
-                        help='Use pretrained weights for the model')
-    parser.add_argument('--model_path', type=str, default='modelParams',
-                        help='Path to save or load the model')
-    parser.add_argument('--load_model', action='store_true',
-                        help='Load a pretrained model instead of training')
-    parser.add_argument('--unbalanced', action='store_true',
-                        help='Load a pretrained model instead of training')
-    
-    # Training parameters
-    parser.add_argument('--batch_size', type=int, default=512,
-                        help='Batch size for training and testing')
-    parser.add_argument('--num_workers', type=int, default=8,
-                        help='Number of workers for data loading')
-    parser.add_argument('--num_epochs', type=int, default=15,
-                        help='Number of epochs for training')
-    parser.add_argument('--patience', type=int, default=3,
-                        help='Patience for early stopping')
-    parser.add_argument('--lr_patience', type=int, default=5,
-                        help='Patience for reducing learning_rate')
-    parser.add_argument('--learning_rate', type=float, default=2,
-                        help='Learning rate for optimizer')
-    
-    # Testing parameters
-    parser.add_argument('--test_images', nargs='+', default=[],
-                        help='List of image paths to test individually')
-    
-    return parser.parse_args()
-
-if __name__ == "__main__":
-    args = parse_arguments()
-
-    os.environ['PYTORCH_MPS_HIGH_WATERMARK_RATIO'] = '0.0'
-
-    '''
-    # Basic run with data augmentation and pretrained model
-    python ship_classifier.py --data_augmentation --pretrained
-    
-    # Change learning rate and batch size
-    python ship_classifier.py --learning_rate 0.0005 --batch_size 256
-    
-    # Run with docked classification and more epochs
-    python ship_classifier.py --docked --num_epochs 20 --patience 5
-    
-    # Load a previously trained model and test it
-    python ship_classifier.py --load_model --model_path my_saved_model
-    
-    # Test specific images with a trained model
-    python ship_classifier.py --load_model --test_images imagen2.jpg imagen3.jpg
-    '''
-    
-    # Print the configuration
-    print("\nRunning with the following configuration:")
-    print(f"Data Augmentation: {args.data_augmentation}")
-    print(f"Pretrained: {args.pretrained}")
-    print(f"Docked classification: {args.docked}")
-    print(f"Batch size: {args.batch_size}")
-    print(f"Number of epochs: {args.num_epochs}")
-    print(f"Learning rate: {args.learning_rate}")
-    print(f"Early stopping patience: {args.patience}\n")
-    
-    # Set up datasets
-    trainset = ShipDataset(
-        root_dir=args.root_dir, 
-        train=True, 
-        dataAugmentation=args.data_augmentation,
-        docked=args.docked,
-        train_ratio=args.train_ratio
-    )
-    
-    testset = ShipDataset(
-        root_dir=args.root_dir, 
-        train=False, 
-        dataAugmentation=False,  # No augmentation for test set
-        docked=args.docked,
-        train_ratio=args.train_ratio
-    )
-
-
-
-    if not args.unbalanced:
-        class_counts = Counter(trainset.labels)
-        print(f'\n--\nClass counts before balancing: {class_counts}')
-        weights = [1.0 / class_counts[label] for label in trainset.labels]
-        print(f'weights for balancing: {Counter(weights)}\n--\n')
-        sampler = WeightedRandomSampler(weights, len(weights))
-        shuffle=False
-    else:
-        sampler=None
-        shuffle=True
-    
-    # Set up data loaders
-    trainloader = DataLoader(
-        trainset, 
-        batch_size=args.batch_size, 
-        num_workers=args.num_workers,
-        shuffle=shuffle,
-        sampler=sampler
-    )
-    
-    testloader = DataLoader(
-        testset, 
-        batch_size=args.batch_size, 
-        num_workers=args.num_workers
-    )
-    
-    # Create classifier
-    classifier = ShipClassifier(pretrained=args.pretrained, 
-                                docked=args.docked)
-    
-    if args.load_model:
-        # Load a pre-trained model
-        classifier.load_model(args.model_path)
-
-    if args.docked:
-        # Load a pre-trained model
-        classifier.partial_load_model(args.model_path)
-
-    
-        
-    if not args.not_train:
-        # Train the model
-        criterion = nn.CrossEntropyLoss()
-        optimizer = optim.AdamW(
-            [param for param in classifier.model.parameters() if param.requires_grad], 
-            lr=args.learning_rate
-        )
-        
-        model, history = classifier.train_model(
-            train_loader=trainloader,
-            optimizer=optimizer,
-            criterion=criterion,
-            num_epochs=args.num_epochs,
-            patience=args.patience,
-            lr_patience=args.lr_patience
-        )
-        
-        # Test and plot results
-        test_acc, test_accuracies, f1, cm = classifier.test_model(testloader)
-        classifier.plot_metrics(
-            history, 
-            test_acc, 
-            dataAugmentation=args.data_augmentation, 
-            pretrained=args.pretrained,
-            cm=cm)
-        
-        plotgrid(classifier,testset)
-        
-        # Save the model
-        classifier.save_model(args.model_path)
-    
-    # Test individual images if provided
-    if args.test_images:
-        classifier.load_model(args.model_path)
-        print("\nTesting individual images:")
-        device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-        test_single_images(classifier, args.test_images, device=device,docked=args.docked)
