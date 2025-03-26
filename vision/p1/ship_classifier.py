@@ -526,8 +526,10 @@ def plotgrid(classifier, trainset, cols=8, rows=4):
 
     figure = plt.figure(figsize=(cols*2, rows*2))
     view = np.random.permutation(cols * rows)
-    
-    for i, j in zip(range(1, cols * rows + 1), np.random.choice(np.arange(len(trainset)),cols * rows)):
+   
+    preds = []
+    indices_aleatorios = np.random.choice(np.arange(len(trainset)),cols * rows)
+    for i, j in zip(range(1, cols * rows + 1), indices_aleatorios):
         sample, label = trainset[j]
         im = torch.permute(torch.tensor(np.expand_dims(sample,0),dtype=torch.float32),(0,1,2,3)).to('mps')
 
@@ -540,11 +542,20 @@ def plotgrid(classifier, trainset, cols=8, rows=4):
         
         #pred = np.round(scipy.special.softmax(classifier.model(im)[0].cpu().detach().numpy()),2)
         pred = np.round(classifier.model(im)[0].cpu().detach().numpy(),2)
-        
+        preds.append(pred)
+
         plt.title(f'y {label} - ŷ {pred}')
         #plt.title(label,pred)
         plt.axis("off")
         plt.imshow(sample, cmap="gray")
+    plt.show();
+    labels = np.array(trainset.labels)
+    match len(np.unique(labels)):
+        case 2:
+            plt.scatter([row[0] for row in preds], [row[1] for row in preds],c=labels[indices_aleatorios])
+        case 3:
+            plt.scatter([row[0] for row in preds], [row[1] for row in preds],[row[2] for row in preds],c=labels[indices_aleatorios])
+
     plt.show();
 
 def test_single_images(classifier, image_paths, device='mps', docked=True):
