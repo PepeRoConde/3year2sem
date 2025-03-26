@@ -37,7 +37,7 @@ def on_release(key):
     print('Stop')
 
 def listen_keyboard():
-    with keyboard.Listener(on_press=on_press, on_release=on_release, suppress=True) as listener:
+    with keyboard.Listener(on_press=on_press, on_release=on_release, suppress=True) as listener: # type: ignore
         listener.join()  # Esto mantiene el listener activo
 
 if __name__ == '__main__':
