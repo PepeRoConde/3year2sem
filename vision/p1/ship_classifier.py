@@ -35,9 +35,9 @@ class ShipClassifier:
         """
 
         if pretrained:
-            model = models.efficientnet_b0(weights='DEFAULT')
+            model = models.efficientnet_b3(weights='DEFAULT')
         else: 
-            model = models.efficientnet_b0()
+            model = models.efficientnet_b3()
 
         if docked:
              n_outputs = 3
@@ -49,16 +49,16 @@ class ShipClassifier:
         # model.features[0][0] = nn.Conv2d(1, 32, kernel_size=3, stride=2, padding=1, bias=False)
 
         # En esta implementacion congelamos los pesos para hacer transfer learning
-        for param in model.features.parameters():
-            param.requires_grad = False
+        #for param in model.features.parameters():
+        #    param.requires_grad = True
             
         # Modificamos para usar dos clases (barco/no barco)
-        model.classifier[1] = nn.Linear(in_features=1280, out_features=64)
+        model.classifier[1] = nn.Linear(in_features=1536, out_features=n_outputs)
         
-        model.classifier.append(nn.Linear(64, 16))
-        model.classifier.append(nn.ReLU())
-        model.classifier.append(nn.Linear(16, n_outputs))
-        model.classifier.append(nn.Softmax())
+        #model.classifier.append(nn.Linear(20, 16))
+        #model.classifier.append(nn.ReLU())
+        #model.classifier.append(nn.Linear(16, n_outputs))
+        model.classifier.append(nn.Softmax(dim=1))
         
         self.model = model
 
@@ -68,10 +68,10 @@ class ShipClassifier:
         x = self.model(x)
         return x
 
-    def train_model(self, train_loader, optimizer=None, criterion=None, num_epochs=3, patience=2):
+    def train_model(self, train_loader, optimizer=None, criterion=None, num_epochs=3, patience=5, lr_patience=2):
         """
         Entrena el modelo de clasificacion binaria de barcos
-
+    
         Args:
             train_loader: DataLoader para los datos de entrenamiento
             optimizer: PyTorch optimizer, Adam por defecto 
@@ -88,27 +88,37 @@ class ShipClassifier:
         if optimizer is None:
             optimizer = optim.Adam(self.model.parameters(), lr=0.001)
         
+        # Add learning rate scheduler
+        lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, 
+            mode='min',      # Reduce LR when metric stops improving
+            factor=0.5,      # Reduce learning rate by half
+            patience=lr_patience,      # Wait 2 epochs before reducing LR
+            verbose=True     # Print when LR changes
+        )
+        
         if criterion is None:
             criterion = nn.CrossEntropyLoss()
             
         device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
         print(f"Using device: {'MPS' if device.type == 'mps' else 'CPU'}")
-
+    
         self.model.to(device)
         scaler = GradScaler()
      
-        # History for metrics
+        # Update history to track learning rate
         history = {
             'train_loss': [],         # Perdida por Batch
             'train_acc': [],          # Accuracy por Batch
             'epoch_train_loss': [],   # Avg loss por Epoch
             'epoch_train_acc': [],    # Avg accuracy por Epoch
+            'learning_rates': [],     # Track learning rates
             'training_time': 0.0      # Total training time
         }
-
+    
         best_loss = np.inf  
         epochs_no_improve = 0       
-
+    
         start_time = time.time()
         for epoch in range(num_epochs):
             print(f'Epoch {epoch+1}/{num_epochs}')
@@ -141,20 +151,25 @@ class ShipClassifier:
                 scaler.step(optimizer)  # Actualizar pesos
                 scaler.update()  # Actualizar el escalador
                 
+                # Track current learning rate
+                current_lr = optimizer.param_groups[0]['lr']
+                history['learning_rates'].append(current_lr)
+                
                 # Loss y Accuracy del Batch 
                 history['train_loss'].append(loss.item())
                 
                 # Calcular accuracy
-                _, predicted = torch.max(outputs, 1)
-                batch_acc = torch.sum(predicted == labels.data) / inputs.size(0)
+                _, preds = torch.max(outputs, 1)
+                
+                batch_acc = torch.sum(preds == labels.data) / inputs.size(0)
                 history['train_acc'].append(batch_acc.item())
                 
                 # Acumular estadisitcas
                 current_loss += loss.item() * inputs.size(0)  
-                current_corrects += torch.sum(predicted == labels.data)  
+                current_corrects += torch.sum(preds == labels.data)  
                 total_samples += inputs.size(0)
                 
-                if i % 100 == 0:
+                if i % 20 == 0:
                     print(f"  Batch {i}: Loss: {loss.item():.4f}, Acc: {batch_acc.item():.4f}")
             
             # Estadisiticas por epoch
@@ -165,7 +180,10 @@ class ShipClassifier:
             history['epoch_train_acc'].append(epoch_acc.item())
             
             print(f'  Train Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
-
+    
+            # Step the learning rate scheduler based on epoch loss
+            lr_scheduler.step(epoch_loss)
+    
             # Early stopping
             if epoch_loss < best_loss:
                 best_loss = epoch_loss  
@@ -177,14 +195,14 @@ class ShipClassifier:
                 if epochs_no_improve >= patience:
                     print(f'  Early stopping triggered after {epoch+1} epochs.')
                     break
-
+    
         # Total training time
         time_elapsed = time.time() - start_time
         history['training_time'] = time_elapsed
-
+    
         print(f'Training completed in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s')
         print(f'Final Accuracy: {epoch_acc:.4f}')
-
+    
         return self.model, history
 
     def test_model(self, test_loader):
@@ -222,6 +240,7 @@ class ShipClassifier:
 
                 outputs = self.model(inputs)
                 _, preds = torch.max(outputs, 1)
+                #preds = torch.argmax(outputs)
 
                 batch_acc = torch.sum(preds == labels.data) / inputs.size(0)
                 test_accuracies.append(batch_acc.item())
@@ -268,7 +287,34 @@ class ShipClassifier:
 
         self.model.load_state_dict(torch.load(path))
         print(f"Model loaded from {path}")
+       
+
+
+    def partial_load_model(self,original_model_path):
+        # Load the original state dict
+        original_state_dict = torch.load(original_model_path)
         
+        # Create a new state dict for the new model
+        new_state_dict = self.model.state_dict()
+        
+        # Copy all layers except the classifier layer
+        for name, param in original_state_dict.items():
+            if 'classifier.1' not in name:  # Skip the classifier layer
+                new_state_dict[name] = param
+        
+        # Partially copy the classifier weights
+        original_classifier_weight = original_state_dict['classifier.1.weight']
+        original_classifier_bias = original_state_dict['classifier.1.bias']
+        
+        # Initialize the new classifier with the original weights
+        new_state_dict['classifier.1.weight'][:2] = original_classifier_weight
+        new_state_dict['classifier.1.bias'][:2] = original_classifier_bias
+        
+        # Load the modified state dict
+        self.model.load_state_dict(new_state_dict)
+        return self.model
+    
+
     def plot_metrics(self, history, test_acc, dataAugmentation, pretrained, cm):
         '''
         Grafica los resultados del entrenamiento y test
@@ -354,8 +400,8 @@ class ShipDataset(Dataset):
 
         self.augmentation_transform = transforms.Compose([
             transforms.RandomHorizontalFlip(),    
-            transforms.ColorJitter(brightness=0.2, contrast=0.1, saturation=0.2, hue=0.1),
-            transforms.RandomAffine(degrees=7, translate=(0.05, 0.05), scale=(0.95, 1.05), shear=2),
+            #transforms.ColorJitter(brightness=0.2, contrast=0.1, saturation=0.2, hue=0.1),
+            #transforms.RandomAffine(degrees=7, translate=(0.05, 0.05), scale=(0.95, 1.05), shear=2),
             transforms.RandomGrayscale(p=0.15), 
         ])
 
@@ -392,6 +438,7 @@ class ShipDataset(Dataset):
                     self.labels.append(0)
 
         # 2. Cropped-ship images (only if dataAugmentation is True)
+        
         if self.dataAugmentation:
             cropped_dir = os.path.join(root_dir, "cropedImages")
             for filename in os.listdir(cropped_dir):
@@ -406,17 +453,16 @@ class ShipDataset(Dataset):
                         self.labels.append(1)
 
         # 3. Regular ship images (images/s-xxx-docked.jpg)
-        if not self.dataAugmentation:
-            for filename in os.listdir(no_ship_dir):
-                if filename.startswith("s-") and filename.endswith(".jpg"):
-                    img_path = os.path.join(no_ship_dir, filename)
-                    if self.docked:
-                        is_docked = 1 if filename.endswith("undocked.jpg") else 2
-                        self.images.append((img_path, "cropped_ship"))
-                        self.labels.append(is_docked)
-                    else:
-                        self.images.append((img_path, "regular_ship"))
-                        self.labels.append(1)
+        for filename in os.listdir(no_ship_dir):
+            if filename.startswith("s-") and filename.endswith(".jpg"):
+                img_path = os.path.join(no_ship_dir, filename)
+                if self.docked:
+                    is_docked = 1 if filename.endswith("undocked.jpg") else 2
+                    self.images.append((img_path, "regular_ship"))
+                    self.labels.append(is_docked)
+                else:
+                    self.images.append((img_path, "regular_ship"))
+                    self.labels.append(1)
 
         no_ship_count = sum(1 for img, type in self.images if type == "no_ship")
         cropped_ship_count = sum(1 for img, type in self.images if type == "cropped_ship")
@@ -480,8 +526,10 @@ def plotgrid(classifier, trainset, cols=8, rows=4):
 
     figure = plt.figure(figsize=(cols*2, rows*2))
     view = np.random.permutation(cols * rows)
-    
-    for i, j in zip(range(1, cols * rows + 1), np.random.choice(np.arange(len(trainset)),cols * rows)):
+   
+    preds = []
+    indices_aleatorios = np.random.choice(np.arange(len(trainset)),cols * rows)
+    for i, j in zip(range(1, cols * rows + 1), indices_aleatorios):
         sample, label = trainset[j]
         im = torch.permute(torch.tensor(np.expand_dims(sample,0),dtype=torch.float32),(0,1,2,3)).to('mps')
 
@@ -494,11 +542,20 @@ def plotgrid(classifier, trainset, cols=8, rows=4):
         
         #pred = np.round(scipy.special.softmax(classifier.model(im)[0].cpu().detach().numpy()),2)
         pred = np.round(classifier.model(im)[0].cpu().detach().numpy(),2)
-        
+        preds.append(pred)
+
         plt.title(f'y {label} - ŷ {pred}')
         #plt.title(label,pred)
         plt.axis("off")
         plt.imshow(sample, cmap="gray")
+    plt.show();
+    labels = np.array(trainset.labels)
+    match len(np.unique(labels)):
+        case 2:
+            plt.scatter([row[0] for row in preds], [row[1] for row in preds],c=labels[indices_aleatorios])
+        case 3:
+            plt.scatter([row[0] for row in preds], [row[1] for row in preds],[row[2] for row in preds],c=labels[indices_aleatorios])
+
     plt.show();
 
 def test_single_images(classifier, image_paths, device='mps', docked=True):
@@ -547,6 +604,8 @@ def parse_arguments():
                         help='Apply data augmentation and include cropped ship images')
     parser.add_argument('--docked', action='store_true',
                         help='Include docked status in labels')
+    parser.add_argument('--not_train', action='store_true',
+                        help='Not train the model, used in company of --test_images')
     parser.add_argument('--train_ratio', type=float, default=0.8,
                         help='Ratio of training data to total data')
     
@@ -557,6 +616,8 @@ def parse_arguments():
                         help='Path to save or load the model')
     parser.add_argument('--load_model', action='store_true',
                         help='Load a pretrained model instead of training')
+    parser.add_argument('--unbalanced', action='store_true',
+                        help='Load a pretrained model instead of training')
     
     # Training parameters
     parser.add_argument('--batch_size', type=int, default=512,
@@ -565,9 +626,11 @@ def parse_arguments():
                         help='Number of workers for data loading')
     parser.add_argument('--num_epochs', type=int, default=15,
                         help='Number of epochs for training')
-    parser.add_argument('--patience', type=int, default=5,
+    parser.add_argument('--patience', type=int, default=3,
                         help='Patience for early stopping')
-    parser.add_argument('--learning_rate', type=float, default=0.001,
+    parser.add_argument('--lr_patience', type=int, default=5,
+                        help='Patience for reducing learning_rate')
+    parser.add_argument('--learning_rate', type=float, default=2,
                         help='Learning rate for optimizer')
     
     # Testing parameters
@@ -578,6 +641,8 @@ def parse_arguments():
 
 if __name__ == "__main__":
     args = parse_arguments()
+
+    os.environ['PYTORCH_MPS_HIGH_WATERMARK_RATIO'] = '0.0'
 
     '''
     # Basic run with data augmentation and pretrained model
@@ -623,15 +688,25 @@ if __name__ == "__main__":
         train_ratio=args.train_ratio
     )
 
-    class_counts = Counter(trainset.labels)
-    weights = [1.0 / class_counts[label] for label in trainset.labels]
-    sampler = WeightedRandomSampler(weights, len(weights))
+
+
+    if not args.unbalanced:
+        class_counts = Counter(trainset.labels)
+        print(f'\n--\nClass counts before balancing: {class_counts}')
+        weights = [1.0 / class_counts[label] for label in trainset.labels]
+        print(f'weights for balancing: {Counter(weights)}\n--\n')
+        sampler = WeightedRandomSampler(weights, len(weights))
+        shuffle=False
+    else:
+        sampler=None
+        shuffle=True
     
     # Set up data loaders
     trainloader = DataLoader(
         trainset, 
         batch_size=args.batch_size, 
         num_workers=args.num_workers,
+        shuffle=shuffle,
         sampler=sampler
     )
     
@@ -648,8 +723,14 @@ if __name__ == "__main__":
     if args.load_model:
         # Load a pre-trained model
         classifier.load_model(args.model_path)
-        test_acc, test_accuracies, f1, cm = classifier.test_model(testloader)
-    else:
+
+    if args.docked:
+        # Load a pre-trained model
+        classifier.partial_load_model(args.model_path)
+
+    
+        
+    if not args.not_train:
         # Train the model
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.AdamW(
@@ -662,7 +743,8 @@ if __name__ == "__main__":
             optimizer=optimizer,
             criterion=criterion,
             num_epochs=args.num_epochs,
-            patience=args.patience
+            patience=args.patience,
+            lr_patience=args.lr_patience
         )
         
         # Test and plot results
@@ -674,7 +756,7 @@ if __name__ == "__main__":
             pretrained=args.pretrained,
             cm=cm)
         
-        plotgrid(testset)
+        plotgrid(classifier,testset)
         
         # Save the model
         classifier.save_model(args.model_path)
