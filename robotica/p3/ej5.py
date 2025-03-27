@@ -77,10 +77,15 @@ class RoboboController:
             messages=[
                 {
                     "role": "system",
-                    "content": "Te voy a decir comandos para mover un robot. Quiero que me categorices estos comandos. "
-                    "Unicamente tienes que moverte hacia X. Dame solo las categorias: forward, backward, right, left. "
-                    "Considera las acciones a realizar segun los escenarios planteados.",
-                },
+                    "content": "Te voy a decir comandos para mover un robot. \
+                        Quiero que me categorices estos comandos en; por ejemplo, movimiento. \
+                        Es decir, te paso una frase y tú me tienes que devolver el comando. \
+                        Puede haber pequeños matices como obstáculos, rampas, etc. que tendrás que considerar. \
+                        Los comandos estarán en lenguaje natural y cotidiano. Los comandos son 4: forward, backward, right, left. \
+                        Estas acciones pueden ser combinadas (left-forward por ejemplo); o con otros parámetros como speed 20, emotion happy, etc. \
+                        Se puede pasar un parametro de tiempo, que debes devolver la seccion de tiempo como: time X.\
+                        Un ejemplo de comando es: 'forward at speed 20 for 2 seconds'. \
+                        Si se pasa el comando quit devuelvelo directamente",                },
                 {"role": "user", "content": command},
             ],
         )
@@ -91,8 +96,12 @@ class RoboboController:
         # Convertir el vector de strings a una lista
         vector = eval(vector_str)
         # Extraer los elementos del vector
-        vx, vy, emocion, sonido, texto = vector
-        return vx, vy, emocion, sonido, texto
+        vx, vy, emotion, sound, text = vector
+
+        self.robobo.moveWheels(vx,vy)
+        self.robobo.emotion(emotion)
+        self.robobo.sound(sound)
+        self.robobo.sayText(text)
 
 # vector_str = "[10, 10, 'hello', 'alegre', 'forward']"
 # result = RoboboController(None, None).parse_vector_string(vector_str)
@@ -115,7 +124,7 @@ def main(ip="localhost"):
         while True:
             user_response = controller.get_text_command()
             # result = controller.parse_command(user_response)
-            result = controller.parse_command(
+            result = controller.parse_vector_string(
                 controller.get_chatgpt_text(user_response)
             )
             if result is False:
