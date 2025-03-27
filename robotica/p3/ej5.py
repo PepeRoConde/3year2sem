@@ -1,5 +1,9 @@
 from robobopy.Robobo import Robobo
+from robobopy.utils.Emotions import Emotions
 from robobosim.RoboboSim import RoboboSim
+from robobopy.utils.Emotions import Emotions
+from robobopy.utils.Sounds import Sounds
+
 from tkinter import simpledialog
 import re
 import openai
@@ -24,11 +28,13 @@ class RoboboController:
         self.default_speed = default_speed
         self.default_time = default_time
 
-        self.movement_strategies = {
-            "forward": (lambda speed: (speed, speed)),
-            "backward": (lambda speed: (-speed, -speed)),
-            "left": (lambda speed: (-speed, speed)),
-            "right": (lambda speed: (speed, -speed)),
+        self.strategies = {
+            "happy": ...,
+            "sad": ...,
+            "sleepy": ...,
+            "scream": ...,
+            "laught": ...,
+            "beep": ...
         }
 
     def parse_command(self, user_response):
@@ -47,23 +53,14 @@ class RoboboController:
             self.sim.disconnect()
             return False
 
-        # Obtener direcciones y velocidades del texto
-        directions = re.findall(r"\b(forward|backward|left|right)\b", user_response)
-        speeds = re.findall(r"\d+", user_response)
-
-        current_speed = int(speeds[0]) if speeds else self.default_speed
-
+        # Vector de comandos: [vx, vy, emocion, sonido, texto]
+        vx, vy, emotion, sound, text = eval(user_response)
         # Ejecutar los movimientos
-        for direction in directions:
-            if direction in self.movement_strategies:
-                # Obtener velocidades de las ruedas (las velocidades pueden ser diferentes)
-                left, right = self.movement_strategies[direction](current_speed)
+        self.robobo.moveWheels(vx,vy)
+        self.robobo.setEmotion(Emotions.emotion)
+        self.robobo.playSound(Sounds.sound)
+        self.robobo.sayText(text)
 
-                # Mover el robot
-                self.robobo.moveWheelsByTime(left, right, self.default_time)
-                print(f"Moving {direction} at speed {current_speed}")
-
-        return True
 
     def get_text_command(self):
         """
@@ -77,35 +74,13 @@ class RoboboController:
             messages=[
                 {
                     "role": "system",
-                    "content": "Te voy a decir comandos para mover un robot. \
-                        Quiero que me categorices estos comandos en; por ejemplo, movimiento. \
-                        Es decir, te paso una frase y tú me tienes que devolver el comando. \
-                        Puede haber pequeños matices como obstáculos, rampas, etc. que tendrás que considerar. \
-                        Los comandos estarán en lenguaje natural y cotidiano. Los comandos son 4: forward, backward, right, left. \
-                        Estas acciones pueden ser combinadas (left-forward por ejemplo); o con otros parámetros como speed 20, emotion happy, etc. \
-                        Se puede pasar un parametro de tiempo, que debes devolver la seccion de tiempo como: time X.\
-                        Un ejemplo de comando es: 'forward at speed 20 for 2 seconds'. \
-                        Si se pasa el comando quit devuelvelo directamente",                },
+                    "content": "CAMBIAR A ALGO CORRECTO PARA ESTE CASO",},
                 {"role": "user", "content": command},
             ],
         )
         print(f"Generated text: {response}")
         return response
 
-    def parse_vector_string(self, vector_str):
-        # Convertir el vector de strings a una lista
-        vector = eval(vector_str)
-        # Extraer los elementos del vector
-        vx, vy, emotion, sound, text = vector
-
-        self.robobo.moveWheels(vx,vy)
-        self.robobo.emotion(emotion)
-        self.robobo.sound(sound)
-        self.robobo.sayText(text)
-
-# vector_str = "[10, 10, 'hello', 'alegre', 'forward']"
-# result = RoboboController(None, None).parse_vector_string(vector_str)
-# print(result)
 
 def main(ip="localhost"):
     sim = RoboboSim(ip)
@@ -117,14 +92,14 @@ def main(ip="localhost"):
 
     controller = RoboboController(robobo, sim)
     vector_str = "[10, 10, 'hello', 'alegre', 'forward']"
-    result = controller.parse_vector_string(vector_str)
-    print(result)
+
+
 
     try:
         while True:
             user_response = controller.get_text_command()
             # result = controller.parse_command(user_response)
-            result = controller.parse_vector_string(
+            result = controller.parse_command(
                 controller.get_chatgpt_text(user_response)
             )
             if result is False:

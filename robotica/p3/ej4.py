@@ -4,12 +4,11 @@ from tkinter import simpledialog
 import re
 import openai
 
-
 client = openai.OpenAI(api_key=api_key) # type: ignore  
 
 
 class RoboboController:
-    def __init__(self, robobo, sim, default_speed=10, default_time=1):
+    def __init__(self, robobo, sim, default_speed=20, default_time=2):
         self.robobo = robobo
         self.sim = sim
         self.default_speed = default_speed
@@ -17,7 +16,7 @@ class RoboboController:
 
         self.movement_strategies = {
             "forward": (lambda speed: (speed, speed)),
-            "backward": (lambda speed: (-speed, -speed)),
+            "back": (lambda speed: (-speed, -speed)),
             "left": (lambda speed: (-speed, speed)),
             "right": (lambda speed: (speed, -speed)),
         }
@@ -33,13 +32,14 @@ class RoboboController:
         # Estandarizamos el input
         user_response = user_response.lower()
 
-        if user_response == "quit":
+        if user_response == "stop":
             self.robobo.stopMotors()
-            self.sim.disconnect()
-            return False
+            # self.sim.disconnect()
+            # return False
+            return
 
         # Obtener direcciones y velocidades del texto
-        directions = re.findall(r"\b(forward|backward|left|right)\b", user_response)
+        directions = re.findall(r"\b(forward|back|left|right)\b", user_response)
         
         # Improved speed parsing
         speeds = re.findall(r"speed (\d+)", user_response)
@@ -52,6 +52,7 @@ class RoboboController:
         # Ejecutar los movimientos
         for direction in directions:
             if direction in self.movement_strategies:
+                
                 # Obtener velocidades de las ruedas (las velocidades pueden ser diferentes)
                 left, right = self.movement_strategies[direction](current_speed)
 
@@ -59,10 +60,13 @@ class RoboboController:
                 if move_time is not None:
                     print(f"Moving {direction} at speed {current_speed} for {move_time} seconds")
                     self.robobo.moveWheelsByTime(left, right, move_time)
+                    if direction == 'left'or direction == 'right':
+                        self.robobo.moveWheelsByTime(current_speed, current_speed, self.default_time)
                 else:
                     print(f"Moving {direction} at speed {current_speed}")
                     self.robobo.moveWheels(left, right)
-
+                    if direction == 'left'or direction == 'right':
+                        self.robobo.moveWheelsByTime(current_speed, current_speed, self.default_time)
         return True
 
     def get_text_command(self):
@@ -77,15 +81,7 @@ class RoboboController:
             messages=[
                 {
                     "role": "system",
-                    "content": "Te voy a decir comandos para mover un robot. \
-                        Quiero que me categorices estos comandos en; por ejemplo, movimiento. \
-                        Es decir, te paso una frase y tú me tienes que devolver el comando. \
-                        Puede haber pequeños matices como obstáculos, rampas, etc. que tendrás que considerar. \
-                        Los comandos estarán en lenguaje natural y cotidiano. Los comandos son 4: forward, backward, right, left. \
-                        Estas acciones pueden ser combinadas (left-forward por ejemplo); o con otros parámetros como speed 20, emotion happy, etc. \
-                        Se puede pasar un parametro de tiempo, que debes devolver la seccion de tiempo como: time X.\
-                        Un ejemplo de comando es: 'forward at speed 20 for 2 seconds'. \
-                        Si se pasa el comando quit devuelvelo directamente",
+                    "content": "Necesito que me des comandos para controlar un robot segun la frase que te ponga. Los comandos son: forward, back, left, right y stop. Ademas, tambien se pueden incluir velocidades (enteros) o tiempo (floats). Los comandos pueden ser complejos como: forward-left. Dame unicamente el comando, nada mas.",
                         
                 },
                 {"role": "user", "content": command},

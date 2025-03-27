@@ -1,0 +1,5 @@
+- Añadir emociones al 2
+    - En el 2 opcional mirar si el movimiento con el micro funciona igual
+    - Intentar que la escucha del micro se cierre con una tecla
+- Terminar de comprobar el 4
+- Hacer el 5 (es decir terminarlo)

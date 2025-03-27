@@ -62,6 +62,8 @@ class RoboboController:
                 # Mover el robot
                 self.robobo.moveWheelsByTime(left, right, self.default_time)
                 print(f"Moving {direction} at speed {current_speed}")
+                if direction == 'left'or direction == 'right':
+                    self.robobo.moveWheelsByTime(current_speed, current_speed, self.default_time)
         
         return True
     
@@ -71,7 +73,7 @@ class RoboboController:
         """
         return simpledialog.askstring("Input", "Enter command:")
 
-    def voice_to_text(self, timeout=None, phrase_time_limit=5):
+    def voice_to_text(self, timeout=None, phrase_time_limit=2.5):
         """
         Convertir la voz a texto
         """

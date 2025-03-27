@@ -4,7 +4,7 @@ from tkinter import simpledialog
 import re
 
 class RoboboController:
-    def __init__(self, robobo, sim, default_speed=10, default_time=1):
+    def __init__(self, robobo, sim, default_speed=10, default_time=2):
         self.robobo = robobo
         self.sim = sim
         self.default_speed = default_speed
@@ -12,9 +12,9 @@ class RoboboController:
         
         self.movement_strategies = {
             'forward': (lambda speed: (speed, speed)),
-            'backward': (lambda speed: (-speed, -speed)),
-            'left': (lambda speed: (-speed, speed)),
-            'right': (lambda speed: (speed, -speed))
+            'back': (lambda speed: (-speed, -speed)),
+            'left': (lambda speed: (speed, -speed)),
+            'right': (lambda speed: (-speed, speed))
         }
     
     def parse_command(self, user_response):
@@ -34,7 +34,7 @@ class RoboboController:
             return False
         
         # Obtener direcciones y velocidades del texto
-        directions = re.findall(r'\b(forward|backward|left|right)\b', user_response)
+        directions = re.findall(r'\b(forward|back|left|right)\b', user_response)
         speeds = re.findall(r'\d+', user_response)
         
         current_speed = int(speeds[0]) if speeds else self.default_speed
@@ -48,6 +48,8 @@ class RoboboController:
                 # Mover el robot
                 self.robobo.moveWheelsByTime(left, right, self.default_time)
                 print(f"Moving {direction} at speed {current_speed}")
+                if direction == 'left'or direction == 'right':
+                    self.robobo.moveWheelsByTime(current_speed, current_speed, self.default_time)
         
         return True
     
