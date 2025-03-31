@@ -2,7 +2,10 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 import os
 from PIL import Image
+import numpy as np
 import numpy.random as random
+import matplotlib.pyplot as plt
+import torch
 
 class RandomLargestSquareCrop(object):
     def __init__(self):
@@ -171,3 +174,20 @@ class ShipDataset(Dataset):
             image = self.additional_transform(image)
 
         return image, label
+
+    def plot_grid(self, cols=8, rows=5):
+        figure = plt.figure(figsize=(cols*2, rows*2))
+        view = random.permutation(cols * rows)
+        
+        indices_aleatorios = random.choice(np.arange(len(self)),cols * rows)
+        for i, j in zip(range(1, cols * rows + 1), indices_aleatorios):
+            sample, label = self[j]
+            sample = torch.Tensor.permute(sample,(1,2,0)).numpy()
+            sample -= np.min(sample)
+            sample /= np.max(sample)
+        
+            figure.add_subplot(rows, cols, i)
+            plt.title(f'Clase {label}')
+            plt.axis("off")
+            plt.imshow(sample, cmap="gray")
+        plt.show();

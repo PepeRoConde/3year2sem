@@ -7,27 +7,6 @@ import torch.nn as nn
 
 from ship_classifier import ShipClassifier
 from ship_dataset import ShipDataset
-'''
-import torch
-import torchvision
-from PIL import Image
-import random
-import torch.nn as nn
-import torchvision.models as models
-import torchvision.transforms as transforms 
-from torch.utils.data import DataLoader, WeightedRandomSampler
-from torch.amp.grad_scaler import GradScaler
-from torch.amp.autocast_mode import autocast
-import numpy as np
-import time
-from tqdm import tqdm
-from sklearn.metrics import f1_score, confusion_matrix
-import torch.optim as optim
-import matplotlib.pyplot as plt
-import seaborn as sns
-import argparse
-'''
-
 
 
 def parse_arguments():
@@ -53,7 +32,7 @@ def parse_arguments():
     parser.add_argument('--load_model', action='store_true',
                         help='Load a pretrained model instead of training')
     parser.add_argument('--unbalanced', action='store_true',
-                        help='Load a pretrained model instead of training')
+                        help='Unless specified, class balancing will be applied')
     
     # Training parameters
     parser.add_argument('--batch_size', type=int, default=512,
@@ -68,7 +47,7 @@ def parse_arguments():
                         help='Patience for reducing learning_rate')
     parser.add_argument('--learning_rate', type=float, default=4,
                         help='Learning rate for optimizer')
-    parser.add_argument('--l2_lambda', type=float, default=1e-2,
+    parser.add_argument('--l2_lambda', type=float, default=0.0,
                         help='Lambda for L2 weight decay regularization.')
     
     # Testing parameters
@@ -101,13 +80,24 @@ if __name__ == "__main__":
     
     # Print the configuration
     print("\nRunning with the following configuration:")
+    print(f"Root directory: {args.root_dir}")
     print(f"Data Augmentation: {args.data_augmentation}")
-    print(f"Pretrained: {args.pretrained}")
     print(f"Docked classification: {args.docked}")
+    print(f"Not training model: {args.not_train}")
+    print(f"Training data ratio: {args.train_ratio}")
+    print(f"Pretrained: {args.pretrained}")
+    print(f"Model path: {args.model_path}")
+    print(f"Loading pretrained model: {args.load_model}")
+    print(f"Class balancing: {'Unbalanced' if args.unbalanced else 'Balanced'}")
     print(f"Batch size: {args.batch_size}")
+    print(f"Number of workers: {args.num_workers}")
     print(f"Number of epochs: {args.num_epochs}")
+    print(f"Early stopping patience: {args.patience}")
     print(f"Learning rate: {args.learning_rate}")
-    print(f"Early stopping patience: {args.patience}\n")
+    print(f"L2 regularization lambda: {args.l2_lambda}")
+    print(f"Learning rate decay patience: {args.lr_patience}")
+    print(f"Test images: {args.test_images}\n")
+
     
     # Set up datasets
     trainset = ShipDataset(
@@ -159,12 +149,24 @@ if __name__ == "__main__":
                                 docked=args.docked)
     
     if args.load_model:
-        # Load a pre-trained model
-        classifier.load_model(args.model_path)
+        if args.docked:
+            # Load a pre-trained model
+            try:
+                try:
+                    classifier.partial_load_model(args.model_path)
+                except:
+                    classifier.load_model(args.model_path)
+            except:
+                print(f'Model not loaded, probably due to an error with accesing {args.model_path}.')
+            # Load a pre-trained model
+        else:
+            try:
+                classifier.load_model(args.model_path)
+            except:
+                print(f'Model not loaded, probably due to an error with accesing {args.model_path}.')
 
-    if args.docked:
-        # Load a pre-trained model
-        classifier.partial_load_model(args.model_path)
+    
+        
 
     
         
@@ -195,7 +197,7 @@ if __name__ == "__main__":
             pretrained=args.pretrained,
             cm=cm)
         
-        plotgrid(classifier,testset)
+        classifier.plotgrid(testset)
         
         # Save the model
         classifier.save_model(args.model_path)

@@ -1,0 +1,130 @@
+
+Running with the following configuration:
+Root directory: /Users/pepe/carrera/3/2/vca/practicas/p2
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 24
+Number of workers: 8
+Number of epochs: 200
+Early stopping patience: 8
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 4
+Test images: []
+
+
+--
+Class counts before balancing: Counter({2: 151, 1: 144, 0: 88})
+weights for balancing: Counter({0.006622516556291391: 151, 0.006944444444444444: 144, 0.011363636363636364: 88})
+--
+
+Using device: MPS
+Epoch 1/200
+----------
+  Batch 0: Loss: 1.2267, Acc: 0.3333
+  Train Loss: 1.2276 Acc: 0.3734
+Epoch 2/200
+----------
+  Batch 0: Loss: 1.1820, Acc: 0.4583
+  Train Loss: 1.2134 Acc: 0.4047
+Epoch 3/200
+----------
+  Batch 0: Loss: 1.2529, Acc: 0.2917
+  Train Loss: 1.1948 Acc: 0.4413
+Epoch 4/200
+----------
+  Batch 0: Loss: 1.1498, Acc: 0.5000
+  Train Loss: 1.2084 Acc: 0.4073
+  No improvement in loss for 1 epochs.
+Epoch 5/200
+----------
+  Batch 0: Loss: 1.1726, Acc: 0.5000
+  Train Loss: 1.2004 Acc: 0.4256
+  No improvement in loss for 2 epochs.
+Epoch 6/200
+----------
+  Batch 0: Loss: 1.1327, Acc: 0.5417
+  Train Loss: 1.1767 Acc: 0.4726
+Epoch 7/200
+----------
+  Batch 0: Loss: 1.1411, Acc: 0.5000
+  Train Loss: 1.1498 Acc: 0.4909
+Epoch 8/200
+----------
+  Batch 0: Loss: 1.1651, Acc: 0.4167
+  Train Loss: 1.1755 Acc: 0.4648
+  No improvement in loss for 1 epochs.
+Epoch 9/200
+----------
+  Batch 0: Loss: 1.2442, Acc: 0.3333
+  Train Loss: 1.1860 Acc: 0.4517
+  No improvement in loss for 2 epochs.
+Epoch 10/200
+----------
+  Batch 0: Loss: 1.1102, Acc: 0.5417
+  Train Loss: 1.1466 Acc: 0.4883
+Epoch 11/200
+----------
+  Batch 0: Loss: 1.1994, Acc: 0.4583
+  Train Loss: 1.1344 Acc: 0.5091
+Epoch 12/200
+----------
+  Batch 0: Loss: 1.2214, Acc: 0.4167
+  Train Loss: 1.1416 Acc: 0.5248
+  No improvement in loss for 1 epochs.
+Epoch 13/200
+----------
+  Batch 0: Loss: 1.0580, Acc: 0.6667
+  Train Loss: 1.1383 Acc: 0.5222
+  No improvement in loss for 2 epochs.
+Epoch 14/200
+----------
+  Batch 0: Loss: 1.2172, Acc: 0.4583
+  Train Loss: 1.1206 Acc: 0.5535
+Epoch 15/200
+----------
+  Batch 0: Loss: 1.1910, Acc: 0.4167
+  Train Loss: 1.1639 Acc: 0.4778
+  No improvement in loss for 1 epochs.
+Epoch 16/200
+----------
+  Batch 0: Loss: 0.9412, Acc: 0.8333
+  Train Loss: 1.1085 Acc: 0.5587
+Epoch 17/200
+----------
+  Batch 0: Loss: 0.9847, Acc: 0.6250
+  Train Loss: 1.1086 Acc: 0.5379
+  No improvement in loss for 1 epochs.
+Epoch 18/200
+----------
+  Batch 0: Loss: 1.1865, Acc: 0.4583
+  Train Loss: 1.1518 Acc: 0.4961
+  No improvement in loss for 2 epochs.
+Epoch 19/200
+----------
+  Batch 0: Loss: 1.0670, Acc: 0.5833
+  Train Loss: 1.1141 Acc: 0.5300
+  No improvement in loss for 3 epochs.
+Epoch 20/200
+----------
+  Batch 0: Loss: 1.1726, Acc: 0.5000
+  Train Loss: 1.1461 Acc: 0.4987
+  No improvement in loss for 4 epochs.
+  Learning rate early stopping triggered after 20 epochs.
+Epoch 21/200
+----------
+  Batch 0: Loss: 1.2777, Acc: 0.3333
+  Train Loss: 1.0987 Acc: 0.5326
+Epoch 22/200
+----------
+  Batch 0: Loss: 1.2144, Acc: 0.4167
+  Train Loss: 1.1276 Acc: 0.5222
+  No improvement in loss for 1 epochs.
+Epoch 23/200
+----------

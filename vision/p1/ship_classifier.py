@@ -4,8 +4,12 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.amp.grad_scaler import GradScaler
 import numpy as np
+import matplotlib.pyplot as plt 
+import seaborn as sns
 import time
 from tqdm import tqdm
+from scipy.special import softmax
+from sklearn.metrics import f1_score, confusion_matrix
 
 class ShipClassifier:
     def __init__(self, pretrained=True, docked=True):
@@ -181,6 +185,9 @@ class ShipClassifier:
             else:
                 epochs_no_improve += 1 
                 print(f'  No improvement in loss for {epochs_no_improve} epochs.')
+
+                if epochs_no_improve == lr_patience:
+                    print(f'  Learning rate early stopping triggered after {epoch+1} epochs.')
                 
                 if epochs_no_improve >= patience:
                     print(f'  Early stopping triggered after {epoch+1} epochs.')
@@ -344,75 +351,99 @@ class ShipClassifier:
         plt.ylabel('True Labels')
         plt.show()
 
-def plotgrid(self, trainset, cols=8, rows=4):
-
-    figure = plt.figure(figsize=(cols*2, rows*2))
-    view = np.random.permutation(cols * rows)
-   
-    preds = []
-    indices_aleatorios = np.random.choice(np.arange(len(trainset)),cols * rows)
-    for i, j in zip(range(1, cols * rows + 1), indices_aleatorios):
-        sample, label = trainset[j]
-        im = torch.permute(torch.tensor(np.expand_dims(sample,0),dtype=torch.float32),(0,1,2,3)).to('mps')
-
-        sample = torch.Tensor.permute(sample,(1,2,0)).numpy()
-        sample -= np.min(sample)
-        sample /= np.max(sample)
-        figure.add_subplot(rows, cols, i)
-        x = torch.Tensor(sample).reshape((1,224,224,3))
-        #x = x.to('mps')
-        
-        #pred = np.round(scipy.special.softmax(classifier.model(im)[0].cpu().detach().numpy()),2)
-        pred = np.round(self.model(im)[0].cpu().detach().numpy(),2)
-        preds.append(pred)
-
-        plt.title(f'y {label} - ŷ {pred}')
-        #plt.title(label,pred)
-        plt.axis("off")
-        plt.imshow(sample, cmap="gray")
-
-    plt.show();
-    labels = np.array(trainset.labels)
-    match len(np.unique(labels)):
-        case 2:
-            plt.scatter([row[0] for row in preds], [row[1] for row in preds],c=labels[indices_aleatorios])
-        case 3:
-            plt.scatter([row[0] for row in preds], [row[1] for row in preds],[row[2] for row in preds],c=labels[indices_aleatorios])
-
-    plt.show();
-
-def test_single_images(self, image_paths, device='mps', docked=True):
-    """
-    Test the classifier on individual images
+    def plotgrid(self, trainset, cols=8, rows=4):
     
-    Args:
-        classifier: Trained ShipClassifier
-        image_paths: List of paths to images
-        device: Computation device
-    """
-    self.model.to(device)
-    self.model.eval()
+        figure = plt.figure(figsize=(cols*2, rows*2))
+        view = np.random.permutation(cols * rows)
+       
+        preds = []
+        indices_aleatorios = np.random.choice(np.arange(len(trainset)),cols * rows)
+        for i, j in zip(range(1, cols * rows + 1), indices_aleatorios):
+            sample, label = trainset[j]
+            im = torch.permute(torch.tensor(np.expand_dims(sample,0),dtype=torch.float32),(0,1,2,3)).to('mps')
     
-    transform = transforms.Compose([
-        #transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
-    
-    if docked:
-        labels = ["No Ship", "Ship (Undocked)", "Ship (Docked)"]
-    else:
-        labels = ["No Ship", "Ship"]
-    
-    for path in image_paths:
-        image = Image.open(path).convert('RGB')
-        image_tensor = transform(image).unsqueeze(0).to(device)
-        
-        with torch.no_grad():
-            output = self.model(image_tensor)
-            _, pred = torch.max(output, 1)
+            sample = torch.Tensor.permute(sample,(1,2,0)).numpy()
+            sample -= np.min(sample)
+            sample /= np.max(sample)
+
             
-        print(f"Image: {path}")
-        print(f"Prediction: {labels[pred.item()]}")
-        print(f"Confidence: {torch.nn.functional.softmax(output, dim=1)[0]}")
-        print("-" * 30)
+            figure.add_subplot(rows, cols, i)
+            
+ 
+            
+            #pred = np.round(scipy.special.softmax(classifier.model(im)[0].cpu().detach().numpy()),2)
+            pred = np.round(self.model(im)[0].cpu().detach().numpy(),2)
+            pred_label = np.argmax(pred)
+            preds.append(pred)
+    
+            plt.title(f'y {label} - ŷ {pred_label}')
+            #plt.title(label,pred)
+            plt.axis("off")
+            plt.imshow(sample, cmap="gray")
+    
+        plt.show();
+        labels = np.array(trainset.labels)
+        match len(np.unique(labels)):
+            case 2:
+                plt.figure(figsize=(8, 6))
+                scatter = plt.scatter([row[0] for row in preds], [row[1] for row in preds], 
+                           c=labels[indices_aleatorios])
+                plt.legend(handles=scatter.legend_elements()[0], 
+                          labels=[f'Class {label}' for label in unique_labels],
+                          title="Classes")
+                plt.xlabel('no barco')
+                plt.ylabel('barco')
+                plt.title('Prediction Distribution')
+                plt.grid(True, linestyle='--', alpha=0.7)
+            case 3:
+                fig = plt.figure(figsize=(10, 8))
+                ax = fig.add_subplot(111, projection="3d")
+                scatter = ax.scatter([row[0] for row in preds], 
+                           [row[1] for row in preds],
+                           [row[2] for row in preds],
+                           c=labels[indices_aleatorios])
+                legend1 = ax.legend(*scatter.legend_elements(),
+                                   loc="upper right", 
+                                   title="Classes")
+                ax.add_artist(legend1)
+                ax.set_xlabel('0 - no barco')
+                ax.set_ylabel('1 - barco (undocked)')
+                ax.set_zlabel('2 - barco (docked)')
+                ax.set_title('3D Prediction Distribution')
+        plt.show();
+    
+    def test_single_images(self, image_paths, device='mps', docked=True):
+        """
+        Test the classifier on individual images
+        
+        Args:
+            classifier: Trained ShipClassifier
+            image_paths: List of paths to images
+            device: Computation device
+        """
+        self.model.to(device)
+        self.model.eval()
+        
+        transform = transforms.Compose([
+            #transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+        
+        if docked:
+            labels = ["No Ship", "Ship (Undocked)", "Ship (Docked)"]
+        else:
+            labels = ["No Ship", "Ship"]
+        
+        for path in image_paths:
+            image = Image.open(path).convert('RGB')
+            image_tensor = transform(image).unsqueeze(0).to(device)
+            
+            with torch.no_grad():
+                output = self.model(image_tensor)
+                _, pred = torch.max(output, 1)
+                
+            print(f"Image: {path}")
+            print(f"Prediction: {labels[pred.item()]}")
+            print(f"Confidence: {torch.nn.functional.softmax(output, dim=1)[0]}")
+            print("-" * 30)
