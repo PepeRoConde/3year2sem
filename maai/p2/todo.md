@@ -1,0 +1,5 @@
+- ntb 5 fuciona pero con cifar no (parametros?)
+- constrastive loss parece que no esta bien (enseñar figuras)
+- añadir matrices confusion y f1
+- utilidades para repetir
+- reusar mas el codigo (repetir menos)

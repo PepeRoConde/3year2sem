@@ -54,6 +54,8 @@ def reconstruction_plot(autoencoder, x_test):
 
     if  len(reconstructed_image) == 2: # esto es para usarlo con el autoencoder de una o dos cabezas
         reconstructed_image = reconstructed_image['decoder'].reshape(32, 32, 3)
+    else:
+        reconstructed_image = reconstructed_image.reshape(32, 32, 3)
     
     axes[1].imshow(reconstructed_image)
     axes[1].set_title("Reconstructed Image")
