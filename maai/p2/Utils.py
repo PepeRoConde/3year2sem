@@ -59,7 +59,7 @@ def reconstruction_plot(autoencoder, x_test):
     reconstructed_image = autoencoder(x_test[index].reshape(1, 32, 32, 3))
 
     if  len(reconstructed_image) == 2:
-        reconstructed_image = reconstructed_image[1].reshape(32, 32, 3)
+        reconstructed_image = reconstructed_image['decoder'].reshape(32, 32, 3)
     
     # Plot the reconstructed image on the right
     axes[1].imshow(reconstructed_image)
