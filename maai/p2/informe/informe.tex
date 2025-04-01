@@ -1,0 +1,61 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in,left=1.5in,includefoot]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% Header & Footer Stuff
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Modelos Avanzados de Aprendizaje Automático II}
+\rhead{614G030302425}
+% \fancyfoot{}
+% \lfoot{Pablo Chantada Saborido \& José Romero Conde}
+% \fancyfoot[R]{}
+
+% The Main Document
+\begin{document}
+\begin{center}
+    \LARGE\bfseries PRÁCTICA II\\
+    \small Pablo Chantada Saborido \& José Romero Conde
+    \line(1,0){430}
+\end{center}
+
+
+\newpage
+
+\section{Entrena un modelo, creado sobre TensorFlow, haciendo uso únicamente de las instancias etiquetadas de entrenamiento. Dicho modelo debe de tener al menos cuatro capas densas y/o convolucionales.}
+\subsection{¿Qué red has escogido? ¿Por qué? ¿Cómo la has entrenado?}
+\subsection{¿Cuál es el rendimiento del modelo en entrenamiento? ¿Y en prueba?}
+\subsection{¿Qué conclusiones sacas de los resultados detallados en el punto anterior?}
+
+\newpage
+\section{Entrena el mismo modelo, incorporando las instancias no etiquetadas de entrenamiento mediante la técnica de auto-aprendizaje. Opcionalmente, se ponderará cada instancia de entrada en función de su calidad (o certeza).}
+\subsection{¿Qué parámetros has definido para el entrenamiento?}
+\subsection{¿Cuál es el rendimiento del modelo en entrenamiento? ¿Y en prueba?}
+\subsection{¿Se mejoran los resultados obtenidos en el Ejercicio 1?}
+\subsection{¿Qué conclusiones sacas de los resultados detallados en los puntos anteriores?}
+
+\newpage
+\section{Entrena un modelo de aprendizaje semisupervisado de tipo autoencoder en dos pasos (primero el autoencoder, después el clasificador). La arquitectura del encoder debe ser exactamente la misma que la definida en los Ejercicios 1 y 2, a excepción del último bloque de capas.}
+\subsection{¿Cuál es la arquitectura del modelo? ¿Y sus hiperparámetros?}
+\subsection{¿Cuál es el rendimiento del modelo en entrenamiento? ¿Y en prueba?}
+\subsection{¿Se mejoran los resultados obtenidos en los Ejercicios 1 y 2?}
+\subsection{¿Qué conclusiones sacas de los resultados detallados en los puntos anteriores?}
+
+\newpage
+\section{Entrena un modelo de aprendizaje semisupervisado de tipo autoencoder en un paso (autoencoder y clasificador al mismo tiempo). La arquitectura del autoencoder será la misma que la definida en el Ejercicio 3, y la combinación de encoder y clasificador será igual a la arquitectura definida en el Ejercicio 1.}
+\subsection{¿Cuál es la arquitectura del modelo? ¿Y sus hiperparámetros?}
+\subsection{¿Cuál es el rendimiento del modelo en entrenamiento? ¿Y en prueba?}
+\subsection{¿Se mejoran los resultados obtenidos en los ejercicios anteriores?}
+\subsection{¿Qué conclusiones sacas de los resultados detallados en los puntos anteriores?}
+
+\newpage
+\section{Repite el mismo entrenamiento de los Ejercicios 1-4, pero eliminando las instancias no etiquetadas más atípicas con respecto a los datos etiquetados. Se cumplirán los siguientes puntos: (a) La arquitectura de la red de clasificación en una clase será la misma a la utilizada en el clasificador del Ejercicio 1, a excepción de la capa de salida. (b) Utiliza la técnica explicada en el Notebook 5, usando un valor de 𝑣 = 0,9}
+\subsection{¿Se mejoran los resultados con respecto a los anteriores ejercicios? ¿Qué conclusiones sacas de estos resultados?}
+
+\newpage
+\section{Repite los Ejercicios 3-5 cambiando el autencoder por la técnica definida en el apartado ``Hay vida más allá del autoencoder'' del Notebook 4. Contesta a las preguntas de dichos ejercicios. Se cumplirán los siguientes puntos: (a) La arquitectura de la red será igual a la parte encoder del autencoder definido en los ejercicios anteriores. (b) El modelo debe entrenar correctamente.}
+\end{document}
+
