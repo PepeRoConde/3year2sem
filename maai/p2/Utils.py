@@ -36,7 +36,9 @@ class DatasetProcess:
         #unlabeled_train = np.reshape(unlabeled_train, (unlabeled_train.shape[0], unlabeled_train.shape[1]*unlabeled_train.shape[2],3))
         
         one_hot_train = np.zeros((y_train.size, len(np.unique(y_train))), dtype=int)
-        one_hot_train[np.arange(y_train.size), y_train ] = 1
+        #one_hot_train[np.arange(y_train.size), y_train ] = 1
+        for vector, y in zip(one_hot_train, y_train):
+            vector[y] = 1
         
         one_hot_test = np.zeros((y_test.size, len(np.unique(y_test))), dtype=int)
         one_hot_test[np.arange(y_test.size), y_test ] = 1
@@ -54,7 +56,10 @@ def reconstruction_plot(autoencoder, x_test):
     axes[0].axis('off') 
     
     # Get the reconstructed image from the autoencoder
-    reconstructed_image = autoencoder(x_test[index].reshape(1, 32, 32, 3)).reshape(32, 32, 3)
+    reconstructed_image = autoencoder(x_test[index].reshape(1, 32, 32, 3))
+
+    if  len(reconstructed_image) == 2:
+        reconstructed_image = reconstructed_image[1].reshape(32, 32, 3)
     
     # Plot the reconstructed image on the right
     axes[1].imshow(reconstructed_image)
