@@ -1,38 +1,35 @@
 from tensorflow.keras import layers, optimizers, models, Model
 import tensorflow as tf
+import matplotlib.pyplot as plt
+import numpy as np
 
 class ContrastiveLoss():
     def __init__(self, temperature=0.5):
         self.temperature = temperature
         
     def __call__(self, M):
-        # y_true es la matriz identidad (no la usamos directamente)
-        # y_pred es la matriz de similitud M
-        
-        # Aplicamos softmax con temperatura
-        logits = M / self.temperature
+        logits = M / self.temperature # temperatura
         logits_max = tf.reduce_max(logits, axis=1, keepdims=True)
         logits = logits - logits_max
         exp_logits = tf.exp(logits)
         exp_logits_sum = tf.reduce_sum(exp_logits, axis=1, keepdims=True)
         probs = exp_logits / exp_logits_sum # softmax
         
-        # Creamos matriz identidad como objetivo
+        
         batch_size = tf.shape(M)[0]
-        I = tf.eye(batch_size)
-        # Seleccionamos las probabilidades de la clase correcta (diagonal de y_true)
+        I = tf.eye(batch_size)  # matriz identidad
+
         correct_class_probs = tf.matmul(I, probs)   
-        # Calculamos entropia cruzada
-        loss = -tf.reduce_mean(tf.math.log(correct_class_probs + 1e-10))
+        loss = -tf.reduce_mean(tf.math.log(correct_class_probs + 1e-10)) # X-Ent
         
         return loss
 
-# Función de pérdida para el clustering
 class ClusteringLoss():
     def __init__(self):
         pass
+        
     def __call__(self, cX_1comp, cX_2comp):
-        # loss_C = cX_1comp(1 - cX_1comp) + cX_2comp(1 - cX_2comp)
+        
         loss_1 = tf.reduce_mean(cX_1comp * (1 - cX_1comp))
         loss_2 = tf.reduce_mean(cX_2comp * (1 - cX_2comp))
         
@@ -50,18 +47,18 @@ class ContrastiveModel():
             clipnorm=1,
         )
         self.data_augmentation_1 = models.Sequential([
-                # layers.RandomFlip("horizontal"),  # Puede ser util en otros casos
+                layers.RandomFlip("horizontal"),  # Puede ser util en otros casos
                 layers.RandomRotation(0.05),
                 layers.RandomTranslation(0.15, 0.15),
                 layers.RandomZoom(.15),
             ])
     
         self.data_augmentation_2 = tf.keras.models.Sequential([
-                # RandomFlip("horizontal"),  # Puede ser util en otros casos
+                layers.RandomFlip("horizontal"),  # Puede ser util en otros casos
                 layers.RandomTranslation(0.15, 0.15),
-                layers.RandomRotation(.2)
-                #layers.Resizing(40, 40), # para CIFAR, para MNIST usar 40 en lugar de 48
-                #layers.RandomCrop(28, 28), # para CIFAR, para MNIST usar 28 en lugar de 32
+                layers.RandomRotation(.2),
+                layers.Resizing(48, 48), # para CIFAR, para MNIST usar 40 en lugar de 48
+                layers.RandomCrop(32, 32), # para CIFAR, para MNIST usar 28 en lugar de 32
             ])
             
         # Definir modelo convolucional
@@ -92,8 +89,6 @@ class ContrastiveModel():
             'contrastive_loss': [],
             'clustering_loss': []
         }
-        
-        #model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
     
     def train_step(self, data):
         if isinstance(data, tuple):
@@ -108,29 +103,16 @@ class ContrastiveModel():
         augX_2 = self.data_augmentation_2(X)
         
         with tf.GradientTape() as tape:
-            #print(f'< 1 {augX_1.shape}, 2 {augX_2.shape}')
-            # Obtener representaciones del encoder
-            augX_1comp = self.encoder(augX_1)
-            #augX_1comp = self.encoder(X)
+            
+            augX_1comp = self.encoder(augX_1) # representaciones del encoder
             augX_2comp = self.encoder(augX_2)
-            #augX_2comp = self.encoder(X)
-            #print(f'<< 1 {augX_1comp.shape}, 2 {augX_2comp.shape}')
-            # Obtener salidas del clustering
-            #augX_1comp = tf.keras.layers.Flatten('channels_last')(augX_1comp)
-            cX_1comp = self.cluster(augX_1comp)
+
+            cX_1comp = self.cluster(augX_1comp) # salidas del clustering
             cX_2comp = self.cluster(augX_2comp)
             
-            # Calcular matriz de similitud M
-            M = tf.matmul(augX_1comp, augX_2comp, transpose_b=True)
-            #print(f'm {M.shape}, 1 {augX_1comp.shape}, 2 {augX_2comp.shape}')
-            
-            # Calcular pérdida de contraste
-            loss_M = self.contrastive_loss(M)
-            
-            # Calcular pérdida de clustering
-            loss_C = self.clustering_loss(cX_1comp, cX_2comp)
-            
-            # Pérdida total
+            M = tf.matmul(augX_1comp, augX_2comp, transpose_b=True) # matriz de similitud M
+            loss_M = self.contrastive_loss(M) 
+            loss_C = self.clustering_loss(cX_1comp, cX_2comp) 
             total_loss = loss_M + self.lambda_param * loss_C
             
         # Calcular gradientes y actualizar pesos
@@ -221,25 +203,19 @@ class ContrastiveModel():
         """
         Visualiza la matriz de similitud para un conjunto de muestras.
         """
-        import matplotlib.pyplot as plt
-        import numpy as np
-        
-        # Seleccionar n_samples aleatorias
+
         if n_samples < X.shape[0]:
             indices = np.random.choice(X.shape[0], n_samples, replace=False)
             samples = X[indices]
         else:
             samples = X
             
-        # Aplicar data augmentation
-        augX_1 = self.data_augmentation_1(samples)
+        augX_1 = self.data_augmentation_1(samples) # Aplicar data augmentation
         augX_2 = self.data_augmentation_2(samples)
         
-        # Obtener representaciones
-        augX_1comp = self.encoder(augX_1)
+        augX_1comp = self.encoder(augX_1) # Obtener representaciones
         augX_2comp = self.encoder(augX_2)
         
-        # Calcular matriz de similitud
         M = tf.matmul(augX_1comp, augX_2comp, transpose_b=True).numpy()
         
         # Visualizar

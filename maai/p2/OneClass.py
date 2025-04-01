@@ -30,9 +30,7 @@ class ChangeRCallback(callbacks.Callback):
 class AnomalyDetector:
 
     def __init__(self, input_shape, nu=.5, l2_lambda=.0001, learning_rate=0.001):
-		# TODO : define el modelo
 
-        
         self.model = tf.keras.models.Sequential([
 			layers.Conv2D(32, (3, 3), activation='relu', padding="same", input_shape=(32, 32, 3), kernel_regularizer=regularizers.l2(l2_lambda)),
 			layers.BatchNormalization(),
@@ -62,8 +60,6 @@ class AnomalyDetector:
 		
 	  
     def loss_function(self, y_true, y_pred):
-        # TODO: crea la función de pérdida
-        # w = self.model.layers[-1].kernel
         r = self.model.r
         nu = self.model.nu
         
@@ -78,7 +74,7 @@ class AnomalyDetector:
         return margin_loss
 	
     def fit(self, X, y=None, sample_weight=None, batch_size=64, epochs=50, delta=.025, steps=3):
-        # TODO: entrena el modelo. Escoge el tamaño de batch y el número de epochs que quieras. No te olvides del callback.
+
         dummy_y = np.zeros((len(X), 1)) # Necesario pasar como salida para que keras no de un error
         
         self.model.compile(optimizer=self.optimizer, loss=self.loss_function)
@@ -86,14 +82,11 @@ class AnomalyDetector:
         return self.model
 		
     def predict(self, X):
-        # TODO: Devuelve la predicción del modelo
         return self.model.predict(X)
     
     def get_encoded_data(self, X):
-        # TODO: devuelve la salida del encoder (code)
         return self.model.layers[1].predict(X)
         
     def __del__(self):
-        # TODO: borra el modelo
         del self.model
         backend.clear_session() # Necesario para liberar la memoria en GPU

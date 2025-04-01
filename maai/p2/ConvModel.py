@@ -122,8 +122,6 @@ class ConvModel:
 		plt.tight_layout()
 		plt.show()
 
-
 	def __del__(self):
 		del self.model
 		tf.keras.backend.clear_session()  # Liberar memoria en GPU
-

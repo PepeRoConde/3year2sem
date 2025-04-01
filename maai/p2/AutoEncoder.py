@@ -12,7 +12,6 @@ class TwoStepAutoEncoder():
         self.input_shape = input_shape
         
         self.encoder = models.Sequential([
-            #layers.Reshape((32, 32, 3), input_shape=input_shape),
 			layers.Conv2D(32, (3, 3), activation='relu', padding="same", input_shape=self.input_shape),
 			layers.BatchNormalization(),
 			layers.MaxPooling2D((2, 2)),
@@ -24,32 +23,20 @@ class TwoStepAutoEncoder():
 			layers.Conv2D(128, (3, 3), activation='relu', padding="same"),
 			layers.BatchNormalization(),
 			layers.MaxPooling2D((2, 2)),
-			
-			#layers.Flatten(),
-			#layers.Dense(256, activation='relu'),
-			#layers.Dropout(0.5),
-			#layers.Dense(100, activation="softmax")
 		])
         
         self.decoder = models.Sequential([
-            # First fully connected layer (Dense) from the encoder
-            #layers.Dense(128 * 32 * 32, activation='relu', input_shape=(100,)),
-            #layers.Reshape((4, 4, 128)),  # Reshape to the appropriate size for the first transposed conv layer
-            
-            # First transposed convolution layer (upsampling)
             layers.Conv2DTranspose(128, (3, 3), activation='relu', padding='same'),
             layers.BatchNormalization(),
-            layers.UpSampling2D((2, 2)),  # Upsample to double the size
+            layers.UpSampling2D((2, 2)),  
             
-            # Second transposed convolution layer (upsampling)
             layers.Conv2DTranspose(64, (3, 3), activation='relu', padding='same'),
             layers.BatchNormalization(),
-            layers.UpSampling2D((2, 2)),  # Upsample again
+            layers.UpSampling2D((2, 2)),
             
-            # Third transposed convolution layer (upsampling)
             layers.Conv2DTranspose(32, (3, 3), activation='relu', padding='same'),
             layers.BatchNormalization(),
-            layers.UpSampling2D((2, 2)),  # Upsample again
+            layers.UpSampling2D((2, 2)),
             
             # Final convolution layer to get the output with 3 channels (RGB image)
             layers.Conv2DTranspose(3, (3, 3), activation='sigmoid', padding='same')  # Output 32x32x3
@@ -66,15 +53,12 @@ class TwoStepAutoEncoder():
         self.autoencoder.compile(optimizer=self.optimicer, loss='mse')
     
     def fit(self, X, y=None, sample_weight=None, batch_size=60_000, epochs=100):
-        # TODO: entrena el modelo. Escoge el tamaño de batch y el número de epochs que quieras
-        
         self.autoencoder.fit(X, X, 
                              batch_size=batch_size, 
                              epochs=epochs, 
                              sample_weight=sample_weight)
 
     def get_encoded_data(self, X):
-        # TODO: devuelve la salida del encoder (code)
         return self.encoder.predict(X)
 
 
@@ -82,20 +66,13 @@ class TwoStepAutoEncoder():
         return self.autoencoder.predict(X)
         
     def __del__(self):
-        # elimina todos los modelos que hayas creado
         backend.clear_session() # Necesario para liberar la memoria en GPU
 
-#--------------------------------------------------------------------------------------------#
-#
-#--------------------------------------------------------------------------------------------#
-#
 #--------------------------------------------------------------------------------------------#
 
 class TwoStepClassifier:
 
     def __init__(self):
-        # TODO : define el modelo y compílalo
-        
         self.input_shape = (4 , 4 , 128)
         
         self.classifier = models.Sequential()
@@ -112,36 +89,25 @@ class TwoStepClassifier:
         self.classifier.compile(optimizer=self.optimicer, loss='categorical_crossentropy', metrics=['accuracy'])
     
     def fit(self, X, y, sample_weight=None, batch_size=60_000, epochs=350):
-        # TODO: entrena el modelo. Escoge el tamaño de batch y el número de epochs que quieras
         self.classifier.fit(X, y, 
                              batch_size=batch_size, 
                              epochs=epochs, 
                              sample_weight=sample_weight)
 
     def predict(self, X):
-        # TODO: devuelve la clase ganadora
-
         return np.argmax(self.predict_proba(X)) + 1
     
     def predict_proba(self, X):
-        
         return self.classifier.predict(X)
     
     def score(self, X, y):
-        
         return self.classifier.evaluate(X, y)[1]
 
     def __del__(self):
-        # elimina todos los modelos que hayas creado
         backend.clear_session() # Necesario para liberar la memoria en GPU
 
 
 #--------------------------------------------------------------------------------------------#
-#
-#--------------------------------------------------------------------------------------------#
-#
-#--------------------------------------------------------------------------------------------#
-
 
 def TwoStepTraining(autoencoder, classifier, x_train, y_train, unlabeled_train, batch_size_autoencoder=1024, epochs_autoencoder=100, batch_size_classifier=1024, epochs_classifier=100):
 
@@ -152,11 +118,6 @@ def TwoStepTraining(autoencoder, classifier, x_train, y_train, unlabeled_train, 
 
 
 #--------------------------------------------------------------------------------------------#
-#
-#--------------------------------------------------------------------------------------------#
-#
-#--------------------------------------------------------------------------------------------#
-
 
 class OneStepAutoencoder:
 
@@ -254,14 +215,8 @@ class OneStepAutoencoder:
     def __del__(self):
         backend.clear_session() # Necesario para liberar la memoria en GPU
 
-
-#--------------------------------------------------------------------------------------------#
-#
-#--------------------------------------------------------------------------------------------#
-#
 #--------------------------------------------------------------------------------------------#
 
 def OneStepTraining(model, x_train, y_train, unlabeled_train, batch_size=60_000, epochs = 1000):
     h = model.fit(x_train, y_train, unlabeled_train, batch_size=batch_size, epochs = epochs)
     return h
-
