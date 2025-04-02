@@ -121,7 +121,7 @@ def TwoStepTraining(autoencoder, classifier, x_train, y_train, unlabeled_train, 
 
 class OneStepAutoencoder:
 
-    def __init__(self, input_shape,learning_rate=0.001):
+    def __init__(self, input_shape,learning_rate=0.001, decoder_extra_loss_weight = 0.3):
        
         self.input_shape = input_shape
         self.num_classes = 100
@@ -171,7 +171,7 @@ class OneStepAutoencoder:
         
         self.model.compile(optimizer=self.optimicer,
                            loss = {'decoder': 'mse', 'classifier': 'categorical_crossentropy'},
-                           loss_weights={'decoder': 1.3, 'classifier': .7},  # Adjust loss weights if needed
+                           loss_weights={'decoder': 1.0 + decoder_extra_loss_weight, 'classifier': 1.0 - decoder_extra_loss_weight},  # Adjust loss weights if needed
                            metrics={'decoder': [], 'classifier': ['accuracy']})
     
     def fit(self, X, y, unlabeled_train, batch_size,  epochs):

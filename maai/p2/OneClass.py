@@ -29,7 +29,7 @@ class ChangeRCallback(callbacks.Callback):
 
 class AnomalyDetector:
 
-    def __init__(self, input_shape, nu=.5, l2_lambda=.0001, learning_rate=0.001):
+    def __init__(self, input_shape, nu=.5, l2_lambda=.0001, learning_rate=0.001, dropout_prob=0.1):
 
         self.model = tf.keras.models.Sequential([
 			layers.Conv2D(32, (3, 3), activation='relu', padding="same", input_shape=(32, 32, 3), kernel_regularizer=regularizers.l2(l2_lambda)),
@@ -46,8 +46,8 @@ class AnomalyDetector:
 			
 			layers.Flatten(),
 			layers.Dense(256, activation='relu', kernel_regularizer=regularizers.l2(l2_lambda)),
-			layers.Dropout(0.5),
-			layers.Dense(1, activation="softmax")
+			layers.Dropout(dropout_prob),
+			layers.Dense(1, activation="sigmoid")
 		])
 
         self.model.r = tf.Variable(1.0, trainable=False, name='r', dtype=tf.float32)

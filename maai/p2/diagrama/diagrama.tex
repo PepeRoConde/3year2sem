@@ -1,0 +1,132 @@
+\documentclass[border=15pt, multi, tikz]{standalone}
+\usepackage{import}
+\subimport{./layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d}
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\DcnvColor{rgb:blue,5;green,2.5;white,5}
+\def\SoftmaxColor{rgb:magenta,5;black,7}
+\def\FlattenColor{rgb:green,5;black,7}
+\def\DenseColor{rgb:orange,5;black,7}
+\def\UpsampleColor{rgb:blue,3;green,7;white,5}
+\def\BatchNormColor{rgb:yellow,2;red,1;white,7}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Draw Layer Blocks - Encoder
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\node[canvas is zy plane at x=0] (temp) at (-3,0,0) {\includegraphics[width=4cm,height=4cm]{placeholder.jpg}};
+
+% conv1 + BN + pool1
+\pic[shift={(0,0,0)}] at (0,0,0) {RightBandedBox={name=cr1,caption=conv1,%
+        xlabel={{"32"}},zlabel=I,fill=\ConvColor,bandfill=\ConvReluColor,%
+        height=40,width=3,depth=40}};
+\pic[shift={(0,0,0)}] at (cr1-east) {Box={name=bn1,caption=BatchNorm,%
+        fill=\BatchNormColor,height=40,width=1,depth=40}};
+\pic[shift={(0,0,0)}] at (bn1-east) {Box={name=p1,%
+        fill=\PoolColor,caption=pool1,opacity=0.5,height=35,width=1,depth=35}};
+
+% conv2 + BN + pool2
+\pic[shift={(2,0,0)}] at (p1-east) {RightBandedBox={name=cr2,caption=conv2,%
+        xlabel={{"64"}},zlabel=I/2,fill=\ConvColor,bandfill=\ConvReluColor,%
+        height=35,width=3,depth=35}};
+\pic[shift={(0,0,0)}] at (cr2-east) {Box={name=bn2,caption=BatchNorm,%
+        fill=\BatchNormColor,height=35,width=1,depth=35}};
+\pic[shift={(0,0,0)}] at (bn2-east) {Box={name=p2,%
+        fill=\PoolColor,caption=pool2,opacity=0.5,height=30,width=1,depth=30}};
+
+% conv3 + BN + pool3 (code)
+\pic[shift={(2,0,0)}] at (p2-east) {RightBandedBox={name=cr3,caption=conv3,%
+        xlabel={{"128"}},zlabel=I/4,fill=\ConvColor,bandfill=\ConvReluColor,%
+        height=30,width=3,depth=30}};
+\pic[shift={(0,0,0)}] at (cr3-east) {Box={name=bn3,caption=BatchNorm,%
+        fill=\BatchNormColor,height=30,width=1,depth=30}};
+\pic[shift={(0,0,0)}] at (bn3-east) {Box={name=code,%
+        fill=\PoolColor,caption=code,opacity=0.5,height=25,width=1,depth=25}};
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Classifier Branch
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pic[shift={(0,-6,0)}] at (code-east) {Box={name=flatten,caption=flatten,%
+        fill=\FlattenColor,height=5,width=3,depth=5}};
+\pic[shift={(1.5,0,0)}] at (flatten-east) {Box={name=dense,caption=dense,%
+        xlabel={{"100"}},fill=\DenseColor,height=5,width=2,depth=5}};
+\pic[shift={(1.5,0,0)}] at (dense-east) {Box={name=softmax,caption=softmax,%
+        fill=\SoftmaxColor,height=5,width=1,depth=5}};
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Decoder Branch
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% deconv1 + BN + upsample1
+\pic[shift={(2,0,0)}] at (code-east) {RightBandedBox={name=dcr1,caption=deconv1,%
+        xlabel={{"128"}},zlabel=I/4,fill=\DcnvColor,bandfill=\DcnvColor,%
+        height=25,width=3,depth=25}};
+\pic[shift={(0,0,0)}] at (dcr1-east) {Box={name=dbn1,caption=BatchNorm,%
+        fill=\BatchNormColor,height=25,width=1,depth=25}};
+\pic[shift={(0,0,0)}] at (dbn1-east) {Box={name=up1,%
+        fill=\UpsampleColor,opacity=0.7,caption=upsample1,height=30,width=1,depth=30}};
+
+% deconv2 + BN + upsample2
+\pic[shift={(2,0,0)}] at (up1-east) {RightBandedBox={name=dcr2,caption=deconv2,%
+        xlabel={{"64"}},zlabel=I/2,fill=\DcnvColor,bandfill=\DcnvColor,%
+        height=30,width=3,depth=30}};
+\pic[shift={(0,0,0)}] at (dcr2-east) {Box={name=dbn2,caption=BatchNorm,%
+        fill=\BatchNormColor,height=30,width=1,depth=30}};
+\pic[shift={(0,0,0)}] at (dbn2-east) {Box={name=up2,%
+        fill=\UpsampleColor,opacity=0.7,caption=upsample2,height=35,width=1,depth=35}};
+
+% deconv3 + BN + upsample3
+\pic[shift={(2,0,0)}] at (up2-east) {RightBandedBox={name=dcr3,caption=deconv3,%
+        xlabel={{"32"}},zlabel=I,fill=\DcnvColor,bandfill=\DcnvColor,%
+        height=35,width=3,depth=35}};
+\pic[shift={(0,0,0)}] at (dcr3-east) {Box={name=dbn3,caption=BatchNorm,%
+        fill=\BatchNormColor,height=35,width=1,depth=35}};
+\pic[shift={(0,0,0)}] at (dbn3-east) {Box={name=up3,%
+        fill=\UpsampleColor,opacity=0.7,caption=upsample3,height=40,width=1,depth=40}};
+
+% final decoder output
+\pic[shift={(2,0,0)}] at (up3-east) {RightBandedBox={name=dcr4,caption=output,%
+        xlabel={{"3"}},zlabel=I,fill=\DcnvColor,bandfill=\DcnvColor,%
+        height=40,width=3,depth=40}};
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Draw connections - Encoder
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\draw [connection]  (cr1-east)    -- node {\midarrow} (bn1-west);
+\draw [connection]  (bn1-east)    -- node {\midarrow} (p1-west);
+\draw [connection]  (p1-east)     -- node {\midarrow} (cr2-west);
+\draw [connection]  (cr2-east)    -- node {\midarrow} (bn2-west);
+\draw [connection]  (bn2-east)    -- node {\midarrow} (p2-west);
+\draw [connection]  (p2-east)     -- node {\midarrow} (cr3-west);
+\draw [connection]  (cr3-east)    -- node {\midarrow} (bn3-west);
+\draw [connection]  (bn3-east)    -- node {\midarrow} (code-west);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Draw connections - Classifier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\draw [connection]  (code-south)  -- node {\midarrow} (flatten-north);
+\draw [connection]  (flatten-east) -- node {\midarrow} (dense-west);
+\draw [connection]  (dense-east)  -- node {\midarrow} (softmax-west);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Draw connections - Decoder
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\draw [connection]  (code-east)   -- node {\midarrow} (dcr1-west);
+\draw [connection]  (dcr1-east)   -- node {\midarrow} (dbn1-west);
+\draw [connection]  (dbn1-east)   -- node {\midarrow} (up1-west);
+\draw [connection]  (up1-east)    -- node {\midarrow} (dcr2-west);
+\draw [connection]  (dcr2-east)   -- node {\midarrow} (dbn2-west);
+\draw [connection]  (dbn2-east)   -- node {\midarrow} (up2-west);
+\draw [connection]  (up2-east)    -- node {\midarrow} (dcr3-west);
+\draw [connection]  (dcr3-east)   -- node {\midarrow} (dbn3-west);
+\draw [connection]  (dbn3-east)   -- node {\midarrow} (up3-west);
+\draw [connection]  (up3-east)    -- node {\midarrow} (dcr4-west);
+
+\end{tikzpicture}
+\end{document}
