@@ -174,7 +174,7 @@ class OneStepAutoencoder:
                            loss_weights={'decoder': 1.0 + decoder_extra_loss_weight, 'classifier': 1.0 - decoder_extra_loss_weight},  # Adjust loss weights if needed
                            metrics={'decoder': [], 'classifier': ['accuracy']})
     
-    def fit(self, X, y, unlabeled_train, batch_size,  epochs):
+    def fit(self, X, y, unlabeled_train, batch_size,  epochs, patience):
         # a float32
         X = np.array(X, dtype=np.float32)
         unlabeled_train = np.array(unlabeled_train, dtype=np.float32)
@@ -194,7 +194,9 @@ class OneStepAutoencoder:
                        sample_weight={'decoder': weight_autoencoder, 'classifier': weight_classifier},
                        epochs=epochs, 
                        batch_size=batch_size, 
-                       verbose=1)
+                       verbose=1,
+                       callbacks=[tf.keras.callbacks.EarlyStopping(monitor="loss", 
+                                                                            patience=patience)])
         return h
 
     def predict_class(self, X):

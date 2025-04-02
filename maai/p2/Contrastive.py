@@ -50,7 +50,7 @@ class ContrastiveModel():
         self.data_augmentation_1 = models.Sequential([
                 layers.RandomFlip("horizontal"), 
                 layers.RandomGaussianBlur(factor=1),
-                layers.RandomColorJitter(value_range=(0,1),hue_factor=(0.5, 0.5)),
+                layers.RandomColorJitter(value_range=(0,1),hue_factor=(0.1, 0.1)),
                 layers.RandomRotation(0.05),
                 layers.RandomTranslation(0.15, 0.15),
                 layers.RandomZoom(.15),
