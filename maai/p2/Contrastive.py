@@ -1,4 +1,4 @@
-from tensorflow.keras import layers, optimizers, models, Model
+from tensorflow.keras import layers, optimizers, models, Model, regularizers
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,6 +9,7 @@ class ContrastiveLoss():
         
     def __call__(self, M):
         logits = M / self.temperature # temperatura
+        
         logits_max = tf.reduce_max(logits, axis=1, keepdims=True)
         logits = logits - logits_max
         exp_logits = tf.exp(logits)
@@ -36,7 +37,7 @@ class ClusteringLoss():
         return loss_1 + loss_2
 
 class ContrastiveModel():
-    def __init__(self, input_shape, lambda_param = 0.5, temperature = 0.5, learning_rate=0.0005):
+    def __init__(self, input_shape, lambda_param = 0.5, temperature = 0.5, learning_rate=0.0005, l2_lambda=0.01):
         self.input_shape = input_shape
         self.output_dim = 100
         self.lambda_param = lambda_param
@@ -47,31 +48,38 @@ class ContrastiveModel():
             clipnorm=1,
         )
         self.data_augmentation_1 = models.Sequential([
-                layers.RandomFlip("horizontal"),  # Puede ser util en otros casos
+                layers.RandomFlip("horizontal"), 
+                layers.RandomGaussianBlur(factor=1),
+                layers.RandomColorJitter(value_range=(0,1),hue_factor=(0.5, 0.5)),
                 layers.RandomRotation(0.05),
                 layers.RandomTranslation(0.15, 0.15),
                 layers.RandomZoom(.15),
             ])
     
         self.data_augmentation_2 = tf.keras.models.Sequential([
-                layers.RandomFlip("horizontal"),  # Puede ser util en otros casos
+                layers.RandomFlip("horizontal"),  
                 layers.RandomTranslation(0.15, 0.15),
-                layers.RandomRotation(.2),
-                layers.Resizing(48, 48), # para CIFAR, para MNIST usar 40 en lugar de 48
+                layers.RandomGaussianBlur(factor=.5),
+                layers.RandomRotation(.15),
+                layers.Resizing(38, 38), # para CIFAR, para MNIST usar 40 en lugar de 48
                 layers.RandomCrop(32, 32), # para CIFAR, para MNIST usar 28 en lugar de 32
             ])
             
         # Definir modelo convolucional
         input_layer = layers.Input(batch_shape=(None, 32, 32,3))  # Tamaño de imagen
-        conv = layers.Conv2D(32, (3, 3), activation='relu', input_shape=self.input_shape)(input_layer)
+        conv = layers.Conv2D(32, (3, 3), activation='relu', padding="same", input_shape=self.input_shape, kernel_regularizer=regularizers.l2(l2_lambda))(input_layer)
         conv = layers.BatchNormalization()(conv)
-        conv = layers.MaxPooling2D((2, 2))(conv)
+        #conv = layers.MaxPooling2D((2, 2))(conv)
         
-        conv = layers.Conv2D(64, (3, 3), activation='relu')(conv)
+        conv = layers.Conv2D(32, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(l2_lambda))(conv)
         conv = layers.BatchNormalization()(conv)
         conv = layers.MaxPooling2D((2, 2))(conv)
+
+        conv = layers.Conv2D(64, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(l2_lambda))(conv)
+        conv = layers.BatchNormalization()(conv)
+        #conv = layers.MaxPooling2D((2, 2))(conv)
     
-        conv = layers.Conv2D(128, (3, 3), activation='relu')(conv)
+        conv = layers.Conv2D(128, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(l2_lambda))(conv)
         conv = layers.BatchNormalization()(conv)
         code = layers.MaxPooling2D((2, 2))(conv)
         flatten_layer = layers.Flatten()(code)

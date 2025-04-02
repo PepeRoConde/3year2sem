@@ -3,7 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class ConvModel:
-	def __init__(self):
+	def __init__(self, learning_rate = 0.001, dropout_prob = 0.2):
+
+        self.output_dim = 100
+        
 		self.model = tf.keras.models.Sequential([
 			tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding="same", input_shape=(32, 32, 3)),
 			tf.keras.layers.BatchNormalization(),
@@ -19,11 +22,15 @@ class ConvModel:
 			
 			tf.keras.layers.Flatten(),
 			tf.keras.layers.Dense(256, activation='relu'),
-			tf.keras.layers.Dropout(0.5),
-			tf.keras.layers.Dense(100, activation="softmax")
+			tf.keras.layers.Dropout(dropout_prob),
+			tf.keras.layers.Dense(self.output_dim, activation="softmax")
 		])
 		
-		self.optimizer = tf.keras.optimizers.SGD(learning_rate=0.0005, momentum=0.9)  # Reducimos LR
+		self.optimicer = optimizers.AdamW(
+            learning_rate=learning_rate,
+            clipnorm=1,
+        )
+
 		self.loss = tf.keras.losses.SparseCategoricalCrossentropy()
 		self.model.compile(
 			loss=self.loss,
@@ -32,10 +39,14 @@ class ConvModel:
 		)
 	
 	
-	def fit(self, X, y, batch_size=32, epochs=50,sample_weight=None):
-		history = self.model.fit(X, y, sample_weight=sample_weight, batch_size=batch_size, 
-								epochs=epochs, verbose=1, 
-								callbacks=[tf.keras.callbacks.EarlyStopping(monitor="loss", patience=3)])
+	def fit(self, X, y, batch_size=32, epochs=50, patience, sample_weight=None):
+		history = self.model.fit(X, y, 
+                                 sample_weight=sample_weight, 
+                                 batch_size=batch_size, 
+								 epochs=epochs, 
+                                 verbose=1, 
+								 callbacks=[tf.keras.callbacks.EarlyStopping(monitor="loss", 
+                                                                            patience=patience)])
 		return history
 	
 	@staticmethod
@@ -121,6 +132,9 @@ class ConvModel:
 		# Show plots
 		plt.tight_layout()
 		plt.show()
+
+    def __call__(self, X):
+        return self.model.predict(X)
 
 	def __del__(self):
 		del self.model
