@@ -12,6 +12,14 @@ class TwoStepAutoEncoder():
         self.input_shape = input_shape
         
         self.encoder = models.Sequential([
+
+            layers.RandomFlip("horizontal", input_shape=(32, 32, 3)),
+            layers.RandomRotation(0.15),
+            layers.RandomZoom(0.25),
+            layers.RandomGaussianBlur(factor=(0,1)),
+            layers.Resizing(36, 36), 
+            layers.RandomCrop(32, 32), 
+            
 			layers.Conv2D(32, (3, 3), activation='relu', padding="same", input_shape=self.input_shape),
 			layers.BatchNormalization(),
 			layers.MaxPooling2D((2, 2)),
@@ -216,6 +224,24 @@ class OneStepAutoencoder:
 
     def __del__(self):
         backend.clear_session() # Necesario para liberar la memoria en GPU
+
+    def plot_confusion_matrix(self, x_test, y_test):
+        y_pred = self.predict_class(x_test)
+        
+        if len(y_true) == 1:
+            y_true = y_test
+        else:
+            y_true = np.argmax(y_test, axis=1)  
+            
+        cm = confusion_matrix(y_true, y_pred) # Compute confusion matrix
+        
+        # Plot confusion matrix using seaborn
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=np.arange(self.num_classes), yticklabels=np.arange(self.num_classes))
+        plt.xlabel('Predicted Labels')
+        plt.ylabel('True Labels')
+        plt.title('Confusion Matrix')
+        plt.show()
 
 #--------------------------------------------------------------------------------------------#
 

@@ -10,18 +10,11 @@ class ContrastiveLoss():
     def __call__(self, M):
         logits = M / self.temperature # temperatura
         
-        logits_max = tf.reduce_max(logits, axis=1, keepdims=True)
-        logits = logits - logits_max
-        exp_logits = tf.exp(logits)
-        exp_logits_sum = tf.reduce_sum(exp_logits, axis=1, keepdims=True)
-        probs = exp_logits / exp_logits_sum # softmax
-        
-        
         batch_size = tf.shape(M)[0]
         I = tf.eye(batch_size)  # matriz identidad
 
-        correct_class_probs = tf.matmul(I, probs)   
-        loss = -tf.reduce_mean(tf.math.log(correct_class_probs + 1e-10)) # X-Ent
+        loss =  tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(I, logits))
+
         
         return loss
 
@@ -30,11 +23,15 @@ class ClusteringLoss():
         pass
         
     def __call__(self, cX_1comp, cX_2comp):
+
+        # Encourage peaky distributions
+        entropy_1 = -tf.reduce_mean(tf.reduce_sum(cX_1comp * tf.math.log(cX_1comp + 1e-8), axis=1))
+        entropy_2 = -tf.reduce_mean(tf.reduce_sum(cX_2comp * tf.math.log(cX_2comp + 1e-8), axis=1))
         
-        loss_1 = tf.reduce_mean(cX_1comp * (1 - cX_1comp))
-        loss_2 = tf.reduce_mean(cX_2comp * (1 - cX_2comp))
+        # Ensure consistency between views
+        consistency = tf.reduce_mean(tf.reduce_sum(tf.square(cX_1comp - cX_2comp), axis=1))
         
-        return loss_1 + loss_2
+        return entropy_1 + entropy_2 + consistency
 
 class ContrastiveModel():
     def __init__(self, input_shape, lambda_param = 0.5, temperature = 0.5, learning_rate=0.0005, l2_lambda=0.01):
@@ -43,13 +40,14 @@ class ContrastiveModel():
         self.lambda_param = lambda_param
         self.contrastive_loss = ContrastiveLoss(temperature=temperature)
         self.clustering_loss = ClusteringLoss()
+        
         self.optimicer = optimizers.AdamW(
             learning_rate=learning_rate,
-            clipnorm=1,
+            clipnorm=5,
         )
         self.data_augmentation_1 = models.Sequential([
                 layers.RandomFlip("horizontal"), 
-                layers.RandomGaussianBlur(factor=1),
+                layers.RandomGaussianBlur(factor=(0,.5)),
                 layers.RandomColorJitter(value_range=(0,1),hue_factor=(0.1, 0.1)),
                 layers.RandomRotation(0.05),
                 layers.RandomTranslation(0.15, 0.15),
@@ -67,7 +65,7 @@ class ContrastiveModel():
             
         # Definir modelo convolucional
         input_layer = layers.Input(batch_shape=(None, 32, 32,3))  # Tamaño de imagen
-        conv = layers.Conv2D(32, (3, 3), activation='relu', padding="same", input_shape=self.input_shape, kernel_regularizer=regularizers.l2(l2_lambda))(input_layer)
+        conv = layers.Conv2D(32, (3, 3), activation='relu', padding="same", kernel_regularizer=regularizers.l2(l2_lambda))(input_layer)
         conv = layers.BatchNormalization()(conv)
         #conv = layers.MaxPooling2D((2, 2))(conv)
         
@@ -82,10 +80,12 @@ class ContrastiveModel():
         conv = layers.Conv2D(128, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(l2_lambda))(conv)
         conv = layers.BatchNormalization()(conv)
         code = layers.MaxPooling2D((2, 2))(conv)
+        
         flatten_layer = layers.Flatten()(code)
         
         # Capa de clustering
-        cluster_layer = layers.Dense(self.output_dim, activation='softmax')(flatten_layer)
+        cluster_layer = layers.Dense(self.output_dim, activation='relu', kernel_regularizer=regularizers.l2(l2_lambda))(flatten_layer)
+        cluster_layer = layers.Dense(self.output_dim, activation='softmax', kernel_regularizer=regularizers.l2(l2_lambda))(cluster_layer)
         
         # Modelo final
         self.encoder = Model(input_layer, outputs=flatten_layer)
@@ -98,7 +98,7 @@ class ContrastiveModel():
             'clustering_loss': []
         }
     
-    def train_step(self, data):
+    def train_step(self, data, temperature):
         if isinstance(data, tuple):
             X = data[0]
         else:
@@ -112,8 +112,11 @@ class ContrastiveModel():
         
         with tf.GradientTape() as tape:
             
-            augX_1comp = self.encoder(augX_1) # representaciones del encoder
-            augX_2comp = self.encoder(augX_2)
+            #augX_1comp = self.encoder(augX_1) # representaciones del encoder
+            #augX_2comp = self.encoder(augX_2)
+
+            augX_1comp = tf.nn.l2_normalize(self.encoder(augX_1), axis=1)
+            augX_2comp = tf.nn.l2_normalize(self.encoder(augX_2), axis=1)
 
             cX_1comp = self.cluster(augX_1comp) # salidas del clustering
             cX_2comp = self.cluster(augX_2comp)
@@ -125,6 +128,9 @@ class ContrastiveModel():
             
         # Calcular gradientes y actualizar pesos
         gradients = tape.gradient(total_loss, self.encoder.trainable_variables + self.cluster.trainable_variables)
+
+        grad_norm = tf.linalg.global_norm(gradients)
+        
         self.optimicer.apply_gradients(zip(gradients, self.encoder.trainable_variables + self.cluster.trainable_variables))
         
         return {"loss": total_loss, "contrastive_loss": loss_M, "clustering_loss": loss_C}
@@ -135,7 +141,7 @@ class ContrastiveModel():
             end = min(start + batch_size, X.shape[0])
             yield X[start:end]
     
-    def train(self, dataset, epochs=10, batch_size=128):
+    def train(self, dataset, epochs=10, batch_size=128, temperature=0.5):
         # Reiniciar el historial de pérdida si comenzamos un nuevo entrenamiento
         self.loss_history = {
             'total_loss': [],
@@ -150,7 +156,7 @@ class ContrastiveModel():
             batch_count = 0
             
             for data in self.mini_batches(dataset, batch_size=batch_size):
-                loss_dict = self.train_step(data)
+                loss_dict = self.train_step(data, temperature=temperature)
                 epoch_total_loss += loss_dict["loss"]
                 epoch_contrastive_loss += loss_dict["contrastive_loss"]
                 epoch_clustering_loss += loss_dict["clustering_loss"]
