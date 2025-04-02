@@ -1,4 +1,4 @@
-from tensorflow.keras import layers, models, optimizers, backend
+from tensorflow.keras import layers, models, optimizers, backend, regularizers
 import numpy as np
 import os
 
@@ -7,51 +7,73 @@ os.environ['KERAS_BACKEND'] = 'JAX'
 
 class TwoStepAutoEncoder():
 
-    def __init__(self, input_shape, learning_rate=0.001):
+    def __init__(self, input_shape, learning_rate=0.001, l2_lambda=0.01, dropout_prob=0.1):
         
         self.input_shape = input_shape
         
         self.encoder = models.Sequential([
-
-            layers.RandomRotation(0.1),
-            layers.RandomZoom(0.1),
-            layers.RandomGaussianBlur(factor=(0,1)),
-            layers.Resizing(34, 34), 
-            layers.RandomCrop(32, 32), 
-            
-			layers.Conv2D(32, (3, 3), activation='relu', padding="same", input_shape=self.input_shape),
-			layers.BatchNormalization(),
-			layers.MaxPooling2D((2, 2)),
-			
-			layers.Conv2D(64, (3, 3), activation='relu', padding="same"),
-			layers.BatchNormalization(),
-			layers.MaxPooling2D((2, 2)),
-		
-			layers.Conv2D(128, (3, 3), activation='relu', padding="same"),
-			layers.BatchNormalization(),
-			layers.MaxPooling2D((2, 2)),
-		])
-        
-        self.decoder = models.Sequential([
-            layers.Conv2DTranspose(128, (3, 3), activation='relu', padding='same'),
+            layers.InputLayer(input_shape=(32, 32, 3)),
+    
+            # Data augmentation layers
+            layers.RandomFlip("horizontal_and_vertical"),
+            layers.RandomRotation(0.2),
+            layers.RandomZoom(0.2),
+            layers.RandomTranslation(0.1, 0.1),
+            layers.RandomGaussianBlur(factor=0.5),
+            layers.RandomContrast(0.3),
+    
+            # Encoder - First convolutional block
+            layers.Conv2D(96, (3, 3), activation='relu', padding="same", 
+                          kernel_regularizer=regularizers.l2(l2_lambda)),
             layers.BatchNormalization(),
-            layers.UpSampling2D((2, 2)),  
-            
-            layers.Conv2DTranspose(64, (3, 3), activation='relu', padding='same'),
+            layers.Conv2D(96, (3, 3), activation='relu', padding="same", 
+                          kernel_regularizer=regularizers.l2(l2_lambda)),
             layers.BatchNormalization(),
-            layers.UpSampling2D((2, 2)),
-            
-            layers.Conv2DTranspose(32, (3, 3), activation='relu', padding='same'),
+            layers.MaxPooling2D((2, 2)),
+            layers.Dropout(dropout_prob / 2),
+    
+            # Encoder - Second convolutional block
+            layers.Conv2D(192, (3, 3), activation='relu', padding="same", 
+                          kernel_regularizer=regularizers.l2(l2_lambda)),
             layers.BatchNormalization(),
-            layers.UpSampling2D((2, 2)),
-            
-            # Final convolution layer to get the output with 3 channels (RGB image)
-            layers.Conv2DTranspose(3, (3, 3), activation='sigmoid', padding='same')  # Output 32x32x3
+            layers.Conv2D(192, (3, 3), activation='relu', padding="same", 
+                          kernel_regularizer=regularizers.l2(l2_lambda)),
+            layers.BatchNormalization(),
+            layers.MaxPooling2D((2, 2)),
+            layers.Dropout(dropout_prob / 2),
+    
+            # Encoder - Third convolutional block
+            layers.Conv2D(256, (3, 3), activation='relu', padding="same", 
+                          kernel_regularizer=regularizers.l2(l2_lambda)),
+            layers.BatchNormalization(),
+            layers.Conv2D(256, (3, 3), activation='relu', padding="same", 
+                          kernel_regularizer=regularizers.l2(l2_lambda)),
+            layers.BatchNormalization(),
+            layers.MaxPooling2D((2, 2)),
+            layers.Dropout(dropout_prob),
         ])
-
-
-
-        
+    
+        # Decoder Sequential Model
+        self.decoder = models.Sequential([
+            layers.Conv2DTranspose(256, (3, 3), activation='relu', padding="same"),
+            layers.BatchNormalization(),
+            layers.UpSampling2D((2, 2)),
+    
+            layers.Conv2DTranspose(192, (3, 3), activation='relu', padding="same"),
+            layers.BatchNormalization(),
+            layers.Conv2DTranspose(192, (3, 3), activation='relu', padding="same"),
+            layers.BatchNormalization(),
+            layers.UpSampling2D((2, 2)),
+    
+            layers.Conv2DTranspose(96, (3, 3), activation='relu', padding="same"),
+            layers.BatchNormalization(),
+            layers.Conv2DTranspose(96, (3, 3), activation='relu', padding="same"),
+            layers.BatchNormalization(),
+            layers.UpSampling2D((2, 2)),
+    
+            # Output layer to reconstruct the image
+            layers.Conv2D(3, (3, 3), activation='sigmoid', padding="same"),
+        ])
         
         self.autoencoder = models.Sequential([self.encoder, self.decoder])
 

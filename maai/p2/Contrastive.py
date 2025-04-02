@@ -40,9 +40,14 @@ class ContrastiveModel():
         self.lambda_param = lambda_param
         self.contrastive_loss = ContrastiveLoss(temperature=temperature)
         self.clustering_loss = ClusteringLoss()
+
+        lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
+            initial_learning_rate=learning_rate,
+            decay_steps=30,
+            decay_rate=0.8)
         
         self.optimicer = optimizers.AdamW(
-            learning_rate=learning_rate,
+            learning_rate=lr_schedule,
             clipnorm=5,
         )
         self.data_augmentation_1 = models.Sequential([
