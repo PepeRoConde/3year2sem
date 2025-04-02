@@ -7,12 +7,11 @@ class ConvModel:
 		self.output_dim = 100
 		self.model = models.Sequential([
 			# Data augmentation layers - aumentados ligeramente
-			layers.RandomFlip("horizontal_and_vertical", input_shape=(32, 32, 3)),
+			layers.RandomFlip("horizontal", input_shape=(32, 32, 3)),
 			layers.RandomRotation(0.2),
 			layers.RandomZoom(0.2),
 			layers.RandomTranslation(0.1, 0.1),  # Añadido traslación
 			layers.RandomGaussianBlur(factor=0.5),
-			layers.RandomContrast(0.3),
 			
 			# Primer bloque convolucional - más filtros
 			layers.Conv2D(96, (3, 3), activation='relu', padding="same", input_shape=(32, 32, 3), 
