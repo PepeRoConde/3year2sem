@@ -3,57 +3,76 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class DatasetProcess:
-	def load():
-		return keras.datasets.cifar100.load_data()
-		
-	def hold_out(train, test, validation_size=2000):
-		(x_train, y_train) = train
-		(x_test, y_test) = test
-
-		# Separación de datos no etiquetados (80% del conjunto de entrenamiento)
-		x_train_no_labeled = x_train[:40000]  # Sin etiquetas
-		
-		# Los 10000 restantes del conjunto de entrenamiento
-		x_train_labeled_all = x_train[40000:]
-		y_train_labeled_all = y_train[40000:]
-		
-		# Separación para validación
-		x_val = x_train_labeled_all[:validation_size]
-		y_val = y_train_labeled_all[:validation_size]
-		
-		# Los datos etiquetados restantes para entrenamiento
-		x_train_labeled = x_train_labeled_all[validation_size:]
-		y_train_labeled = y_train_labeled_all[validation_size:]
-		
-		train_sets = (x_train_no_labeled, x_train_labeled, y_train_labeled)
-		val_sets = (x_val, y_val)
-		test_sets = (x_test, y_test)
-		
-		return train_sets, val_sets, test_sets
-
-	def alt():
-		
-		labeled_data = 0.01 # Vamos a usar el etiquetado de sólo el 1% de los datos
-		np.random.seed(42)
-		
-		(x_train, y_train), (x_test, y_test), = keras.datasets.cifar100.load_data()
-		
-		indexes = np.arange(len(x_train))
-		np.random.shuffle(indexes)
-		ntrain_data = int(labeled_data*len(x_train))
-		unlabeled_train = x_train[indexes[ntrain_data:]] /255
-		x_train = x_train[indexes[:ntrain_data]] /255
-		x_test = x_test /255
-		y_train = y_train[indexes[:ntrain_data]]
-
-		one_hot_train = np.zeros((y_train.size, len(np.unique(y_train))), dtype=int)
-		for vector, y in zip(one_hot_train, y_train):
-			vector[y] = 1
-		
-		one_hot_test = np.zeros((y_test.size, len(np.unique(y_test))), dtype=int)
-		one_hot_test[np.arange(y_test.size), y_test ] = 1
-		
-		return unlabeled_train, x_train, y_train, x_test, y_test, one_hot_train, one_hot_test
+    def load():
+        return keras.datasets.cifar100.load_data()
+        
+    def hold_out(train, test, validation_size=2000):
+        (x_train, y_train) = train
+        (x_test, y_test) = test
+        
+        # Separación de datos no etiquetados (80% del conjunto de entrenamiento)
+        x_train_no_labeled = x_train[:40000]  # Sin etiquetas
+        
+        # Los 10000 restantes del conjunto de entrenamiento
+        x_train_labeled_all = x_train[40000:]
+        y_train_labeled_all = y_train[40000:]
+        
+        # Separación para validación
+        x_val = x_train_labeled_all[:validation_size]
+        y_val = y_train_labeled_all[:validation_size]
+        
+        # Los datos etiquetados restantes para entrenamiento
+        x_train_labeled = x_train_labeled_all[validation_size:]
+        y_train_labeled = y_train_labeled_all[validation_size:]
+        
+        train_sets = (x_train_no_labeled, x_train_labeled, y_train_labeled)
+        val_sets = (x_val, y_val)
+        test_sets = (x_test, y_test)
+        
+        return train_sets, val_sets, test_sets
+    
+    def alt():
+        
+        labeled_data = 0.33  # Use only 1% of labeled data
+        np.random.seed(42)
+        
+        (x_train, y_train), (x_test, y_test) = keras.datasets.cifar100.load_data()
+        
+        # Shuffle the indices of the training data
+        indexes = np.arange(len(x_train))
+        np.random.shuffle(indexes)
+        
+        # Define the number of labeled data to use
+        ntrain_data = int(labeled_data * len(x_train))
+        
+        # Split the data into unlabeled, train, and validation sets
+        unlabeled_train = x_train[indexes[ntrain_data:]] / 255
+        x_train = x_train[indexes[:ntrain_data]] / 255
+        x_test = x_test / 255
+        y_train = y_train[indexes[:ntrain_data]]
+        
+        # Split the labeled training data further into training and validation
+        validation_split = 0.5  # Use 50% of labeled data for validation
+        nvalidation_data = int(validation_split * len(x_train))
+        
+        x_val = x_train[-nvalidation_data:]
+        y_val = y_train[-nvalidation_data:]
+        x_train = x_train[:-nvalidation_data]
+        y_train = y_train[:-nvalidation_data]
+        
+        # One-hot encoding for labels
+        one_hot_train = np.zeros((y_train.size, len(np.unique(y_train))), dtype=int)
+        for vector, y in zip(one_hot_train, y_train):
+            vector[y] = 1
+        
+        one_hot_val = np.zeros((y_val.size, len(np.unique(y_val))), dtype=int)
+        for vector, y in zip(one_hot_val, y_val):
+            vector[y] = 1
+        
+        one_hot_test = np.zeros((y_test.size, len(np.unique(y_test))), dtype=int)
+        one_hot_test[np.arange(y_test.size), y_test] = 1
+        
+        return unlabeled_train, x_train, y_train, x_val, y_val, x_test, y_test, one_hot_train, one_hot_val, one_hot_test
 
 
 def reconstruction_plot(autoencoder, x_test):

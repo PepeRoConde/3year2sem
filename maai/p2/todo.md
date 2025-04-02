@@ -20,3 +20,5 @@ cosas que hacer:
 - hacer el main bueno
 - utilidades para repetir (SE)
 - hacer plot cuales son atipicos pepe
+- que los imports de data sean los mismos
+- que mis funciones usen val?
