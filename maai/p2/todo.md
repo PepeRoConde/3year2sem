@@ -19,7 +19,6 @@ en el 5 repetir solo del 2 al 4
 cosas que hacer:
 - hacer el main bueno
 - contrastive pepe
-- añadir matrices confusion y f1 peep
 - utilidades para repetir (SE)
 - en el two step guardar los valores como en transfer learning <--- (tradeoff eficiencia) por lo menos implementar igual no usar
 - awrn pepe

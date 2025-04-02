@@ -90,3 +90,21 @@ class AnomalyDetector:
     def __del__(self):
         del self.model
         backend.clear_session() # Necesario para liberar la memoria en GPU
+
+    def plot_confusion_matrix(self, x_test, y_test):
+        y_pred = self.predict_class(x_test)
+        
+        if len(y_true) == 1:
+            y_true = y_test
+        else:
+            y_true = np.argmax(y_test, axis=1)  
+            
+        cm = confusion_matrix(y_true, y_pred) # Compute confusion matrix
+        
+        # Plot confusion matrix using seaborn
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=np.arange(self.num_classes), yticklabels=np.arange(self.num_classes))
+        plt.xlabel('Predicted Labels')
+        plt.ylabel('True Labels')
+        plt.title('Confusion Matrix')
+        plt.show()
