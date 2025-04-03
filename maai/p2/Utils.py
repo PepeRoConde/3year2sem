@@ -1,6 +1,7 @@
 import tensorflow.keras as keras
 import numpy as np
 import matplotlib.pyplot as plt
+import visualkeras
 
 class DatasetProcess:
     def load():
@@ -96,3 +97,22 @@ def reconstruction_plot(autoencoder, x_test):
 	axes[1].axis('off')
 	
 	plt.show()
+ 
+
+def plot_model(model, name):
+	"""
+	Args:
+		model: Puede ser un modelo de Keras directo o un objeto ConvModel
+		name: Nombre del archivo de salida
+	"""
+	# Comprobar si el modelo es una instancia de modelo Keras
+	if hasattr(model, 'model'):
+		keras_model = model.model
+	else:
+		# Si ya es un modelo Keras, usarlo directamente
+		keras_model = model
+	
+	# Visualizar el modelo usando visualkeras
+	visualkeras.layered_view(keras_model, to_file=name, legend=True, draw_volume=True)    
+	print(f"Modelo guardado como '{name}'")
+ 
