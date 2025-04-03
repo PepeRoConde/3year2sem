@@ -124,13 +124,6 @@ class TwoStepClassifier:
 			layers.Dense(self.output_dim, activation="softmax")
         ])
 
-        
-
-
-
-
-
-
 
         self.optimizer = optimizers.AdamW(
             learning_rate=learning_rate,
@@ -161,10 +154,13 @@ class TwoStepClassifier:
 
 #--------------------------------------------------------------------------------------------#
 
-def TwoStepTraining(autoencoder, classifier, x_train, y_train, unlabeled_train, validation_data=None, batch_size_autoencoder=1024, epochs_autoencoder=100, batch_size_classifier=1024, epochs_classifier=100):
+def TwoStepTraining(autoencoder, classifier, x_train, y_train, unlabeled_train, validation_data=None, batch_size_autoencoder=1024, epochs_autoencoder=100, batch_size_classifier=1024, epochs_classifier=100, contrastive=False):
 
     all_x = np.vstack((x_train, unlabeled_train))
-    autoencoder.fit(all_x, batch_size=batch_size_autoencoder, epochs=epochs_autoencoder, validation_data=(validation_data[0],validation_data[0]))
+    if contrastive:
+        autoencoder.train(unlabeled_train, epochs=epochs_autoencoder, batch_size= batch_size_autoencoder)
+    else:
+        autoencoder.fit(all_x, batch_size=batch_size_autoencoder, epochs=epochs_autoencoder, validation_data=(validation_data[0],validation_data[0]))
     x_coded = autoencoder.get_encoded_data(x_train)
     x_val, y_val = validation_data
     x_val_coded = autoencoder.get_encoded_data(x_val)

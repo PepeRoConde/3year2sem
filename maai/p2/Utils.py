@@ -129,12 +129,12 @@ def anomaly_report(model,unlabeled_train):
     print(f"Datos filtrados no etiquetados (solo típicos): {filtered_unlabeled_train.shape}")
     print(f"Se eliminaron {unlabeled_train.shape[0] - filtered_unlabeled_train.shape[0]} muestras atípicas")
 
-    return filtered_unlabeled_train
+    return filtered_unlabeled_train, is_typical
 
 
 
     
-def plot_atipicos():
+def plot_atipicos(filtered_unlabeled_train, is_typical, unlabeled_train):
     # Seleccionar un ejemplo de imagen típica
     # Tomamos una imagen aleatoria del conjunto filtrado (típicas)
     idx_tipica = np.random.randint(0, filtered_unlabeled_train.shape[0])
