@@ -81,14 +81,14 @@ class ConvModel:
 			metrics=['accuracy']
 		)
 	
-	def fit(self, X, y, validation_data=None, batch_size=64, epochs=100, patience=8, sample_weight=None):
+	def fit(self, X, y, validation_data=None, batch_size=64, epochs=100, patience=4, sample_weight=None, verbose=1):
 		# Callbacks mejorados
 		callback_list = [
 			callbacks.EarlyStopping(
 				monitor="val_loss" if validation_data else "loss",
 				patience=patience,
 				restore_best_weights=True,
-				verbose=1
+				verbose=verbose
 			)
 		]
 		
@@ -98,14 +98,13 @@ class ConvModel:
 				epochs=epochs,
 				validation_data=validation_data,
 				callbacks=callback_list,
-				verbose=1,
+				verbose=verbose,
 				sample_weight=sample_weight  
 		)
 		return history
 	
-	# El método self_training_v2 permanece igual
 	@staticmethod
-	def self_training_v2(model_func, x_train, y_train, unlabeled_data, validation_data=None, thresh=0.8, train_epochs=3):
+	def self_training_v2(model_func, x_train, y_train, unlabeled_data, validation_data=None, thresh=0.8, train_epochs=3, verbose=1):
 		# Make copies of the input data
 		train_data = np.array(x_train, copy=True)
 		train_label = np.array(y_train, copy=True)
@@ -114,14 +113,14 @@ class ConvModel:
 		# Initialize sample weights
 		sample_weights = np.ones(len(train_label)) * 2.0
 		
-		for i in range(train_epochs):
+		for i in range(1, train_epochs):
 			if len(current_unlabeled) == 0:
 				print("No more unlabeled data left")
 				break
 				
 			# Create and train new model
 			model = model_func()
-			model.fit(train_data, train_label, sample_weight=sample_weights, verbose=0)
+			model.fit(train_data, train_label, validation_data=validation_data, sample_weight=sample_weights, verbose=verbose)
 			
 			# Predict on unlabeled data
 			y_pred = model.predict_proba(current_unlabeled)
@@ -145,15 +144,15 @@ class ConvModel:
 				# Remove used examples from unlabeled data
 				current_unlabeled = current_unlabeled[~high_confidence]
 				
-				print(f"Epoch {i+1}: Added {len(new_data)} samples, {len(current_unlabeled)} remaining")
-				print(f"Model accuracy: {model.score(train_data, train_label)}")
+				print(f"Epoch {i}: Added {len(new_data)} samples, {len(current_unlabeled)} remaining")
 			else:
-				print(f"Epoch {i+1}: No samples added")
+				print(f"Epoch {i}: No samples added")
 		
 		# Train final model
 		final_model = model_func()
-		final_model.fit(train_data, train_label, validation_data=validation_data, sample_weight=sample_weights)
-		
+		history = final_model.fit(train_data, train_label, validation_data=validation_data, sample_weight=sample_weights)
+		print(f"Final model trained with {len(train_data)} samples")
+		final_model.plot(history)
 		return final_model
 	
 	def predict(self, X):
