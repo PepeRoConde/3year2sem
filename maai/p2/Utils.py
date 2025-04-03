@@ -32,7 +32,7 @@ class DatasetProcess:
         
         return train_sets, val_sets, test_sets
     
-    def alt():
+    def load_dataset():
         
         labeled_data = 0.33  
         np.random.seed(42)
