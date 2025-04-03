@@ -1,4 +1,4 @@
-from tensorflow.keras import layers, models, optimizers, backend, regularizers
+from tensorflow.keras import layers, models, optimizers, backend, regularizers, callbacks
 import numpy as np
 import os
 
@@ -50,7 +50,6 @@ class TwoStepAutoEncoder():
                           kernel_regularizer=regularizers.l2(l2_lambda)),
             layers.BatchNormalization(),
             layers.MaxPooling2D((2, 2)),
-            layers.Dropout(dropout_prob),
         ])
     
         # Decoder Sequential Model
@@ -106,21 +105,39 @@ class TwoStepAutoEncoder():
 
 class TwoStepClassifier:
 
-    def __init__(self):
-        self.input_shape = (4 , 4 , 128)
-        
-        self.classifier = models.Sequential()
-        self.classifier.add(layers.InputLayer(shape=self.input_shape))
-        self.classifier.add(layers.Flatten())
-        self.classifier.add(layers.Dense(128, activation='relu'))
-        self.classifier.add(layers.Dense(100, activation='sigmoid'))
+    def __init__(self,dropout_prob=0.1,l2_lambda=0.0005,learning_rate=0.01):
 
-        self.optimicer = optimizers.AdamW(
-            learning_rate=0.001,
+        self.output_dim=100
+
+        self.classifier = models.Sequential([
+
+            layers.Flatten(),
+            layers.Dense(512, activation='relu', kernel_regularizer=regularizers.l2(l2_lambda)),
+			layers.BatchNormalization(),
+			layers.Dropout(dropout_prob),
+   
+			# Capa extra intermedia
+			layers.Dense(256, activation='relu', kernel_regularizer=regularizers.l2(l2_lambda)),
+			layers.BatchNormalization(),
+			layers.Dropout(dropout_prob/2),
+			
+			layers.Dense(self.output_dim, activation="softmax")
+        ])
+
+        
+
+
+
+
+
+
+
+        self.optimizer = optimizers.AdamW(
+            learning_rate=learning_rate,
             clipnorm=1,
         )
 
-        self.classifier.compile(optimizer=self.optimicer, loss='categorical_crossentropy', metrics=['accuracy'])
+        self.classifier.compile(optimizer=self.optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
     
     def fit(self, X, y, validation_data=None, sample_weight=None, batch_size=60_000, epochs=350):
         self.classifier.fit(X, y, 
@@ -149,14 +166,16 @@ def TwoStepTraining(autoencoder, classifier, x_train, y_train, unlabeled_train, 
     all_x = np.vstack((x_train, unlabeled_train))
     autoencoder.fit(all_x, batch_size=batch_size_autoencoder, epochs=epochs_autoencoder, validation_data=(validation_data[0],validation_data[0]))
     x_coded = autoencoder.get_encoded_data(x_train)
-    classifier.fit(x_coded, y_train, batch_size=batch_size_classifier, epochs=epochs_classifier, validation_data=validation_data)
+    x_val, y_val = validation_data
+    x_val_coded = autoencoder.get_encoded_data(x_val)
+    classifier.fit(x_coded, y_train, batch_size=batch_size_classifier, epochs=epochs_classifier, validation_data=(x_val_coded,y_val))
 
 
 #--------------------------------------------------------------------------------------------#
 
 class OneStepAutoencoder:
 
-    def __init__(self, input_shape,learning_rate=0.001, decoder_extra_loss_weight = 0.3):
+    def __init__(self, input_shape,learning_rate=0.001, decoder_extra_loss_weight = 0.3, l2_lambda=0.001, dropout_prob=0.05):
        
         self.input_shape = input_shape
         self.num_classes = 100
@@ -220,14 +239,14 @@ class OneStepAutoencoder:
         x = layers.BatchNormalization()(x)
         x = layers.Conv2DTranspose(96, (3, 3), activation='relu', padding="same")(x)
         x = layers.BatchNormalization()(x)
-        #x = layers.UpSampling2D((2, 2))(x)
+        x = layers.UpSampling2D((2, 2))(x)
     
         # Output layer to reconstruct the image
-        #decoded = layers.Conv2D(3, (3, 3), activation='sigmoid', padding="same")(x)
+        decoded = layers.Conv2D(3, (3, 3), activation='sigmoid', padding="same")(x)
         decoded = layers.Conv2DTranspose(3, (3, 3), activation='sigmoid', padding='same', name='decoder')(decoded)
 
         # classifier
-        classifier = layers.Flatten()(code)
+        classifier = layers.Flatten()(encoded)
         classifier_output = layers.Dense(self.num_classes, activation='softmax',name='classifier')(classifier)
 
         
@@ -268,7 +287,7 @@ class OneStepAutoencoder:
                        batch_size=batch_size,
                        validation_data=validation_data,
                        verbose=1,
-                       callbacks=[tf.keras.callbacks.EarlyStopping(monitor="loss", 
+                       callbacks=[callbacks.EarlyStopping(monitor="loss", 
                                                                             patience=patience)])
         return h
 
@@ -310,6 +329,6 @@ class OneStepAutoencoder:
 
 #--------------------------------------------------------------------------------------------#
 
-def OneStepTraining(model, x_train, y_train, unlabeled_train, batch_size=60_000, epochs = 1000):
-    h = model.fit(x_train, y_train, unlabeled_train, batch_size=batch_size, epochs = epochs)
+def OneStepTraining(model, x_train, y_train, unlabeled_train, batch_size=60_000, epochs = 1000, patience=5):
+    h = model.fit(x_train, y_train, unlabeled_train, batch_size=batch_size, epochs = epochs, patience=patience)
     return h

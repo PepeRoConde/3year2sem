@@ -22,3 +22,5 @@ cosas que hacer:
 - hacer plot cuales son atipicos pepe
 - que los imports de data sean los mismos
 - que mis funciones usen val?
+- earlty stopin
+- lr scheduler
