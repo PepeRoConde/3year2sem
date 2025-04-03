@@ -4,7 +4,6 @@ import os
 
 os.environ['KERAS_BACKEND'] = 'JAX'
 
-
 class TwoStepAutoEncoder():
 
     def __init__(self, input_shape, learning_rate=0.001, l2_lambda=0.01, dropout_prob=0.1):

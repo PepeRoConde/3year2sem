@@ -121,7 +121,7 @@ class ConvModel:
 				
 			# Create and train new model
 			model = model_func()
-			model.fit(train_data, train_label, sample_weight=sample_weights)
+			model.fit(train_data, train_label, sample_weight=sample_weights, verbose=0)
 			
 			# Predict on unlabeled data
 			y_pred = model.predict_proba(current_unlabeled)
@@ -146,6 +146,7 @@ class ConvModel:
 				current_unlabeled = current_unlabeled[~high_confidence]
 				
 				print(f"Epoch {i+1}: Added {len(new_data)} samples, {len(current_unlabeled)} remaining")
+				print(f"Model accuracy: {model.score(train_data, train_label)}")
 			else:
 				print(f"Epoch {i+1}: No samples added")
 		
