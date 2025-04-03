@@ -1,4 +1,5 @@
 from tensorflow.keras import layers, models, optimizers, backend, regularizers, callbacks
+from sklearn.metrics import accuracy_score
 import numpy as np
 import os
 
@@ -177,7 +178,7 @@ class OneStepAutoencoder:
     def __init__(self, input_shape,learning_rate=0.001, decoder_extra_loss_weight = 0.3, l2_lambda=0.001, dropout_prob=0.05):
        
         self.input_shape = input_shape
-        self.num_classes = 100
+        self.output_dim = 100
 
         input_layer = layers.Input(shape=self.input_shape)
 
@@ -245,10 +246,18 @@ class OneStepAutoencoder:
         decoded = layers.Conv2DTranspose(3, (3, 3), activation='sigmoid', padding='same', name='decoder')(decoded)
 
         # classifier
-        classifier = layers.Flatten()(encoded)
-        classifier_output = layers.Dense(self.num_classes, activation='softmax',name='classifier')(classifier)
 
+        classifier = layers.Flatten()(encoded)
+        classifier = layers.Dense(512, activation='relu', kernel_regularizer=regularizers.l2(l2_lambda))(classifier)
+        classifier = layers.BatchNormalization()(classifier)
+        classifier = layers.Dropout(dropout_prob)(classifier)
         
+        classifier = layers.Dense(256, activation='relu', kernel_regularizer=regularizers.l2(l2_lambda))(classifier)
+        classifier = layers.BatchNormalization()(classifier)
+        classifier = layers.Dropout(dropout_prob/2)(classifier)
+        
+        classifier_output = layers.Dense(self.output_dim, activation="softmax", name='classifier')(classifier)
+
         #--------------------------------------------------------------------------------------------#
         # model
         self.model = models.Model(input_layer, 
@@ -299,7 +308,7 @@ class OneStepAutoencoder:
         return image
     
     def score(self, X, y):
-        y_pred = self.predict(X)
+        y_pred = np.argmax(self.model.predict(X)['classifier'],axis=1)
         return accuracy_score(y, y_pred)
 
     def __call__(self, X):

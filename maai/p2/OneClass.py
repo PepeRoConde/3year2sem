@@ -1,4 +1,4 @@
-from tensorflow.keras import layers, callbacks, regularizers, backend, optimizers
+from tensorflow.keras import layers, callbacks, regularizers, backend, optimizers, models
 import tensorflow as tf
 import numpy as np
 
@@ -31,24 +31,55 @@ class AnomalyDetector:
 
     def __init__(self, input_shape, nu=.5, l2_lambda=.0001, learning_rate=0.001, dropout_prob=0.1):
 
-        self.model = tf.keras.models.Sequential([
-			layers.Conv2D(32, (3, 3), activation='relu', padding="same", input_shape=(32, 32, 3), kernel_regularizer=regularizers.l2(l2_lambda)),
+        self.model = models.Sequential([
+			# Data augmentation layers - aumentados ligeramente
+			layers.RandomFlip("horizontal", input_shape=(32, 32, 3)),
+			layers.RandomRotation(0.2),
+			layers.RandomZoom(0.2),
+			layers.RandomTranslation(0.1, 0.1),  # Añadido traslación
+			layers.RandomGaussianBlur(factor=0.5),
+			
+			# Primer bloque convolucional - más filtros
+			layers.Conv2D(96, (3, 3), activation='relu', padding="same", input_shape=(32, 32, 3), 
+						  kernel_regularizer=regularizers.l2(l2_lambda)),
+			layers.BatchNormalization(),
+			layers.Conv2D(96, (3, 3), activation='relu', padding="same", 
+						  kernel_regularizer=regularizers.l2(l2_lambda)),
 			layers.BatchNormalization(),
 			layers.MaxPooling2D((2, 2)),
+			layers.Dropout(dropout_prob/2),
 			
-			layers.Conv2D(64, (3, 3), activation='relu', padding="same", kernel_regularizer=regularizers.l2(l2_lambda)),
+			# Segundo bloque convolucional - más filtros
+			layers.Conv2D(192, (3, 3), activation='relu', padding="same", 
+						  kernel_regularizer=regularizers.l2(l2_lambda)),
+			layers.BatchNormalization(),
+			layers.Conv2D(192, (3, 3), activation='relu', padding="same", 
+						  kernel_regularizer=regularizers.l2(l2_lambda)),
 			layers.BatchNormalization(),
 			layers.MaxPooling2D((2, 2)),
-			
-			layers.Conv2D(128, (3, 3), activation='relu', padding="same", kernel_regularizer=regularizers.l2(l2_lambda)),
+			layers.Dropout(dropout_prob/2),
+   
+			# Tercer bloque convolucional
+			layers.Conv2D(256, (3, 3), activation='relu', padding="same", 
+						  kernel_regularizer=regularizers.l2(l2_lambda)),
+			layers.BatchNormalization(),
+			layers.Conv2D(256, (3, 3), activation='relu', padding="same", 
+						  kernel_regularizer=regularizers.l2(l2_lambda)),
 			layers.BatchNormalization(),
 			layers.MaxPooling2D((2, 2)),
-			
-			layers.Flatten(),
-			layers.Dense(256, activation='relu', kernel_regularizer=regularizers.l2(l2_lambda)),
 			layers.Dropout(dropout_prob),
+   
+			# Global Average Pooling en lugar de Flatten
+			layers.GlobalAveragePooling2D(),
+   
+			# Capa extra intermedia
+			layers.Dense(256, activation='relu', kernel_regularizer=regularizers.l2(l2_lambda)),
+			layers.BatchNormalization(),
+			layers.Dropout(dropout_prob/2),
+			
 			layers.Dense(1, activation="sigmoid")
-		])
+        ])
+
 
         self.model.r = tf.Variable(1.0, trainable=False, name='r', dtype=tf.float32)
         self.model.nu = tf.Variable(nu, trainable=False, name='nu', dtype=tf.float32)
