@@ -34,7 +34,7 @@ class DatasetProcess:
     
     def alt():
         
-        labeled_data = 0.33  # Use only 1% of labeled data
+        labeled_data = 0.33  
         np.random.seed(42)
         
         (x_train, y_train), (x_test, y_test) = keras.datasets.cifar100.load_data()
@@ -97,8 +97,6 @@ def reconstruction_plot(autoencoder, x_test):
 	axes[1].axis('off')
 	
 	plt.show()
- 
-
 def plot_model(model, name):
 	"""
 	Args:
@@ -116,3 +114,107 @@ def plot_model(model, name):
 	visualkeras.layered_view(keras_model, to_file=name, legend=True, draw_volume=True)    
 	print(f"Modelo guardado como '{name}'")
  
+def anomaly_report(model,unlabeled_train):
+    # Primero predecimos qué datos son típicos en el conjunto no etiquetado
+    unlabeled_predictions = model.predict(unlabeled_train)
+    r_value = model.model.r.numpy()
+    is_typical = unlabeled_predictions > r_value
+    
+    # Filtramos para obtener solo los datos típicos
+    filtered_unlabeled_train = np.array([unlabeled_train[i]  for i in range(len(unlabeled_train)) if is_typical[i]])
+    percetage = float(sum(is_typical) * 100 / len(is_typical))
+    print(f"Porcentaje de datos no etiquetados etiquetados como típicos: {percetage:.2f}%")
+    print(f"Porcentaje de datos no etiquetados etiquetados como atípicos: {100 - percetage:.2f}%")
+    print(f"Datos originales no etiquetados: {unlabeled_train.shape}")
+    print(f"Datos filtrados no etiquetados (solo típicos): {filtered_unlabeled_train.shape}")
+    print(f"Se eliminaron {unlabeled_train.shape[0] - filtered_unlabeled_train.shape[0]} muestras atípicas")
+
+    return filtered_unlabeled_train
+
+
+
+    
+def plot_atipicos():
+    # Seleccionar un ejemplo de imagen típica
+    # Tomamos una imagen aleatoria del conjunto filtrado (típicas)
+    idx_tipica = np.random.randint(0, filtered_unlabeled_train.shape[0])
+    img_tipica = filtered_unlabeled_train[idx_tipica]
+    
+    # Seleccionar un ejemplo de imagen atípica
+    # Creamos una máscara para las imágenes atípicas
+    is_atipica = ~is_typical
+    atipicas = unlabeled_train[is_atipica]
+    
+    # Verificamos que haya imágenes atípicas
+    if atipicas.shape[0] > 0:
+        idx_atipica = np.random.randint(0, atipicas.shape[0])
+        img_atipica = atipicas[idx_atipica]
+    else:
+        # Si no hay imágenes atípicas, tomamos la que tenga la puntuación más baja
+        idx_atipica = np.argmin(unlabeled_predictions)
+        img_atipica = unlabeled_train[idx_atipica]
+    
+    # Calcular las puntuaciones de anomalía para ambas imágenes
+    score_tipica = model.predict(img_tipica.reshape(1, 32, 32, 3))[0]
+    score_atipica = model.predict(img_atipica.reshape(1, 32, 32, 3))[0]
+    
+    # Visualizar ambas imágenes lado a lado
+    plt.figure(figsize=(12, 5))
+    
+    # Imagen típica
+    plt.subplot(1, 2, 1)
+    plt.imshow(img_tipica)
+    plt.title(f'Imagen Típica\nPuntuación: {score_tipica:.4f}\nr_value: {r_value:.4f}')
+    plt.axis('off')
+    
+    # Imagen atípica
+    plt.subplot(1, 2, 2)
+    plt.imshow(img_atipica)
+    plt.title(f'Imagen Atípica\nPuntuación: {score_atipica:.4f}\nr_value: {r_value:.4f}')
+    plt.axis('off')
+    
+    plt.suptitle('Comparación de Imágenes Típicas vs Atípicas')
+    plt.tight_layout()
+    plt.show()
+
+# Adicionalmente, podemos visualizar más ejemplos de imágenes atípicas
+def mostrar_mas_ejemplos_atipicos(num_ejemplos=5):
+    if atipicas.shape[0] > 0:
+        plt.figure(figsize=(15, 3))
+        indices = np.random.choice(atipicas.shape[0], min(num_ejemplos, atipicas.shape[0]), replace=False)
+        
+        for i, idx in enumerate(indices):
+            plt.subplot(1, num_ejemplos, i + 1)
+            plt.imshow(atipicas[idx])
+            score = model.predict(atipicas[idx].reshape(1, 32, 32, 3))[0]
+            plt.title(f'Score: {score:.4f}')
+            plt.axis('off')
+            
+        plt.suptitle(f'Ejemplos adicionales de imágenes atípicas')
+        plt.tight_layout()
+        plt.show()
+    else:
+        print("No hay suficientes ejemplos de imágenes atípicas para mostrar.")
+
+# Descomentar para mostrar más ejemplos
+# mostrar_mas_ejemplos_atipicos()
+
+# También podemos ver la distribución de puntuaciones
+def visualizar_distribucion_puntuaciones():
+    plt.figure(figsize=(10, 6))
+    
+    # Obtener todas las predicciones
+    todas_predicciones = model.predict(unlabeled_train)
+    
+    # Visualizar histograma
+    plt.hist(todas_predicciones, bins=50, alpha=0.7)
+    plt.axvline(x=r_value, color='r', linestyle='--', label=f'r_value = {r_value:.4f}')
+    plt.xlabel('Puntuación de Anomalía')
+    plt.ylabel('Número de Muestras')
+    plt.title('Distribución de Puntuaciones de Anomalía')
+    plt.legend()
+    plt.grid(alpha=0.3)
+    plt.show()
+
+# Descomentar para visualizar la distribución
+# visualizar_distribucion_puntuaciones()
