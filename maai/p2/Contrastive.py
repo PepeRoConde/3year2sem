@@ -1,6 +1,7 @@
 from tensorflow.keras import layers, optimizers, models, Model, regularizers, losses
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
 import numpy as np
 
 class ContrastiveLoss():
@@ -627,6 +628,10 @@ class SemiSupervisedContrastiveModel():
         features = self.encoder(X)
         clusters = self.cluster(features)
         return tf.argmax(clusters, axis=1).numpy()
+
+    def score(self, x, y):
+        return accuracy_score(self.predict(x), y)
+        
     
     def plot_similarity_matrix(self, X, n_samples=10):
         """

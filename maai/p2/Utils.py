@@ -134,47 +134,11 @@ def anomaly_report(model,unlabeled_train):
 
 
     
-def plot_atipicos(filtered_unlabeled_train, is_typical, unlabeled_train):
-    # Seleccionar un ejemplo de imagen típica
-    # Tomamos una imagen aleatoria del conjunto filtrado (típicas)
-    idx_tipica = np.random.randint(0, filtered_unlabeled_train.shape[0])
-    img_tipica = filtered_unlabeled_train[idx_tipica]
-    
-    # Seleccionar un ejemplo de imagen atípica
-    # Creamos una máscara para las imágenes atípicas
+def plot_atipicos(is_typical, unlabeled_train):
     is_atipica = ~is_typical
-    atipicas = unlabeled_train[is_atipica]
-    
-    # Verificamos que haya imágenes atípicas
-    if atipicas.shape[0] > 0:
-        idx_atipica = np.random.randint(0, atipicas.shape[0])
-        img_atipica = atipicas[idx_atipica]
-    else:
-        # Si no hay imágenes atípicas, tomamos la que tenga la puntuación más baja
-        idx_atipica = np.argmin(unlabeled_predictions)
-        img_atipica = unlabeled_train[idx_atipica]
-    
-    # Calcular las puntuaciones de anomalía para ambas imágenes
-    score_tipica = model.predict(img_tipica.reshape(1, 32, 32, 3))[0]
-    score_atipica = model.predict(img_atipica.reshape(1, 32, 32, 3))[0]
-    
-    # Visualizar ambas imágenes lado a lado
-    plt.figure(figsize=(12, 5))
-    
-    # Imagen típica
-    plt.subplot(1, 2, 1)
-    plt.imshow(img_tipica)
-    plt.title(f'Imagen Típica\nPuntuación: {score_tipica:.4f}\nr_value: {r_value:.4f}')
-    plt.axis('off')
-    
-    # Imagen atípica
-    plt.subplot(1, 2, 2)
-    plt.imshow(img_atipica)
-    plt.title(f'Imagen Atípica\nPuntuación: {score_atipica:.4f}\nr_value: {r_value:.4f}')
-    plt.axis('off')
-    
-    plt.suptitle('Comparación de Imágenes Típicas vs Atípicas')
-    plt.tight_layout()
+    indices_atipicos = np.where(is_atipica == True)[0]
+    indice_atipico = np.random.choice(indices_atipicos)
+    plt.imshow(unlabeled_train[indice_atipico])
     plt.show()
 
 # Adicionalmente, podemos visualizar más ejemplos de imágenes atípicas
