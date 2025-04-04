@@ -1,8 +1,11 @@
+
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[margin=1in,left=1.5in,includefoot]{geometry}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[spanish]{babel}
 
 % Header & Footer Stuff
 
@@ -22,11 +25,49 @@
     \line(1,0){430}
 \end{center}
 
+\vspace{200}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{conv.png}
+    
+    \label{fig:enter-label}
+\end{figure}
 
+\thispagestyle{empty}
 \newpage
+
+\section{Introducción y aspectos generales}
+
+
+El problema a resolver es clasificación en 100 clases de un conjunto de datos de 50000 ejemplos, de los cuales 40000 no están etiquetados y de los 10000 restantes hemos dedicado 1000 a validación. Además, las clases son muy parecidas entre sí (hombre y niño o bicicleta y motocicleta) y los ejemplos de cada clase no tienen por qué ser parecidos entre sí tampoco (puentes, castillos o sillas pueden tener alta variación dentro de ellas mismas). Es por esto que decimos que el problema es difícil. Como se sugiere en AlexNet \cite{krizhevsky2012imagenet}, la profundidad en una RNA puede permitir mejor capacidad de representación, es por esto que nosotros, después de plantear un baseline con una red ``pequeña'' decidimos hacerla más grande, y es esta la que consta en el código entregado. 
+
+Sobre esto, a priori pensaríamos que sería un camino de rosas el simplemente hacer un modelo más grande, pero nos encontramos con que, en general, la red grande necesitaba más épocas para conseguir los mismos resultados que la pequeña en entrenamiento; por contrapartida, la pequeña sobreentrenada más mientras que la grande solía ser bastante robusta. Es por esto que sospechamos fuertemente que los resultados aquí presentes son inconclusos en cuanto a la capacidad que tienen los modelos definidos de aprender. Nosotros decidimos tomar esta decisión (en vez de aferrarnos al modelo más pequeño y rápido de entrenar) porque aunque con el modelo pequeño conseguíamos buenos resultados, sabíamos que era consecuencia del sobreentrenamiento. \\
+
+Antes de proceder con el análisis de cada ejercicio nos gustaría justificar algunas decisiones generales que hemos tomado en cuanto al entrenamiento y definición de los modelos. Como optimizador hemos usado \emph{AdamW} \cite{loshchilov2017decoupled}, y para enfrentarnos al problema de la explosión del gradiente en el entrenamiento de las redes contrastivas hemos tenido que usar \emph{Gradient Clipping} \cite{mikolov2012phd}, esta última decisión por desgracia no fue aventurada con antelación sino que fue \emph{debuggeando} el código, que la red no entrenaba más de un epoch sin incluirlo, fue al usar \texttt{print(gradients.magnitude)} que nos dimos cuenta. Como hay pocos ejemplos etiquetados y por tanto era relativamente sencillo caer en sobreentrenamiento decidimos optar por tres medidas de regularización de forma transversal a lo largo de la práctica:
+
+\begin{enumerate}
+    \item Penalización de la norma euclídea de los coeficientes de los filtros convolucionales y de las capas densas. Sabemos que si forzamos a nuestros coeficientes a ser pequeños (o en este caso, equivalente a tener un \emph{prior} de que $ \theta\sim \mathcal{N} \left( \mathbf{0}, \mathbf{I} \right)$, más adelante exploraremos otros priores).
+    \item Dropout \cite{srivastava2014dropout} para las capas densas que constituyen a los clasificadores. A lo largo de la práctica se ha usado siguiendo distintas probabilidades de dropout y siguendo esquemas fijos o dinámicos (distintas capas de la misma red tienen distinta probailidad). También incluimos Dropout entre cada bloque convolucional
+    \item Aumento de datos leve y estático. Al principio de todos los modelos aquí propuestos existe un aumento de datos, lo cual dificulta aún más el problema pero nos garantiza que no sobreentrenará (o no lo hará tanto). Después de probar con distintas opciones hemos llegado a la siguiente configuración:
+        \begin{itemize}
+            \item Volteo horizontal. Aunque en dominios como OCR no es aplicable, después de examinar las clases de CIFAR100, hemos visto que todas ellas pueden ser volteadas sin consecuencia. Produciendo así mayor variedad y simultaneamente preparándonos para posibles ejemplos volteados en test
+            \item Rotación aleatoria con probabilidad 0.2
+            \item Zoom aleatorio con probabilidad 0.2
+            \item Translación aleatoria pequeña
+            \item Leve emborronado gausiano, esto nos hace ser robustos a características de baja frecuencia, que en CIFAR100 están presentes en, sobretodo, frutas y flores ya que pueden ser fácilmente discriminables sólo con información de baja frecuencia. 
+        \end{itemize}
+\end{enumerate}
 
 \section{Entrena un modelo, creado sobre TensorFlow, haciendo uso únicamente de las instancias etiquetadas de entrenamiento. Dicho modelo debe de tener al menos cuatro capas densas y/o convolucionales.}
 \subsection{¿Qué red has escogido? ¿Por qué? ¿Cómo la has entrenado?}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{model_inicial.png}
+    \caption{Diseño de la Red Convolucional}
+    \label{fig:enter-label}
+\end{figure}
+
 Los datos han sido divididos según las especificaciones del enunciado (40.000 muestras no etiquetadas, 10.000 etiquetadas). Estas últimas, a su vez, han sido divididas en entrenamiento (9.000) y validación (1.000).
 Hemos seleccionado una red convolucional compuesta por tres bloques convolucionales (6 capas convolucionales en total) y 2 capas densas de clasificación. Implementamos diferentes técnicas de regularización para intentar evitar el sobreentrenamiento:
 \begin{itemize}
@@ -166,25 +207,147 @@ En conclusión, el autoaprendizaje muestra potencial incluso con un clasificador
 \newpage
 \section{Entrena un modelo de aprendizaje semisupervisado de tipo autoencoder en dos pasos (primero el autoencoder, después el clasificador). La arquitectura del encoder debe ser exactamente la misma que la definida en los Ejercicios 1 y 2, a excepción del último bloque de capas.}
 \subsection{¿Cuál es la arquitectura del modelo? ¿Y sus hiperparámetros?}
+
+La arquitectura del autoencoder fue una decisión con pocos grados de libertad poque debía usar la arquitectura anterior como encoder y ser especular hacia delante. En concreto, sobre el ``encoder'' 
+que nos venía dado añadimos:
+\begin{itemize}
+    \item Una capa convolucional de 256 filtros seguidos de un BatchNorm \cite{ioffe2015batch} y UpSampling.
+    \item Un bloque de dos capas convolucionales de 192. Entre ellas BatchNorm y al final UpSampling
+    \item Otro bloque como el anterior pero las convoluciones de 96 filtros.
+    \item Para el segundo de los pasos se usó un clasificador idéntico al presentado en el ejercicio 1
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{autoencoder.png}
+    \caption{Arquitectura del AutoEncoder}
+    \label{fig:enter-label}
+\end{figure}
+
+Todas las convoluciones usan filtros $3 \times 3$ como fue sugerido por la arquitectura VGG \cite{simonyan2014very}. En cuanto a los hiperparámetros:
+
+\begin{itemize}
+    \item Tasa de aprendizaje de 0.01 para el autoencoder y 0.05 para el clasificador.
+    \item Regularición $L_{2}$ con $\lambda = 0.0005$ para ambos.
+    \item Dropout con probabilidad 0.05 para el autoencoder y 0.1 para el clasificador.
+    \item Tamaño de batch de 512 para el autoencoder y 4096 para el clasificador.
+    \item 15 épocas para el autoencoder y 50 para el clasificador.
+\end{itemize}
+
+Sobre estas decisiones comentar dos cosas. En primer lugar no hemos podido hacer la exploración del espacio de hiperparámetros que nos hubiese gustado con, por ejemplo, un gridsearch. Por tanto estamos seguros de haber elegido hiperparámetros subóptimos, pero por cuestiones de cómputo no pudo ser de otra forma. La segunda consideración también está relacionada con la capacidad de cómputo, las épocas. Si cuando acaba la ejecución vemos que la perdida estaba bajando a un cierto ritmo, o en el caso del clasificador, la precisión subiendo... sabemos que con más épocas hubiese ofrecido mejores resultados. 
+Sobre eso estamos seguros por el siguiente argumento: si una red pequeña ofrece buenos resultados en reconstrucción pero malos en clasificación, una red grande que ofrezca mejores resultados en clasificación no puede ofrecer peores resultados en reconstrucción. O por lo menos eso en teoría, en la práctica tenemos que lidiar con las dificultades del entrenamiento de las redes profundas. Para que una red más profunda aprenda necesita más cambios en sus parámetros pues existe una relación más intrincada entre ellos mismos, las entradas y las salidas. 
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstruccion_buena.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstruccion_mala.png}
+    \end{minipage}
+    \caption{A la izquierda, reconstrucción con un autoencoder pequeño, a la derecha con el grande actual (15 épocas). }
+    \label{fig:reconstruccion3}
+\end{figure}
+
+Entonces la pregunta es ¿Porqué nos aferramos al modelo grande si da peores resultados en el autoencoder? Porque creemos fuertemente que con suficientes épocas (y seguramente consideraciones adicionales de entrenamiento que se nos escapan) aprendería por lo menos tan bien como el otro, pero con mucha seguridad mejor.
+
+
+
+
 \subsection{¿Cuál es el rendimiento del modelo en entrenamiento? ¿Y en prueba?}
+El rendimiento en entrenamiento es positivo en el sentido de que no para de mejorar y no hemos observado en ninguna ejecución \emph{plateau}. No obstante como hemos sugerido antes, no hubo épocas suficientes y el rendimiento del clasificador en el conjunto de datos de prueba es peor que un uno por ciento, es decir peor que aleatorio. Ciertamente viendo la Figura \ref{fig:reconstruccion3} no podríamos esperar mucho de esas representaciones. 
+
+
 \subsection{¿Se mejoran los resultados obtenidos en los Ejercicios 1 y 2?}
+No, en absoluto. Lo cierto esque esos dos ejercicios eran directos mientras que este se esforzaba en primer lugar en intentar resolver un problema más grande, en concreto, aprender la distribución de $\mathcal{X}$. Como vimos en \cite{chapelle2006semi}:
+\begin{quote}
+Vapnik’s principle: When trying to solve some problem, one should not solve a more
+diﬃcult problem as an intermediate step.
+\end{quote}
+
+Y efectivamente podemos comprobar que con recursos de tiempo limitado, ser más directo ofrece mejores resultados
+
+
 \subsection{¿Qué conclusiones sacas de los resultados detallados en los puntos anteriores?}
+
+Que si sólo quisiesemos reconstruir imágenes y tuviesemos poco timepo quizás el autoencoder pequeño sería mejor opción. Pero si tuviesemos que usar un modelo para producción en un contexto real, nosotros apostaríamos por el grande, aunque probablemente no se pueda entrenar con nuestros portátiles en una tarde, por poner un ejemplo.
 
 \newpage
 \section{Entrena un modelo de aprendizaje semisupervisado de tipo autoencoder en un paso (autoencoder y clasificador al mismo tiempo). La arquitectura del autoencoder será la misma que la definida en el Ejercicio 3, y la combinación de encoder y clasificador será igual a la arquitectura definida en el Ejercicio 1.}
 \subsection{¿Cuál es la arquitectura del modelo? ¿Y sus hiperparámetros?}
+La arquitectura no puede ser otra que la del ejercicio anterior, no obstante si vale la pena mencionar que en el primero como cada una de las partes era muy éstandar, lo hicimos usando\\
+\noindent\texttt{tf.keras.models.Sequential([])} pero para este ejercicio tuvimos que usar la opción \emph{funcional}, por lo demás son idénticos (deben serlo). En cuanto a hiperparámetros:
+\begin{itemize}
+    \item Tasa de aprendizaje de 0.0035
+    \item Peso extra al decoder, esto es: \[ \mathcal{L}_{AutoencoderSSL} = (1-\alpha) \; \mathcal{L}_{\text{clasificación}} + (1+\alpha)\; \mathcal{L}_{\text{reconstrucción}} \] donde $\alpha = 0.5$. Esta decisión se basó en la creencia de que con buenas representaciones será sencillo clasificar, además de que si no le damos más peso al AutoEncoder, el clasificador sobreentrenará muy seguramente el conjunto de datos de entrenamiento, consiguiendo buenas métricas pero sin conseguir buenas representaciones (que es lo que realemente nos importa para generalizar).
+    \item Regularición $L_{2}$ con $\lambda = 0.00005$
+    \item Dropout con probabilidad 0.05
+    \item Tamaño de batch de 512  
+\end{itemize}
+
+De nuevo, la elección de hiperparámetros fue (desgraciadamente) poco informada en el sentido de que es probable que existan mejores combinaciones de hiperparámetros pero por lo menos creemos que nuestra decisión fue razonable. Y efectivamente podemos ver que entrenar entrena
 \subsection{¿Cuál es el rendimiento del modelo en entrenamiento? ¿Y en prueba?}
+Después de 16 épocas (claramente muy poco y por tanto muy poco concluyentes serán los resultados) obtuvimos una precisión en el conjunto de datos de entrenamiento de un 2.75\% y en test 2.49\% lo cual es significativamente mejor que el ejercicio anterior y en menos épocas.
 \subsection{¿Se mejoran los resultados obtenidos en los ejercicios anteriores?}
+Con respecto a los dos primeros no, por el motivo comentado. En cambio con el ejercicio anterior sí, y aunque tienen la misma arquitectura no es una sorpresa que ocurra porque ahora los cambios en las capas de representación y clasificación están sincronizados y ambas se modifican bajo la misma señal de error \cite{rumelhart1986learning}; podríamos pensar que ``hablan entre sí''. Adicionalmente en el ejercicio anterior podría ocurrir que los ejemplos supervisados sobreescriban las representaciones obtenidas con los ejemplos no supervisados, lo cierto esque no es ese el caso en este ejercicio. Una comparativa un poco pseudocientífica puede obtenerse comparando las recontrucciones de las figuras \ref{fig:reconstruccion3} y \ref{fig:ej4}.
 \subsection{¿Qué conclusiones sacas de los resultados detallados en los puntos anteriores?}
+
+Por lo obtenido experimentalmente, apoyado del razonamiento, concluimos que es mejor esta segunda forma. Además, esta aproximación soportaría, por ejemplo, que \texttt{x\_unlabeled} fuese todo imagenet (o cualquier otro conjunto de datos grande como este propio CIFAR100) y el \texttt{x\_train} aquello que se quisiese resolver si es que es muy general. O si por el contrario uno quisiese discriminar abejas de belutinas, podría incluir efectivamente ejemplos etiquetados en  \texttt{x\_train} mientras que en \texttt{x\_unlabeled} podría tener incluso insectos cualquiera. Sabemos \cite{yosinski2014transferable} que las representaciones se pueden entrenar con ejemplos de una distribución $\mathcal{X}_1$ para aprender a discriminar ejemplos de  $\mathcal{X}_2$, sobretodo si $\mathcal{X}_1 \supset \mathcal{X}_2$. Lo cual es cierto en nuestro caso ya que los datos etiquetados sin duda pertenecen a la misma distribucion que los no etiquetados, y el procedimiento de este ejercicio permite actualizar los pesos de una pasada teniendo en cuenta a ambos. No obstante, los resultados en si son malos, pero de nuevo, confiamos que con más épocas eventualmente consiguiese mejores resultados. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{ej4.png}
+    \caption{Reconstrucción para el ejercicio 4 después de 16 épocas}
+    \label{fig:ej4}
+\end{figure}
+
 
 \newpage
 \section{Repite el mismo entrenamiento de los Ejercicios 1-4, pero eliminando las instancias no etiquetadas más atípicas con respecto a los datos etiquetados. Se cumplirán los siguientes puntos: (a) La arquitectura de la red de clasificación en una clase será la misma a la utilizada en el clasificador del Ejercicio 1, a excepción de la capa de salida. (b) Utiliza la técnica explicada en el Notebook 5, usando un valor de \textit{v} = 0,9}
 \subsection{¿Se mejoran los resultados con respecto a los anteriores ejercicios? ¿Qué conclusiones sacas de estos resultados?}
 
+Después de ejecutar el modelo de detección de anomalías, este clasifica al 89.8\% de los ejemplos como típicos y el 10.2\% como atípicos. Si inspeccionamos las imágenes consideradas como atípicas, vemos entre ellas dos tipos, aquellas que tienen un fondo blanco (en vez de un fondo natural) y aquellas que no tienen forma y son un \emph{blob}, podemos ver un ejemplo en la figura \ref{fig:atipico}. Lo que observamos en general es un empeoramiento en la calidad de generalización esto puede estar debido a que precisamente son los átipicos los que empujan y definen el borde de las regiones en las que se tesela el espacio de píxeles. Al quedarse con los típicos, el problema se vuelve más sencillo (aunque hay menos datos) y por tanto es esperable la observada empeora en generalización.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{atipico.png}
+    \caption{Imagen detectada como atípico por el detector de atípicos. Nuestra hipótesis es que un filtro de gabor en las primeras capas haya dado una respuesta inusualmente alta y por eso atípico.}
+    \label{fig:atipico}
+\end{figure}
+
 \newpage
 \section{Repite los Ejercicios 3-5 cambiando el autencoder por la técnica definida en el apartado ``Hay vida más allá del autoencoder'' del Notebook 4. Contesta a las preguntas de dichos ejercicios. Se cumplirán los siguientes puntos: }
 \subsection{La arquitectura de la red será igual a la parte encoder del autencoder definido en los ejercicios anteriores.} 
 \subsection{El modelo debe entrenar correctamente.}
+
+Sobre el entrenamiento de la aproximación contrastiva hemos experimentado las dos siguientes dificultades:
+\begin{enumerate}
+    \item Como en \cite{chen2020simple} se recomienda el uso de grandes \emph{BatchSize} para el mejor rendimiento del aprendizaje contrastivo, y simultaneamente es este el modelo más pesado computacionalmente de la práctica (multiplicaciones de matrices enormes para conseguir la matriz de similaridad $\mathcal{M}$) ocurre que: si entrenamos con \emph{BatchSize} pequeños sabemos de primera mano que nos espera mala fortuna pero si entrenamos con \emph{BatchSize} grandes, eventualmente ocurrió que las GPUs de nuestros portatiles dejaban de funcionar dando error. Es por esto que entrenar este modelo fue complejo. 
+    \item La arquitectura grande dificulta aún más todo esto, porque a priori un ejemplo $x$ si lo aumentamos una vez ($x_{aum1}$) y luego otra ($x_{aum2}$) y luego normalizalizamos para que $||x_{aumi}||_2 = 1$ para $i \in \{1,2\}$ no cabría esperar, a priori que $\langle x_{aum1}, x_{aum2}\rangle = 1$, que es exactamente lo que le pedimos, y precisamente cabría esperar que muy buenas fuesen las representaciones para conseguirlo. Es por esto que de nuevo hemos observado terribles matrices de similaridad como puede verse un ejemplo en \ref{fig:matriz}.
+\end{enumerate}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{similaridad.png}
+    \caption{Matriz de similaridad}
+    \label{fig:matriz}
+\end{figure}
+
+\section{Consideraciones}
+
+Debido a las limitaciones de recursos computacionales y restricciones de tiempo, no fue posible ejecutar la práctica con la profundidad y exhaustividad que hubiéramos deseado. Para complementar este trabajo y demostrar la procedencia de nuestros resultados, se han incluido varios archivos adicionales en la carpeta de entrega. Entre ellos se encuentran el archivo principal de ejecución "main.ipynb", que contiene el flujo de trabajo completo, además de dos notebooks específicos para el ejercicio 2 y un notebook adicional que muestra resultados parciales de la ejecución. Estos materiales complementarios sirven como evidencia de que los resultados presentados no fueron extraídos de manera arbitraria, sino que son producto de implementaciones reales, aunque por las limitaciones mencionadas no se pudieron explorar todas las configuraciones ni ejecutar todos los experimentos planificados originalmente.
+
+
+\newpage
+
+\bibliographystyle{plain}  % or another style like "ieeetr", "acm", "alpha", etc.
+\bibliography{articulos_mencionados}  % 'references' is the name of your .bib file (without the extension)
+
+
 
 \end{document}
 

@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 
 class ConvModel:
     """
-    Attributes:
+	Clase ConvModel para crear y entrenar un modelo de red neuronal convolucional.
+    
+    Atributos:
         output_dim (int): Dimensión de la capa de salida (número de clases)
         model (keras.Model): El modelo de keras subyacente
         optimizer (keras.optimizers): Optimizador configurado
@@ -12,8 +14,6 @@ class ConvModel:
     """
     def __init__(self, learning_rate=0.0005, dropout_prob=0.3, l2_lambda=0.003):
         """
-        Inicializa el modelo con hiperparámetros específicos.
-        
         Args:
             learning_rate (float): Tasa de aprendizaje inicial para el optimizador
             dropout_prob (float): Probabilidad de dropout para regularización
@@ -84,8 +84,8 @@ class ConvModel:
         # AdamW combina Adam con decaimiento de pesos adecuado
         self.optimizer = optimizers.AdamW(
             learning_rate=lr_schedule,
-            clipnorm=1,  		# Previene explosión de gradientes
-            weight_decay=1e-4  	# Decaimiento de pesos para regularización
+            clipnorm=1,        # Previene explosión de gradientes
+            weight_decay=1e-4  # Decaimiento de pesos para regularización
         )
 
         # Función de pérdida estándar para clasificación multiclase
@@ -98,10 +98,8 @@ class ConvModel:
             metrics=['accuracy']
         )
     
-    def fit(self, X, y, validation_data=None, batch_size=64, epochs=100, patience=4, sample_weight=None, verbose=1):
+    def fit(self, X, y, validation_data=None, batch_size=128, epochs=100, patience=4, sample_weight=None, verbose=1):
         """
-        Entrena el modelo con early stopping para prevenir sobreajuste.
-        
         Args:
             X (numpy.ndarray): Datos de entrenamiento
             y (numpy.ndarray): Etiquetas de entrenamiento
@@ -175,7 +173,7 @@ class ConvModel:
                 
             # Crear y entrenar nuevo modelo en cada iteración
             model = model_func()
-            model.fit(train_data, train_label, validation_data=validation_data, sample_weight=sample_weights, verbose=verbose, epochs=train_epochs)
+            model.fit(train_data, train_label, validation_data=validation_data, sample_weight=sample_weights, verbose=verbose)
             
             # Obtener predicciones y confianza
             y_pred = model.predict_proba(current_unlabeled)
@@ -259,33 +257,51 @@ class ConvModel:
     
         # Gráfico de pérdida
         plt.subplot(1, 2, 1)
-        plt.plot(history.history['loss'], label='Training Loss')
+        plt.plot(history.history['loss'], label='Pérdida de Entrenamiento')
         if 'val_loss' in history.history:
-            plt.plot(history.history['val_loss'], label='Validation Loss')
-        plt.title('Model Loss')
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
+            plt.plot(history.history['val_loss'], label='Pérdida de Validación')
+        plt.title('Pérdida del Modelo')
+        plt.xlabel('Época')
+        plt.ylabel('Pérdida')
         plt.legend(loc='upper right')
     
         # Gráfico de precisión
         plt.subplot(1, 2, 2)
-        plt.plot(history.history['accuracy'], label='Training Accuracy')
+        plt.plot(history.history['accuracy'], label='Precisión de Entrenamiento')
         if 'val_accuracy' in history.history:
-            plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
-        plt.title('Model Accuracy')
-        plt.xlabel('Epoch')
-        plt.ylabel('Accuracy')
+            plt.plot(history.history['val_accuracy'], label='Precisión de Validación')
+        plt.title('Precisión del Modelo')
+        plt.xlabel('Época')
+        plt.ylabel('Precisión')
         plt.legend(loc='lower right')
     
         plt.tight_layout()
         plt.show()
     
     def __call__(self, X):
+        """
+        Permite llamar al objeto como una función para realizar predicciones.
+        
+        Args:
+            X (numpy.ndarray): Datos de entrada
+            
+        Returns:
+            numpy.ndarray: Predicciones del modelo
+        """
         return self.model.predict(X)
     
     def summary(self):
+        """
+        Devuelve un resumen de la arquitectura del modelo.
+        
+        Returns:
+            str: Resumen de las capas y parámetros del modelo
+        """
         return self.model.summary()
     
     def __del__(self):
+        """
+        Libera recursos al eliminar la instancia del modelo.
+        """
         del self.model
         backend.clear_session()  # Liberar memoria en GPU
