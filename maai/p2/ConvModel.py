@@ -175,7 +175,7 @@ class ConvModel:
                 
             # Crear y entrenar nuevo modelo en cada iteración
             model = model_func()
-            model.fit(train_data, train_label, validation_data=validation_data, sample_weight=sample_weights, verbose=verbose)
+            model.fit(train_data, train_label, validation_data=validation_data, sample_weight=sample_weights, verbose=verbose, epochs=train_epochs)
             
             # Obtener predicciones y confianza
             y_pred = model.predict_proba(current_unlabeled)
