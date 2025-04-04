@@ -27,15 +27,141 @@
 
 \section{Entrena un modelo, creado sobre TensorFlow, haciendo uso únicamente de las instancias etiquetadas de entrenamiento. Dicho modelo debe de tener al menos cuatro capas densas y/o convolucionales.}
 \subsection{¿Qué red has escogido? ¿Por qué? ¿Cómo la has entrenado?}
+Los datos han sido divididos según las especificaciones del enunciado (40.000 muestras no etiquetadas, 10.000 etiquetadas). Estas últimas, a su vez, han sido divididas en entrenamiento (9.000) y validación (1.000).
+Hemos seleccionado una red convolucional compuesta por tres bloques convolucionales (6 capas convolucionales en total) y 2 capas densas de clasificación. Implementamos diferentes técnicas de regularización para intentar evitar el sobreentrenamiento:
+\begin{itemize}
+\item \textbf{BatchNormalization} después de cada capa convolucional para estabilizar el aprendizaje.
+\item \textbf{Regularización L2} ($\lambda = 0.003$) para penalizar pesos de gran magnitud.
+\item \textbf{Dropout} con probabilidades entre 0.15 y 0.3 en distintas capas.
+\item \textbf{Data augmentation} para aumentar artificialmente la cantidad de datos, aunque no tengan la diferencia real del conjunto original.
+\end{itemize}
+Para la reducción de dimensionalidad utilizamos capas de \textbf{MaxPooling} tras cada bloque convolucional. Antes de las capas de clasificación aplicamos \textbf{GlobalAveragePooling} que reduce drásticamente el número de parámetros comparado con el enfoque clásico de Flatten.
+Como función de activación utilizamos \textbf{ReLU} en todas las capas intermedias al ser una función de activación referente al tratar con redes neuronales, con \textbf{Softmax} en la capa de salida para obtener probabilidades de clase.
+Para la optimización, implementamos:
+\begin{itemize}
+\item \textbf{Learning Rate Scheduler} con decaimiento coseno para reducir progresivamente la tasa de aprendizaje.
+\item Optimizador \textbf{AdamW} que incorpora una regularización de decaimiento de pesos.
+\item \textbf{EarlyStopping} con paciencia 4 para detener el entrenamiento.
+\end{itemize}
+
+El entrenamiento se realizó con un tamaño de batch de 128 durante un máximo de 100 épocas, aunque el proceso se detuvo prematuramente debido al early stopping.
+
 \subsection{¿Cuál es el rendimiento del modelo en entrenamiento? ¿Y en prueba?}
+El modelo alcanza una precisión de aproximadamente 40\% en el conjunto de entrenamiento y 30\% en el conjunto de prueba. Como se observa en la Figura \ref{model-performance-ej1}, existe una clara distancia entre las curvas de entrenamiento y validación que comienza a ampliarse considerablemente después de la época 20, indicando sobreentrenamiento.
+La pérdida en el conjunto de entrenamiento continúa disminuyendo hasta aproximadamente 3.0, mientras que la pérdida de validación se estabiliza alrededor de 3.7, confirmando que el modelo memoriza patrones del conjunto de entrenamiento, pero no se traspasa este aprendizaje bien a datos nuevos.
+Considerando que estamos trabajando con 90 muestras por clase para entrenamiento (tras separar el conjunto de validación), un rendimiento del $\approx$30\% no es extremadamente malo. En el ejercicio siguiente (Autoaprendizaje), se intentará abordar este problema añadiendo las muestras no etiquetadas al modelo.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\linewidth]{ej1.png}
+\caption{Resultado de Entrenamiento con muestras Etiquetadas}
+\label{model-performance-ej1}
+\end{figure}
+
+
 \subsection{¿Qué conclusiones sacas de los resultados detallados en el punto anterior?}
+Los resultados obtenidos nos muestran las limitaciones a las que nos enfrentamos, dada la complejidad del problema y las restricciones planteadas:
+\begin{enumerate}
+\item \textbf{Insuficiencia de datos etiquetados}: Con solo 90 ejemplos por clase para entrenamiento (tras separar el conjunto de validación), el modelo no puede aprender las características representativas de cada clase. 
+
+\item \textbf{Sobreentrenamiento}: A pesar de implementar múltiples técnicas de regularización (L2, dropout, data augmentation, batch normalization), el modelo sigue mostrando un claro sobreentrenamiento. Esto sugiere que el modelo inevitablemente va a presentar un sobreajuste ya sea por la dificultad del conjunto de datos o por la falta de los mismos.
+
+\end{enumerate}
+Estos resultados nos indican que un modelo convolucional básico no tiene la capacidad de superar este problema. Para ello, necesitamos explorar otras técnicas como el autoaprendizaje para aumentar "artificialmente" el conjunto de datos etiquetados.
+
 
 \newpage
 \section{Entrena el mismo modelo, incorporando las instancias no etiquetadas de entrenamiento mediante la técnica de auto-aprendizaje. Opcionalmente, se ponderará cada instancia de entrada en función de su calidad (o certeza).}
+
 \subsection{¿Qué parámetros has definido para el entrenamiento?}
+Para los nuevos parámetros hemos modificado levemente los hiperparámetros del modelo para adaptarlo al autoaprendizaje:
+\begin{itemize}
+    \item \textbf{Learning Rate} reducido para facilitar un proceso de fine-tuning más estable
+    \item \textbf{Dropout} levemente más alto para prevenir el sobreajuste al incorporar nuevas muestras
+    \item \textbf{Regularización L2} levemente más alta para controlar mejor la complejidad del modelo cuando se agregan nuevas muestras
+    \item \textbf{Ponderación:} las instancias iniciales (etiquetadas) tienen una ponderación de 2, mientras que las nuevas instancias tienen una ponderación asignada según su nivel de certeza (valor de probabilidad)
+\end{itemize}
+
+Los parámetros específicos del proceso de autoentrenamiento se seleccionaron tras realizar múltiples experimentos con diferentes valores:
+\begin{itemize}
+    \item \textbf{Umbral de confianza (threshold):} probamos diferentes valores entre 0.6 y 0.9
+    \item \textbf{Número de iteraciones:} exploramos valores entre 3 y 8 iteraciones
+    \item \textbf{Ponderación de muestras:} asignamos pesos proporcionales a la confianza de la predicción
+\end{itemize}
+
 \subsection{¿Cuál es el rendimiento del modelo en entrenamiento? ¿Y en prueba?}
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{ej2_mal.png}
+    \caption{Autoentrenamiento con threshold=0.6}
+    \label{fig:low-threshold}
+\end{subfigure}%
+\hfill
+\begin{subfigure}{.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{ej2_bueno.png}
+    \caption{Autoentrenamiento con threshold=0.85}
+    \label{fig:high-threshold}
+\end{subfigure}
+\caption{Comparación de modelos con diferentes umbrales de confianza (4 iteraciones)}
+\label{fig:both-thresholds}
+\end{figure}
+
+Los resultados obtenidos para las diferentes configuraciones de autoentrenamiento son:
+
+\begin{itemize}
+    \item \textbf{Configuración 1 (threshold=0.6, iteraciones=4):}
+    \begin{itemize}
+        \item Precisión en entrenamiento: 60.39\%
+        \item Pérdida en entrenamiento: 3.3332
+        \item Precisión en validación: 26.00\%
+        \item Pérdida en validación: 3.9404
+        \item Precisión en prueba: 29.31\%
+        \item Muestras utilizadas: 19.757
+        \item Mejora respecto al modelo base: -0.21\%
+    \end{itemize}
+    
+    \item \textbf{Configuración 2 (threshold=0.85, iteraciones=4):}
+    \begin{itemize}
+        \item Precisión en entrenamiento: 63.05\%
+        \item Pérdida en entrenamiento: 3.4490
+        \item Precisión en validación: 31.80\%
+        \item Pérdida en validación: 3.7595
+        \item Precisión en prueba: 34.11\%
+        \item Muestras utilizadas: 15.296
+        \item Mejora respecto al modelo base: +3.31\%
+    \end{itemize}
+\end{itemize}
+
 \subsection{¿Se mejoran los resultados obtenidos en el Ejercicio 1?}
+Observamos una mejora significativa únicamente con el umbral más alto (0.85), que aumenta la precisión en prueba en un 3.31\% respecto al modelo base. Sin embargo, al incrementar el umbral a 0.9, el modelo no incorpora suficientes muestras nuevas para mejorar significativamente. 
+
+Con el umbral más bajo (0.6), no solo no se produce mejora, sino que se observa un ligero deterioro del rendimiento (-0.21\%). Esto sugiere que muchas de las muestras incorporadas tienen etiquetas incorrectas que confunden al modelo.
+
+En cuanto al número de iteraciones, encontramos que 4 es el valor óptimo. Con más iteraciones, el modelo tiende a sobreentrenar y su rendimiento en prueba se deteriora notablemente, probablemente por la acumulación de errores en las pseudo-etiquetas.
+
+Por último, cabe señalar que se observa un aumento en el sobreajuste del modelo con autoaprendizaje, especialmente con umbrales bajos. Esto probablemente se debe a que el modelo, debido a su rendimiento limitado, tiende a asignar pseudo-etiquetas a instancias que son muy similares a las que ya conoce bien, reforzando patrones que ya había aprendido en lugar de aprender nuevas instancias. 
+
 \subsection{¿Qué conclusiones sacas de los resultados detallados en los puntos anteriores?}
+Las técnicas de autoaprendizaje pueden mejorar el rendimiento de un clasificador cuando se aplican correctamente, pero presentan limitaciones importantes:
+
+\begin{enumerate}
+    \item \textbf{Calidad del modelo base:} El éxito del autoaprendizaje depende crucialmente de la calidad del clasificador inicial. Con una precisión base de aproximadamente 30\%, nuestro modelo asigna etiquetas incorrectas a una proporción significativa de las muestras no etiquetadas.
+    
+    \item \textbf{Umbral de confianza crítico:} Un umbral bajo (0.6) incorpora demasiadas muestras incorrectamente etiquetadas, mientras que un umbral demasiado alto (>0.85) no incorpora suficientes muestras para mejorar significativamente el rendimiento.
+    
+    \item \textbf{Cantidad vs. calidad:} Observamos que el modelo con umbral 0.85 incorpora menos muestras (15.296 vs 19.757) pero logra mejor rendimiento, confirmando que la calidad de las etiquetas generadas por el clasificador es más importante que la cantidad.
+    
+    \item \textbf{Límite práctico:} El número de muestras añadidas (~5.000-10.000 de 40.000 disponibles) indica que el modelo solo puede etiquetar con alta confianza una pequeña fracción del conjunto no etiquetado, lo que limita el potencial del autoaprendizaje en nuestras condiciones.
+    
+    \item \textbf{Iteraciones controladas:} Más iteraciones no siempre son mejores; el error puede propagarse y amplificarse en cada ciclo de pseudo-etiquetado. Comprobamos que a partir de las 6-8 iteraciones el modelo comienza a perder rendimiento rápidamente.
+\end{enumerate}
+
+En conclusión, el autoaprendizaje muestra potencial incluso con un clasificador medio como base (mejora de 3.31\%), pero requiere una cuidadosa calibración de parámetros para equilibrar la incorporación de nuevas muestras con el riesgo de introducir etiquetas incorrectas. Con un clasificador base más preciso, podríamos esperar mejoras más significativas ya que podría asignar pseudo-etiquetas correctas a una mayor proporción de las muestras no etiquetadas.
+
+
 
 \newpage
 \section{Entrena un modelo de aprendizaje semisupervisado de tipo autoencoder en dos pasos (primero el autoencoder, después el clasificador). La arquitectura del encoder debe ser exactamente la misma que la definida en los Ejercicios 1 y 2, a excepción del último bloque de capas.}
@@ -52,10 +178,13 @@
 \subsection{¿Qué conclusiones sacas de los resultados detallados en los puntos anteriores?}
 
 \newpage
-\section{Repite el mismo entrenamiento de los Ejercicios 1-4, pero eliminando las instancias no etiquetadas más atípicas con respecto a los datos etiquetados. Se cumplirán los siguientes puntos: (a) La arquitectura de la red de clasificación en una clase será la misma a la utilizada en el clasificador del Ejercicio 1, a excepción de la capa de salida. (b) Utiliza la técnica explicada en el Notebook 5, usando un valor de 𝑣 = 0,9}
+\section{Repite el mismo entrenamiento de los Ejercicios 1-4, pero eliminando las instancias no etiquetadas más atípicas con respecto a los datos etiquetados. Se cumplirán los siguientes puntos: (a) La arquitectura de la red de clasificación en una clase será la misma a la utilizada en el clasificador del Ejercicio 1, a excepción de la capa de salida. (b) Utiliza la técnica explicada en el Notebook 5, usando un valor de \textit{v} = 0,9}
 \subsection{¿Se mejoran los resultados con respecto a los anteriores ejercicios? ¿Qué conclusiones sacas de estos resultados?}
 
 \newpage
-\section{Repite los Ejercicios 3-5 cambiando el autencoder por la técnica definida en el apartado ``Hay vida más allá del autoencoder'' del Notebook 4. Contesta a las preguntas de dichos ejercicios. Se cumplirán los siguientes puntos: (a) La arquitectura de la red será igual a la parte encoder del autencoder definido en los ejercicios anteriores. (b) El modelo debe entrenar correctamente.}
+\section{Repite los Ejercicios 3-5 cambiando el autencoder por la técnica definida en el apartado ``Hay vida más allá del autoencoder'' del Notebook 4. Contesta a las preguntas de dichos ejercicios. Se cumplirán los siguientes puntos: }
+\subsection{La arquitectura de la red será igual a la parte encoder del autencoder definido en los ejercicios anteriores.} 
+\subsection{El modelo debe entrenar correctamente.}
+
 \end{document}
 
