@@ -205,7 +205,7 @@ class ConvModel:
         
         # Entrenamiento del modelo final con todos los datos pseudo-etiquetados
         final_model = model_func()
-        history = final_model.fit(train_data, train_label, validation_data=validation_data, sample_weight=sample_weights)
+        history = final_model.fit(train_data, train_label, validation_data=validation_data, sample_weight=sample_weights, epochs=train_epochs)
         print(f"Final model trained with {len(train_data)} samples")
         final_model.plot(history)
         return final_model

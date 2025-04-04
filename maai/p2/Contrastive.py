@@ -204,7 +204,7 @@ class ContrastiveModel():
                   f"Contrastive Loss: {avg_contrastive_loss:.4f}, "
                   f"Clustering Loss: {avg_clustering_loss:.4f}")
             
-    def get_encoded_data(self,mX):
+    def get_encoded_data(self,X):
         return self.encoder(X)
     
     def plot_training_history(self, figsize=(12, 6)):
