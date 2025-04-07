@@ -1,0 +1,32 @@
+
+Running with the following configuration:
+Root directory: /Users/pepe/carrera/3/2/vca/practicas/p2
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+MLP head: False
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 24
+Number of workers: 8
+Number of epochs: 1
+Early stopping patience: 8
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 4
+Test images: []
+
+
+--
+Class counts before balancing: Counter({2: 151, 1: 144, 0: 88})
+weights for balancing: Counter({0.006622516556291391: 151, 0.006944444444444444: 144, 0.011363636363636364: 88})
+--
+
+Using device: MPS
+Epoch 1/1
+----------
+  Batch 0: Loss: 1.2357, Acc: 0.3333

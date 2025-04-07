@@ -27,6 +27,8 @@ def parse_arguments():
     # Model parameters
     parser.add_argument('--pretrained', action='store_true',
                         help='Use pretrained weights for the model')
+    parser.add_argument('--mlp_head', action='store_true',
+                        help='Use a 2-layer MLP in the head of the model')
     parser.add_argument('--model_path', type=str, default='modelParams',
                         help='Path to save or load the model')
     parser.add_argument('--load_model', action='store_true',
@@ -49,6 +51,8 @@ def parse_arguments():
                         help='Learning rate for optimizer')
     parser.add_argument('--l2_lambda', type=float, default=0.0,
                         help='Lambda for L2 weight decay regularization.')
+    parser.add_argument('--show', action='store_true',
+                        help='Show figures instead of saving them')
     
     # Testing parameters
     parser.add_argument('--test_images', nargs='+', default=[],
@@ -86,6 +90,8 @@ if __name__ == "__main__":
     print(f"Not training model: {args.not_train}")
     print(f"Training data ratio: {args.train_ratio}")
     print(f"Pretrained: {args.pretrained}")
+    print(f"MLP head: {args.mlp_head}")
+    print(f"Show: {args.show}")
     print(f"Model path: {args.model_path}")
     print(f"Loading pretrained model: {args.load_model}")
     print(f"Class balancing: {'Unbalanced' if args.unbalanced else 'Balanced'}")
@@ -146,7 +152,8 @@ if __name__ == "__main__":
     
     # Create classifier
     classifier = ShipClassifier(pretrained=args.pretrained, 
-                                docked=args.docked)
+                                docked=args.docked,
+                                mlp_head=args.mlp_head)
     
     if args.load_model:
         if args.docked:
@@ -190,16 +197,18 @@ if __name__ == "__main__":
         
         # Test and plot results
         test_acc, test_accuracies, f1, cm = classifier.test_model(testloader)
+        
         classifier.plot_metrics(
             history, 
-            test_acc, 
-            dataAugmentation=args.data_augmentation, 
-            pretrained=args.pretrained,
-            cm=cm)
+            test_acc,
+            cm=cm,
+            dataAugmentation=args.data_augmentation,
+            show=args.show)
         
-        classifier.plotgrid(testset)
+        classifier.plotgrid(testset,
+                            show=args.show,
+                            dataAugmentation=args.data_augmentation)
         
-        # Save the model
         classifier.save_model(args.model_path)
     
     # Test individual images if provided

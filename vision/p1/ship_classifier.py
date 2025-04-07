@@ -7,16 +7,22 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import seaborn as sns
 import time
+import os
 from tqdm import tqdm
 from scipy.special import softmax
 from sklearn.metrics import f1_score, confusion_matrix
 
 class ShipClassifier:
-    def __init__(self, pretrained=True, docked=True):
+    def __init__(self, pretrained=True, docked=True, mlp_head=True):
+
+        self.pretrained = pretrained
+        self.docked = docked
+        self.mlp_head = mlp_head
+        
         self.model = None
         self.create_model(pretrained, docked)
         
-    def create_model(self, pretrained=True, docked=True):
+    def create_model(self, pretrained=True, docked=True, mlp_head=True):
         """
         Crea una EfficientNet para la clasificacion de barcos
         
@@ -34,20 +40,19 @@ class ShipClassifier:
         else:
              n_outputs = 2
         
-        # SEGUN EL PREENTRENAMIENTO QUE HAGAMOS TENEMOS QUE CAMBIAR LA CAPA ORIGINAL
-        # original_conv = model.features[0][0]
-        # model.features[0][0] = nn.Conv2d(1, 32, kernel_size=3, stride=2, padding=1, bias=False)
-
-        # En esta implementacion congelamos los pesos para hacer transfer learning
-        #for param in model.features.parameters():
-        #    param.requires_grad = True
+      
+        for param in model.features.parameters():
+            param.requires_grad = True
             
-        # Modificamos para usar dos clases (barco/no barco)
-        model.classifier[1] = nn.Linear(in_features=1536, out_features=n_outputs)
         
-        #model.classifier.append(nn.Linear(20, 16))
-        #model.classifier.append(nn.ReLU())
-        #model.classifier.append(nn.Linear(16, n_outputs))
+        if mlp_head:
+            model.classifier[1] = nn.Linear(in_features=1536, out_features=64)
+            model.classifier.append(nn.Linear(64, 32))
+            model.classifier.append(nn.ReLU())
+            model.classifier.append(nn.Linear(32, n_outputs))
+        else:
+            model.classifier[1] = nn.Linear(in_features=1536, out_features=n_outputs)
+            
         model.classifier.append(nn.Softmax(dim=1))
         
         self.model = model
@@ -282,9 +287,18 @@ class ShipClassifier:
         if self.model is None:
             return "Please create a model (ShipClassifier.create_model()) before training"
 
-        self.model.load_state_dict(torch.load(path))
-        print(f"Model loaded from {path}")
-       
+        try:
+            self.model.load_state_dict(torch.load(path))
+            print(f"Model loaded from {path}")
+            
+        except:
+            
+            new_state_dict = self.model.state_dict()
+            
+            for name, param in torch.load(path).items():
+                if 'classifier.1' not in name:  # Skip the classifier layer
+                    new_state_dict[name] = param
+            self.model.load_state_dict(new_state_dict)
 
 
     def partial_load_model(self,original_model_path):
@@ -312,7 +326,7 @@ class ShipClassifier:
         return self.model
     
 
-    def plot_metrics(self, history, test_acc, dataAugmentation, pretrained, cm):
+    def plot_metrics(self, history, test_acc, cm, dataAugmentation, show=True):
         '''
         Grafica los resultados del entrenamiento y test
         
@@ -321,7 +335,7 @@ class ShipClassifier:
             test_acc: ultimo valor de accuracy en el test
         '''
         plt.figure(figsize=(12, 5))
-        plt.title(f'Aumento de datos {dataAugmentation}, Preentrenado {pretrained}')
+        plt.title(f'Aumento de datos {dataAugmentation}, Preentrenado {self.pretrained}, MLP {self.mlp_head} ')
 
         # Gráfico de pérdida
         plt.subplot(1, 2, 1)
@@ -341,17 +355,42 @@ class ShipClassifier:
         plt.legend()
 
         plt.tight_layout()
-        plt.show()
+        if show:
+            plt.show()
+        else:
+            current_directory_path = os.getcwd()
+            subfolder_path = os.path.join(current_directory_path, 'figures')
+            
+            if not os.path.exists(subfolder_path):
+                os.makedirs(subfolder_path)
 
+            file_name = f'LOSS__A_{dataAugmentation}_P_{self.pretrained}_MLP_{self.mlp_head}'
+            file_path = os.path.join(subfolder_path, file_name)
+            
+            plt.savefig(file_path)
         # Visualizar la matriz de confusión
         plt.figure(figsize=(8, 6))
         sns.heatmap(cm, annot=True, fmt='g', cmap='Blues', xticklabels=list(range(len(cm))), yticklabels=list(range(len(cm))))
         plt.title('Confusion Matrix')
         plt.xlabel('Predicted Labels')
         plt.ylabel('True Labels')
-        plt.show()
+        
+        if show:
+            plt.show()
+        else:
+            
+            current_directory_path = os.getcwd()
+            subfolder_path = os.path.join(current_directory_path, 'figures')
+            
+            if not os.path.exists(subfolder_path):
+                os.makedirs(subfolder_path)
 
-    def plotgrid(self, trainset, cols=8, rows=4):
+            file_name = f'CM__A_{dataAugmentation}_P_{self.pretrained}_MLP_{self.mlp_head}'
+            file_path = os.path.join(subfolder_path, file_name)
+            
+            plt.savefig(file_path)
+
+    def plotgrid(self, trainset, dataAugmentation, cols=8, rows=4,  argmax=True, show=True):
     
         figure = plt.figure(figsize=(cols*2, rows*2))
         view = np.random.permutation(cols * rows)
@@ -365,23 +404,36 @@ class ShipClassifier:
             sample = torch.Tensor.permute(sample,(1,2,0)).numpy()
             sample -= np.min(sample)
             sample /= np.max(sample)
-
             
             figure.add_subplot(rows, cols, i)
             
- 
-            
             #pred = np.round(scipy.special.softmax(classifier.model(im)[0].cpu().detach().numpy()),2)
             pred = np.round(self.model(im)[0].cpu().detach().numpy(),2)
-            pred_label = np.argmax(pred)
             preds.append(pred)
+            
+            if argmax:
+                pred = np.argmax(pred)
+            
     
-            plt.title(f'y {label} - ŷ {pred_label}')
+            plt.title(f'y {label} - ŷ {pred}')
             #plt.title(label,pred)
             plt.axis("off")
             plt.imshow(sample, cmap="gray")
     
-        plt.show();
+        if show:
+            plt.show()
+        else:
+            current_directory_path = os.getcwd()
+            subfolder_path = os.path.join(current_directory_path, 'figures')
+            
+            if not os.path.exists(subfolder_path):
+                os.makedirs(subfolder_path)
+
+            file_name = f'GRID__A_{dataAugmentation}_P_{self.pretrained}_MLP_{self.mlp_head}'
+            file_path = os.path.join(subfolder_path, file_name)
+            
+            plt.savefig(file_path)
+            
         labels = np.array(trainset.labels)
         match len(np.unique(labels)):
             case 2:
@@ -410,8 +462,20 @@ class ShipClassifier:
                 ax.set_ylabel('1 - barco (undocked)')
                 ax.set_zlabel('2 - barco (docked)')
                 ax.set_title('3D Prediction Distribution')
-        plt.show();
-    
+                
+        if show:
+            plt.show()
+        else:
+            current_directory_path = os.getcwd()
+            subfolder_path = os.path.join(current_directory_path, 'figures')
+            
+            if not os.path.exists(subfolder_path):
+                os.makedirs(subfolder_path)
+
+            file_name = f'3D__A_{dataAugmentation}_P_{self.pretrained}_MLP_{self.mlp_head}'
+            file_path = os.path.join(subfolder_path, file_name)
+            
+            plt.savefig(file_path)
     def test_single_images(self, image_paths, device='mps', docked=True):
         """
         Test the classifier on individual images

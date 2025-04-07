@@ -53,8 +53,8 @@ class ShipDataset(Dataset):
 
         self.augmentation_transform = transforms.Compose([
             transforms.RandomHorizontalFlip(),    
-            transforms.ColorJitter(brightness=0.2, contrast=0.1, saturation=0.2, hue=0.1),
-            transforms.RandomAffine(degrees=7, translate=(0.05, 0.05), scale=(0.95, 1.05), shear=2),
+            transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.1),
+            transforms.RandomAffine(degrees=10, translate=(0.15, 0.15), scale=(0.7, 1.15), shear=2),
             transforms.RandomGrayscale(p=0.15), 
         ])
 
