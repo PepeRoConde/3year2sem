@@ -335,7 +335,8 @@ class ShipClassifier:
             test_acc: ultimo valor de accuracy en el test
         '''
         plt.figure(figsize=(12, 5))
-        plt.title(f'Aumento de datos {dataAugmentation}, Preentrenado {self.pretrained}, MLP {self.mlp_head} ')
+        # ahora ya no hace falta
+        #plt.title(f'Aumento de datos {dataAugmentation}, Preentrenado {self.pretrained}, Docked {self.docked} ')
 
         # Gráfico de pérdida
         plt.subplot(1, 2, 1)
@@ -364,7 +365,7 @@ class ShipClassifier:
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
 
-            file_name = f'LOSS__A_{dataAugmentation}_P_{self.pretrained}_MLP_{self.mlp_head}'
+            file_name = f'LOSS__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}'
             file_path = os.path.join(subfolder_path, file_name)
             
             plt.savefig(file_path)
@@ -385,7 +386,7 @@ class ShipClassifier:
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
 
-            file_name = f'CM__A_{dataAugmentation}_P_{self.pretrained}_MLP_{self.mlp_head}'
+            file_name = f'CM__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}'
             file_path = os.path.join(subfolder_path, file_name)
             
             plt.savefig(file_path)
@@ -429,7 +430,7 @@ class ShipClassifier:
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
 
-            file_name = f'GRID__A_{dataAugmentation}_P_{self.pretrained}_MLP_{self.mlp_head}'
+            file_name = f'GRID__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}'
             file_path = os.path.join(subfolder_path, file_name)
             
             plt.savefig(file_path)
@@ -441,7 +442,7 @@ class ShipClassifier:
                 scatter = plt.scatter([row[0] for row in preds], [row[1] for row in preds], 
                            c=labels[indices_aleatorios])
                 plt.legend(handles=scatter.legend_elements()[0], 
-                          labels=[f'Class {label}' for label in unique_labels],
+                          labels=[f'Class {label}' for label in np.unique(labels)],
                           title="Classes")
                 plt.xlabel('no barco')
                 plt.ylabel('barco')
@@ -472,7 +473,7 @@ class ShipClassifier:
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
 
-            file_name = f'3D__A_{dataAugmentation}_P_{self.pretrained}_MLP_{self.mlp_head}'
+            file_name = f'3D__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}'
             file_path = os.path.join(subfolder_path, file_name)
             
             plt.savefig(file_path)
