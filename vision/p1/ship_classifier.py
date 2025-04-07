@@ -13,11 +13,12 @@ from scipy.special import softmax
 from sklearn.metrics import f1_score, confusion_matrix
 
 class ShipClassifier:
-    def __init__(self, pretrained=True, docked=True, mlp_head=True):
+    def __init__(self, pretrained=True, docked=True, mlp_head=True, device='mps'):
 
         self.pretrained = pretrained
         self.docked = docked
         self.mlp_head = mlp_head
+        self.device = device
         
         self.model = None
         self.create_model(pretrained, docked)
@@ -95,10 +96,9 @@ class ShipClassifier:
         if criterion is None:
             criterion = nn.CrossEntropyLoss()
             
-        device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-        print(f"Using device: {'MPS' if device.type == 'mps' else 'CPU'}")
+        print(f"Using device: {self.device}")
     
-        self.model.to(device)
+        self.model.to(self.device)
         scaler = GradScaler()
      
         # Update history to track learning rate
@@ -126,20 +126,15 @@ class ShipClassifier:
             total_samples = 0
             
             for i, (inputs, labels) in enumerate(tqdm(train_loader, desc=f"Epoch {epoch+1}")):
-                inputs = inputs.to(device)
-                labels = labels.to(device)
+                inputs = inputs.to(self.device)
+                labels = labels.to(self.device)
                 
                 # Reiniciar los gradientes
                 optimizer.zero_grad()
                 
                 # Forward
-                if device.type == 'cuda':
-                    with autocast(device_type='cuda'): 
-                        outputs = self.model(inputs)
-                        loss = criterion(outputs, labels)  # Calculo de loss
-                else:
-                    outputs = self.model(inputs) 
-                    loss = criterion(outputs, labels)  # Calculo de loss
+                outputs = self.model(inputs) 
+                loss = criterion(outputs, labels)  # Calculo de loss
                 
                 # L2 regularization
                 l2_norm = sum(p.pow(2).sum() for p in self.model.parameters())
@@ -223,10 +218,9 @@ class ShipClassifier:
         if self.model is None:
             return "Please create a model (ShipClassifier.create_model()) before training"
 
-        device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-        print(f"Using device: {'MPS' if device.type == 'mps' else 'CPU'}")
+        print(f"Using device: {self.device}")
 
-        self.model.to(device)  
+        self.model.to(self.device)  
         self.model.eval()  # Poner el modelo en modo evaluacion
         
         running_corrects = 0
@@ -237,8 +231,8 @@ class ShipClassifier:
         
         with torch.no_grad():
             for inputs, labels in tqdm(test_loader, desc="Evaluating"):
-                inputs = inputs.to(device)
-                labels = labels.to(device)
+                inputs = inputs.to(self.device)
+                labels = labels.to(self.device)
 
                 outputs = self.model(inputs)
                 _, preds = torch.max(outputs, 1)
@@ -477,16 +471,15 @@ class ShipClassifier:
             file_path = os.path.join(subfolder_path, file_name)
             
             plt.savefig(file_path)
-    def test_single_images(self, image_paths, device='mps', docked=True):
+    def test_single_images(self, image_paths, docked=True):
         """
         Test the classifier on individual images
         
         Args:
             classifier: Trained ShipClassifier
             image_paths: List of paths to images
-            device: Computation device
         """
-        self.model.to(device)
+        self.model.to(self.device)
         self.model.eval()
         
         transform = transforms.Compose([
@@ -502,7 +495,7 @@ class ShipClassifier:
         
         for path in image_paths:
             image = Image.open(path).convert('RGB')
-            image_tensor = transform(image).unsqueeze(0).to(device)
+            image_tensor = transform(image).unsqueeze(0).to(self.device)
             
             with torch.no_grad():
                 output = self.model(image_tensor)

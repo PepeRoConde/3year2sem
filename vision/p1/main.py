@@ -53,6 +53,8 @@ def parse_arguments():
                         help='Lambda for L2 weight decay regularization.')
     parser.add_argument('--show', action='store_true',
                         help='Show figures instead of saving them')
+    parser.add_argument('--device', type=str, default='mps',
+                        help='Device, default mps.')
     
     # Testing parameters
     parser.add_argument('--test_images', nargs='+', default=[],
@@ -153,7 +155,8 @@ if __name__ == "__main__":
     # Create classifier
     classifier = ShipClassifier(pretrained=args.pretrained, 
                                 docked=args.docked,
-                                mlp_head=args.mlp_head)
+                                mlp_head=args.mlp_head,
+                                device=args.device)
     
     if args.load_model:
         if args.docked:
@@ -215,5 +218,4 @@ if __name__ == "__main__":
     if args.test_images:
         classifier.load_model(args.model_path)
         print("\nTesting individual images:")
-        device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-        test_single_images(classifier, args.test_images, device=device,docked=args.docked)
+        test_single_images(classifier, args.test_images, device=args.device,docked=args.docked)
