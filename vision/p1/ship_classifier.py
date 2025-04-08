@@ -394,7 +394,7 @@ class ShipClassifier:
         indices_aleatorios = np.random.choice(np.arange(len(trainset)),cols * rows)
         for i, j in zip(range(1, cols * rows + 1), indices_aleatorios):
             sample, label = trainset[j]
-            im = torch.permute(torch.tensor(np.expand_dims(sample,0),dtype=torch.float32),(0,1,2,3)).to('mps')
+            im = torch.permute(torch.tensor(np.expand_dims(sample,0),dtype=torch.float32),(0,1,2,3)).to(self.device)
     
             sample = torch.Tensor.permute(sample,(1,2,0)).numpy()
             sample -= np.min(sample)
