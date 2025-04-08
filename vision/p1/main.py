@@ -161,7 +161,8 @@ if __name__ == "__main__":
     classifier = ShipClassifier(pretrained=args.pretrained, 
                                 docked=args.docked,
                                 mlp_head=args.mlp_head,
-                                device=args.device)
+                                device=args.device,
+                                arquitecture=args.arquitecture)
     
     if args.load_model:
         if args.docked:

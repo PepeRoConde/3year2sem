@@ -13,7 +13,7 @@ from scipy.special import softmax
 from sklearn.metrics import f1_score, confusion_matrix
 
 class ShipClassifier:
-    def __init__(self, pretrained=True, docked=True, mlp_head=True, arquitecture='efficientnet_b3', device='mps'):
+    def __init__(self, pretrained=True, docked=True, mlp_head=True, arquitecture='efficientnet_b4', device='mps'):
 
         self.pretrained = pretrained
         self.docked = docked
