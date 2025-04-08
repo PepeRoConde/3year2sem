@@ -1,0 +1,5 @@
+python main.py --arquitecture resnet50 --data_augmentation  --docked --batch_size 16 --num_epochs 500 --patience 20 --lr_patience 8 --learning_rate 0.0001 --l2_lambda 0.000001 --mlp_head "$@" >> model_choose.txt
+python main.py --arquitecture vgg_19 --data_augmentation  --docked --batch_size 16 --num_epochs 500 --patience 20 --lr_patience 8 --learning_rate 0.0001 --l2_lambda 0.000001 --mlp_head "$@" >> model_choose.txt
+python main.py --arquitecture convnext_base --data_augmentation  --docked --batch_size 16 --num_epochs 500 --patience 20 --lr_patience 8 --learning_rate 0.0001 --l2_lambda 0.000001 --mlp_head "$@" >> model_choose.txt
+python main.py --arquitecture efficientnet_b4 --data_augmentation  --docked --batch_size 16 --num_epochs 500 --patience 20 --lr_patience 8 --learning_rate 0.0001 --l2_lambda 0.000001 --mlp_head "$@" >> model_choose.txt
+python main.py --arquitecture efficientnet_b7 --data_augmentation  --docked --batch_size 16 --num_epochs 500 --patience 20 --lr_patience 8 --learning_rate 0.0001 --l2_lambda 0.000001 --mlp_head "$@" >> model_choose.txt

@@ -23,6 +23,8 @@ def parse_arguments():
                         help='Not train the model, used in company of --test_images')
     parser.add_argument('--train_ratio', type=float, default=0.8,
                         help='Ratio of training data to total data')
+    parser.add_argument('--unbalanced', action='store_true',
+                        help='Unless specified, class balancing will be applied')
     
     # Model parameters
     parser.add_argument('--pretrained', action='store_true',
@@ -33,8 +35,8 @@ def parse_arguments():
                         help='Path to save or load the model')
     parser.add_argument('--load_model', action='store_true',
                         help='Load a pretrained model instead of training')
-    parser.add_argument('--unbalanced', action='store_true',
-                        help='Unless specified, class balancing will be applied')
+    parser.add_argument('--arquitecture', type=str, default='efficientnet_b4',
+                        help='Model arquitecture, default efficientnet_b4.')
     
     # Training parameters
     parser.add_argument('--batch_size', type=int, default=512,

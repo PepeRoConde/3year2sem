@@ -13,13 +13,14 @@ from scipy.special import softmax
 from sklearn.metrics import f1_score, confusion_matrix
 
 class ShipClassifier:
-    def __init__(self, pretrained=True, docked=True, mlp_head=True, device='mps'):
+    def __init__(self, pretrained=True, docked=True, mlp_head=True, arquitecture='efficientnet_b3', device='mps'):
 
         self.pretrained = pretrained
         self.docked = docked
         self.mlp_head = mlp_head
         self.device = device
-        
+        self.arquitecture = arquitecture
+
         self.model = None
         self.create_model(pretrained, docked)
         
@@ -32,9 +33,308 @@ class ShipClassifier:
         """
 
         if pretrained:
-            model = models.efficientnet_b3(weights='DEFAULT')
-        else: 
-            model = models.efficientnet_b3()
+            match self.architecture:
+                # EfficientNet family
+                case 'efficientnet_b0':
+                    model = models.efficientnet_b0(weights='DEFAULT')
+                case 'efficientnet_b1':
+                    model = models.efficientnet_b1(weights='DEFAULT')
+                case 'efficientnet_b2':
+                    model = models.efficientnet_b2(weights='DEFAULT')
+                case 'efficientnet_b3':
+                    model = models.efficientnet_b3(weights='DEFAULT')
+                case 'efficientnet_b4':
+                    model = models.efficientnet_b4(weights='DEFAULT')
+                case 'efficientnet_b5':
+                    model = models.efficientnet_b5(weights='DEFAULT')
+                case 'efficientnet_b6':
+                    model = models.efficientnet_b6(weights='DEFAULT')
+                case 'efficientnet_b7':
+                    model = models.efficientnet_b7(weights='DEFAULT')
+                case 'efficientnet_v2_s':
+                    model = models.efficientnet_v2_s(weights='DEFAULT')
+                case 'efficientnet_v2_m':
+                    model = models.efficientnet_v2_m(weights='DEFAULT')
+                case 'efficientnet_v2_l':
+                    model = models.efficientnet_v2_l(weights='DEFAULT')
+                
+                # ResNet family
+                case 'resnet18':
+                    model = models.resnet18(weights='DEFAULT')
+                case 'resnet34':
+                    model = models.resnet34(weights='DEFAULT')
+                case 'resnet50':
+                    model = models.resnet50(weights='DEFAULT')
+                case 'resnet101':
+                    model = models.resnet101(weights='DEFAULT')
+                case 'resnet152':
+                    model = models.resnet152(weights='DEFAULT')
+                case 'wide_resnet50_2':
+                    model = models.wide_resnet50_2(weights='DEFAULT')
+                case 'wide_resnet101_2':
+                    model = models.wide_resnet101_2(weights='DEFAULT')
+                
+                # MobileNet family
+                case 'mobilenet_v2':
+                    model = models.mobilenet_v2(weights='DEFAULT')
+                case 'mobilenet_v3_small':
+                    model = models.mobilenet_v3_small(weights='DEFAULT')
+                case 'mobilenet_v3_large':
+                    model = models.mobilenet_v3_large(weights='DEFAULT')
+                
+                # DenseNet family
+                case 'densenet121':
+                    model = models.densenet121(weights='DEFAULT')
+                case 'densenet161':
+                    model = models.densenet161(weights='DEFAULT')
+                case 'densenet169':
+                    model = models.densenet169(weights='DEFAULT')
+                case 'densenet201':
+                    model = models.densenet201(weights='DEFAULT')
+                
+                # VGG family
+                case 'vgg11':
+                    model = models.vgg11(weights='DEFAULT')
+                case 'vgg13':
+                    model = models.vgg13(weights='DEFAULT')
+                case 'vgg16':
+                    model = models.vgg16(weights='DEFAULT')
+                case 'vgg19':
+                    model = models.vgg19(weights='DEFAULT')
+                case 'vgg11_bn':
+                    model = models.vgg11_bn(weights='DEFAULT')
+                case 'vgg13_bn':
+                    model = models.vgg13_bn(weights='DEFAULT')
+                case 'vgg16_bn':
+                    model = models.vgg16_bn(weights='DEFAULT')
+                case 'vgg19_bn':
+                    model = models.vgg19_bn(weights='DEFAULT')
+                
+                # Vision Transformer family
+                case 'vit_b_16':
+                    model = models.vit_b_16(weights='DEFAULT')
+                case 'vit_b_32':
+                    model = models.vit_b_32(weights='DEFAULT')
+                case 'vit_l_16':
+                    model = models.vit_l_16(weights='DEFAULT')
+                case 'vit_l_32':
+                    model = models.vit_l_32(weights='DEFAULT')
+                case 'vit_h_14':
+                    model = models.vit_h_14(weights='DEFAULT')
+                
+                # ConvNeXt family
+                case 'convnext_tiny':
+                    model = models.convnext_tiny(weights='DEFAULT')
+                case 'convnext_small':
+                    model = models.convnext_small(weights='DEFAULT')
+                case 'convnext_base':
+                    model = models.convnext_base(weights='DEFAULT')
+                case 'convnext_large':
+                    model = models.convnext_large(weights='DEFAULT')
+                
+                # RegNet family
+                case 'regnet_y_400mf':
+                    model = models.regnet_y_400mf(weights='DEFAULT')
+                case 'regnet_y_800mf':
+                    model = models.regnet_y_800mf(weights='DEFAULT')
+                case 'regnet_y_1_6gf':
+                    model = models.regnet_y_1_6gf(weights='DEFAULT')
+                case 'regnet_y_3_2gf':
+                    model = models.regnet_y_3_2gf(weights='DEFAULT')
+                case 'regnet_y_8gf':
+                    model = models.regnet_y_8gf(weights='DEFAULT')
+                case 'regnet_y_16gf':
+                    model = models.regnet_y_16gf(weights='DEFAULT')
+                case 'regnet_y_32gf':
+                    model = models.regnet_y_32gf(weights='DEFAULT')
+                
+                # Swin Transformer family
+                case 'swin_t':
+                    model = models.swin_t(weights='DEFAULT')
+                case 'swin_s':
+                    model = models.swin_s(weights='DEFAULT')
+                case 'swin_b':
+                    model = models.swin_b(weights='DEFAULT')
+                case 'swin_v2_t':
+                    model = models.swin_v2_t(weights='DEFAULT')
+                case 'swin_v2_s':
+                    model = models.swin_v2_s(weights='DEFAULT')
+                case 'swin_v2_b':
+                    model = models.swin_v2_b(weights='DEFAULT')
+                
+                # Other architectures
+                case 'shufflenet_v2_x0_5':
+                    model = models.shufflenet_v2_x0_5(weights='DEFAULT')
+                case 'shufflenet_v2_x1_0':
+                    model = models.shufflenet_v2_x1_0(weights='DEFAULT')
+                case 'shufflenet_v2_x1_5':
+                    model = models.shufflenet_v2_x1_5(weights='DEFAULT')
+                case 'shufflenet_v2_x2_0':
+                    model = models.shufflenet_v2_x2_0(weights='DEFAULT')
+                case 'inception_v3':
+                    model = models.inception_v3(weights='DEFAULT')
+                case 'googlenet':
+                    model = models.googlenet(weights='DEFAULT')
+                case 'squeezenet1_0':
+                    model = models.squeezenet1_0(weights='DEFAULT')
+                case 'squeezenet1_1':
+                    model = models.squeezenet1_1(weights='DEFAULT')
+                case 'alexnet':
+                    model = models.alexnet(weights='DEFAULT')
+                case _:
+                    raise ValueError(f"Architecture {self.architecture} not supported")
+        else:
+            match self.arquitecture:
+                # EfficientNet family (without pretrained weights)
+                case 'efficientnet_b0':
+                    model = models.efficientnet_b0()
+                case 'efficientnet_b1':
+                    model = models.efficientnet_b1()
+                case 'efficientnet_b2':
+                    model = models.efficientnet_b2()
+                case 'efficientnet_b3':
+                    model = models.efficientnet_b3()
+                case 'efficientnet_b4':
+                    model = models.efficientnet_b4()
+                case 'efficientnet_b5':
+                    model = models.efficientnet_b5()
+                case 'efficientnet_b6':
+                    model = models.efficientnet_b6()
+                case 'efficientnet_b7':
+                    model = models.efficientnet_b7()
+                case 'efficientnet_v2_s':
+                    model = models.efficientnet_v2_s()
+                case 'efficientnet_v2_m':
+                    model = models.efficientnet_v2_m()
+                case 'efficientnet_v2_l':
+                    model = models.efficientnet_v2_l()
+                
+                # ResNet family
+                case 'resnet18':
+                    model = models.resnet18()
+                case 'resnet34':
+                    model = models.resnet34()
+                case 'resnet50':
+                    model = models.resnet50()
+                case 'resnet101':
+                    model = models.resnet101()
+                case 'resnet152':
+                    model = models.resnet152()
+                case 'wide_resnet50_2':
+                    model = models.wide_resnet50_2()
+                case 'wide_resnet101_2':
+                    model = models.wide_resnet101_2()
+                
+                # MobileNet family
+                case 'mobilenet_v2':
+                    model = models.mobilenet_v2()
+                case 'mobilenet_v3_small':
+                    model = models.mobilenet_v3_small()
+                case 'mobilenet_v3_large':
+                    model = models.mobilenet_v3_large()
+                
+                # DenseNet family
+                case 'densenet121':
+                    model = models.densenet121()
+                case 'densenet161':
+                    model = models.densenet161()
+                case 'densenet169':
+                    model = models.densenet169()
+                case 'densenet201':
+                    model = models.densenet201()
+                
+                # VGG family
+                case 'vgg11':
+                    model = models.vgg11()
+                case 'vgg13':
+                    model = models.vgg13()
+                case 'vgg16':
+                    model = models.vgg16()
+                case 'vgg19':
+                    model = models.vgg19()
+                case 'vgg11_bn':
+                    model = models.vgg11_bn()
+                case 'vgg13_bn':
+                    model = models.vgg13_bn()
+                case 'vgg16_bn':
+                    model = models.vgg16_bn()
+                case 'vgg19_bn':
+                    model = models.vgg19_bn()
+                
+                # Vision Transformer family
+                case 'vit_b_16':
+                    model = models.vit_b_16()
+                case 'vit_b_32':
+                    model = models.vit_b_32()
+                case 'vit_l_16':
+                    model = models.vit_l_16()
+                case 'vit_l_32':
+                    model = models.vit_l_32()
+                case 'vit_h_14':
+                    model = models.vit_h_14()
+                
+                # ConvNeXt family
+                case 'convnext_tiny':
+                    model = models.convnext_tiny()
+                case 'convnext_small':
+                    model = models.convnext_small()
+                case 'convnext_base':
+                    model = models.convnext_base()
+                case 'convnext_large':
+                    model = models.convnext_large()
+                
+                # RegNet family
+                case 'regnet_y_400mf':
+                    model = models.regnet_y_400mf()
+                case 'regnet_y_800mf':
+                    model = models.regnet_y_800mf()
+                case 'regnet_y_1_6gf':
+                    model = models.regnet_y_1_6gf()
+                case 'regnet_y_3_2gf':
+                    model = models.regnet_y_3_2gf()
+                case 'regnet_y_8gf':
+                    model = models.regnet_y_8gf()
+                case 'regnet_y_16gf':
+                    model = models.regnet_y_16gf()
+                case 'regnet_y_32gf':
+                    model = models.regnet_y_32gf()
+                
+                # Swin Transformer family
+                case 'swin_t':
+                    model = models.swin_t()
+                case 'swin_s':
+                    model = models.swin_s()
+                case 'swin_b':
+                    model = models.swin_b()
+                case 'swin_v2_t':
+                    model = models.swin_v2_t()
+                case 'swin_v2_s':
+                    model = models.swin_v2_s()
+                case 'swin_v2_b':
+                    model = models.swin_v2_b()
+                
+                # Other architectures
+                case 'shufflenet_v2_x0_5':
+                    model = models.shufflenet_v2_x0_5()
+                case 'shufflenet_v2_x1_0':
+                    model = models.shufflenet_v2_x1_0()
+                case 'shufflenet_v2_x1_5':
+                    model = models.shufflenet_v2_x1_5()
+                case 'shufflenet_v2_x2_0':
+                    model = models.shufflenet_v2_x2_0()
+                case 'inception_v3':
+                    model = models.inception_v3()
+                case 'googlenet':
+                    model = models.googlenet()
+                case 'squeezenet1_0':
+                    model = models.squeezenet1_0()
+                case 'squeezenet1_1':
+                    model = models.squeezenet1_1()
+                case 'alexnet':
+                    model = models.alexnet()
+                case _:
+                    raise ValueError(f"Architecture {self.architecture} not supported")
+
 
         if docked:
              n_outputs = 3
@@ -47,12 +347,15 @@ class ShipClassifier:
             
         
         if mlp_head:
-            model.classifier[1] = nn.Linear(in_features=1536, out_features=64)
+            # model.classifier[1] = nn.Linear(in_features=1536, out_features=64)
+            # ahora lo hace la funcion y de forma general
+            self.update_classifier(model, 64)
             model.classifier.append(nn.Linear(64, 32))
             model.classifier.append(nn.ReLU())
             model.classifier.append(nn.Linear(32, n_outputs))
         else:
-            model.classifier[1] = nn.Linear(in_features=1536, out_features=n_outputs)
+            # model.classifier[1] = nn.Linear(in_features=1536, out_features=n_outputs)
+            self.update_classifier(model, n_outputs)
             
         model.classifier.append(nn.Softmax(dim=1))
         
@@ -359,7 +662,7 @@ class ShipClassifier:
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
 
-            file_name = f'LOSS__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}'
+            file_name = f'LOSS__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}_{self.arquitecture}'
             file_path = os.path.join(subfolder_path, file_name)
             
             plt.savefig(file_path)
@@ -380,7 +683,7 @@ class ShipClassifier:
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
 
-            file_name = f'CM__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}'
+            file_name = f'CM__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}_{self.arquitecture}'
             file_path = os.path.join(subfolder_path, file_name)
             
             plt.savefig(file_path)
@@ -424,7 +727,7 @@ class ShipClassifier:
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
 
-            file_name = f'GRID__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}'
+            file_name = f'GRID__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}_{self.arquitecture}'
             file_path = os.path.join(subfolder_path, file_name)
             
             plt.savefig(file_path)
@@ -467,7 +770,7 @@ class ShipClassifier:
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
 
-            file_name = f'3D__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}'
+            file_name = f'3D__A_{dataAugmentation}_P_{self.pretrained}_D_{self.docked}_MLP_{self.mlp_head}_{self.arquitecture}'
             file_path = os.path.join(subfolder_path, file_name)
             
             plt.savefig(file_path)
@@ -505,3 +808,35 @@ class ShipClassifier:
             print(f"Prediction: {labels[pred.item()]}")
             print(f"Confidence: {torch.nn.functional.softmax(output, dim=1)[0]}")
             print("-" * 30)
+
+    def update_classifier(self,model, out_features=64):
+        # For EfficientNet models
+        if hasattr(model, 'classifier') and isinstance(model.classifier, nn.Sequential):
+            # Get the in_features from the existing Linear layer
+            in_features = model.classifier[1].in_features
+            model.classifier[1] = nn.Linear(in_features=in_features, out_features=out_features)
+
+        # For ResNet, VGG, DenseNet models with fc layer
+        elif hasattr(model, 'fc') and isinstance(model.fc, nn.Linear):
+            in_features = model.fc.in_features
+            model.fc = nn.Linear(in_features=in_features, out_features=out_features)
+
+        # For models with classifier as single Linear layer
+        elif hasattr(model, 'classifier') and isinstance(model.classifier, nn.Linear):
+            in_features = model.classifier.in_features
+            model.classifier = nn.Linear(in_features=in_features, out_features=out_features)
+
+        # For Vision Transformers
+        elif hasattr(model, 'heads') and hasattr(model.heads, 'head'):
+            in_features = model.heads.head.in_features
+            model.heads.head = nn.Linear(in_features=in_features, out_features=out_features)
+
+        # For MobileNetV3, ShuffleNet, etc.
+        elif hasattr(model, 'classifier') and isinstance(model.classifier, nn.Module) and hasattr(model.classifier, 'in_features'):
+            in_features = model.classifier.in_features
+            model.classifier = nn.Linear(in_features=in_features, out_features=out_features)
+
+        else:
+            raise ValueError(f"Unable to identify the classifier in the model {type(model).__name__}")
+
+        return model
