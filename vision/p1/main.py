@@ -33,6 +33,8 @@ def parse_arguments():
                         help='Use a 2-layer MLP in the head of the model')
     parser.add_argument('--model_path', type=str, default='modelParams',
                         help='Path to save or load the model')
+    parser.add_argument('--save', action='store_true',
+                        help='Save the model parameters if the location specified by --model_path, or in modelParams otherwise')
     parser.add_argument('--load_model', action='store_true',
                         help='Load a pretrained model instead of training')
     parser.add_argument('--arquitecture', type=str, default='efficientnet_b4',
@@ -94,6 +96,7 @@ if __name__ == "__main__":
     print(f"Not training model: {args.not_train}")
     print(f"Training data ratio: {args.train_ratio}")
     print(f"Pretrained: {args.pretrained}")
+    print(f"Model arquitecture: {args.arquitecture}")
     print(f"MLP head: {args.mlp_head}")
     print(f"Show: {args.show}")
     print(f"Model path: {args.model_path}")
@@ -214,7 +217,8 @@ if __name__ == "__main__":
                             show=args.show,
                             dataAugmentation=args.data_augmentation)
         
-        classifier.save_model(args.model_path)
+        if args.save:
+            classifier.save_model(args.model_path)
     
     # Test individual images if provided
     if args.test_images:
