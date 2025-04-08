@@ -33,7 +33,7 @@ class ShipClassifier:
         """
 
         if pretrained:
-            match self.architecture:
+            match self.arquitecture:
                 # EfficientNet family
                 case 'efficientnet_b0':
                     model = models.efficientnet_b0(weights='DEFAULT')
