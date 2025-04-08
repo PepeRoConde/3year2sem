@@ -333,7 +333,7 @@ class ShipClassifier:
                 case 'alexnet':
                     model = models.alexnet()
                 case _:
-                    raise ValueError(f"Architecture {self.architecture} not supported")
+                    raise ValueError(f"Architecture {self.arquitecture} not supported")
 
 
         if docked:
@@ -342,24 +342,9 @@ class ShipClassifier:
              n_outputs = 2
         
       
-        for param in model.features.parameters():
-            param.requires_grad = True
-            
+        # this configures the classifier head, appending layers or not as specified by the mlp_head argument  
         
-        if mlp_head:
-            # model.classifier[1] = nn.Linear(in_features=1536, out_features=64)
-            # ahora lo hace la funcion y de forma general
-            self.update_classifier(model, 64)
-            model.classifier.append(nn.Linear(64, 32))
-            model.classifier.append(nn.ReLU())
-            model.classifier.append(nn.Linear(32, n_outputs))
-        else:
-            # model.classifier[1] = nn.Linear(in_features=1536, out_features=n_outputs)
-            self.update_classifier(model, n_outputs)
-            
-        model.classifier.append(nn.Softmax(dim=1))
-        
-        self.model = model
+        self.model = self.update_classifier(model, n_outputs)
 
         return model
         
@@ -809,34 +794,127 @@ class ShipClassifier:
             print(f"Confidence: {torch.nn.functional.softmax(output, dim=1)[0]}")
             print("-" * 30)
 
-    def update_classifier(self,model, out_features=64):
+    def update_classifier(self, model, out_features=64):
+        """
+        Update the model's classifier layer, optionally replacing it with an MLP.
+        
+        Args:
+            model: The PyTorch model to modify
+            out_features: The number of output features/classes
+            mlp_head: If True, add intermediate FC layers (64, 32) before the final output layer
+            
+        Returns:
+            model: The modified model
+        """
         # For EfficientNet models
         if hasattr(model, 'classifier') and isinstance(model.classifier, nn.Sequential):
-            # Get the in_features from the existing Linear layer
             in_features = model.classifier[1].in_features
-            model.classifier[1] = nn.Linear(in_features=in_features, out_features=out_features)
-
+            
+            if self.mlp_head:
+                model.classifier[1] = nn.Sequential(
+                    nn.Linear(in_features=in_features, out_features=64),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=64, out_features=32),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=32, out_features=out_features),
+                    nn.Softmax(dim=1)
+                )
+            else:
+                model.classifier[1] = nn.Linear(in_features=in_features, out_features=out_features)
+        
         # For ResNet, VGG, DenseNet models with fc layer
         elif hasattr(model, 'fc') and isinstance(model.fc, nn.Linear):
             in_features = model.fc.in_features
-            model.fc = nn.Linear(in_features=in_features, out_features=out_features)
-
+            
+            if self.mlp_head:
+                model.fc = nn.Sequential(
+                    nn.Linear(in_features=in_features, out_features=64),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=64, out_features=32),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=32, out_features=out_features),
+                    nn.Softmax(dim=1)
+                )
+            else:
+                model.fc = nn.Linear(in_features=in_features, out_features=out_features)
+        
         # For models with classifier as single Linear layer
         elif hasattr(model, 'classifier') and isinstance(model.classifier, nn.Linear):
             in_features = model.classifier.in_features
-            model.classifier = nn.Linear(in_features=in_features, out_features=out_features)
-
+            
+            if self.mlp_head:
+                model.classifier = nn.Sequential(
+                    nn.Linear(in_features=in_features, out_features=64),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=64, out_features=32),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=32, out_features=out_features),
+                    nn.Softmax(dim=1)
+                )
+            else:
+                model.classifier = nn.Linear(in_features=in_features, out_features=out_features)
+        
         # For Vision Transformers
         elif hasattr(model, 'heads') and hasattr(model.heads, 'head'):
             in_features = model.heads.head.in_features
-            model.heads.head = nn.Linear(in_features=in_features, out_features=out_features)
-
+            
+            if self.mlp_head:
+                model.heads.head = nn.Sequential(
+                    nn.Linear(in_features=in_features, out_features=64),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=64, out_features=32),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=32, out_features=out_features),
+                    nn.Softmax(dim=1)
+                )
+            else:
+                model.heads.head = nn.Linear(in_features=in_features, out_features=out_features)
+        
         # For MobileNetV3, ShuffleNet, etc.
         elif hasattr(model, 'classifier') and isinstance(model.classifier, nn.Module) and hasattr(model.classifier, 'in_features'):
             in_features = model.classifier.in_features
-            model.classifier = nn.Linear(in_features=in_features, out_features=out_features)
-
+            
+            if self.mlp_head:
+                model.classifier = nn.Sequential(
+                    nn.Linear(in_features=in_features, out_features=64),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=64, out_features=32),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=32, out_features=out_features),
+                    nn.Softmax(dim=1)
+                )
+            else:
+                model.classifier = nn.Linear(in_features=in_features, out_features=out_features)
+        
+        # For ConvNeXt models
+        elif hasattr(model, 'classifier') and hasattr(model.classifier, 'flatten') and hasattr(model.classifier, 'linear'):
+            in_features = model.classifier.linear.in_features
+            
+            if self.mlp_head:
+                model.classifier.linear = nn.Sequential(
+                    nn.Linear(in_features=in_features, out_features=64),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=64, out_features=32),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(0.2),
+                    nn.Linear(in_features=32, out_features=out_features),
+                    nn.Softmax(dim=1)
+                )
+            else:
+                model.classifier.linear = nn.Linear(in_features=in_features, out_features=out_features)
+        
         else:
             raise ValueError(f"Unable to identify the classifier in the model {type(model).__name__}")
-
+        
         return model
