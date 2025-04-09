@@ -1,131 +1,45 @@
+from robobo_controller import RoboboController
 from robobopy.Robobo import Robobo
 from robobosim.RoboboSim import RoboboSim
 from tkinter import simpledialog
-import re
 import openai
 
 client = openai.OpenAI(api_key=api_key)
 
-class RoboboController:
-    def __init__(self, robobo, sim, default_speed=20, default_time=4):
-        self.robobo = robobo
-        self.sim = sim
-        self.default_speed = default_speed
-        self.default_time = default_time
 
-        self.movement_strategies = {
-            "forward": (lambda speed: (speed, speed)),
-            "back": (lambda speed: (-speed, -speed)),
-            "left": (lambda speed: (-speed, speed)),
-            "right": (lambda speed: (speed, -speed)),
-        }
-
-        self.compound_movements = {
-            "forward-left": self._move_forward_left,
-            "forward-right": self._move_forward_right,
-            "back-left": self._move_back_left,
-            "back-right": self._move_back_right,
-        }
-
-    def _move_forward_left(self, speed, time=None):
-        """Execute a forward-left compound movement"""
-        self.robobo.moveWheelsByTime(
-            speed // 2, speed, self.default_time if time is None else time
-        )
-        return True
-
-    def _move_forward_right(self, speed, time=None):
-        """Execute a forward-right compound movement"""
-        self.robobo.moveWheelsByTime(
-            speed, speed // 2, self.default_time if time is None else time
-        )
-        return True
-
-    def _move_back_left(self, speed, time=None):
-        """Execute a back-left compound movement"""
-        self.robobo.moveWheelsByTime(
-            -speed, -speed // 2, self.default_time if time is None else time
-        )
-        return True
-
-    def _move_back_right(self, speed, time=None):
-        """Execute a back-right compound movement"""
-        self.robobo.moveWheelsByTime(
-            -speed // 2, -speed, self.default_time if time is None else time
-        )
-        return True
-
-    def parse_command(self, user_response):
+class ChatGPTRoboboController(RoboboController):
+    """
+    Controlador de Robobo que utiliza ChatGPT para interpretar comandos en lenguaje natural.
+    """
+    
+    def __init__(self, robobo, sim, default_speed=20, default_time=1):
         """
-        Parse the user command and move the robot
+        Args:
+            robobo: Instancia del robot Robobo
+            sim: Instancia del simulador
+            default_speed: Velocidad base
+            default_time: Tiempo predeterminado
         """
-        if user_response is None or user_response.strip() == "":
-            print("No command entered")
-            return None
-
-        # Standardize input
-        user_response = user_response.lower().strip()
-
-        if user_response == "stop":
-            print("Stopping motors")
-            self.robobo.stopMotors()
-            return True
-
-        # Check for compound movements first
-        for compound_move, move_function in self.compound_movements.items():
-            if compound_move in user_response:
-                # Extract speed and time parameters
-                speeds = re.findall(r"speed (\d+)", user_response)
-                current_speed = int(speeds[0]) if speeds else self.default_speed
-
-                time_matches = re.findall(r"\btime (\d+(?:\.\d+)?)\b", user_response)
-                move_time = float(time_matches[0]) if time_matches else None
-
-                print(
-                    f"Executing compound movement: {compound_move} with speed: {current_speed}"
-                    + (f" for {move_time} seconds" if move_time else "")
-                )
-
-                return move_function(current_speed, move_time)
-
-        # Get directions and speeds from text
-        directions = re.findall(r"\b(forward|back|left|right)\b", user_response)
-
-        # If no direction found, report error
-        if not directions:
-            print("No valid direction found in command")
-            return True
-
-        # Improved speed parsing
-        speeds = re.findall(r"speed (\d+)", user_response)
-        current_speed = int(speeds[0]) if speeds else self.default_speed
-
-        # Improved time parsing
-        time_matches = re.findall(r"\btime (\d+(?:\.\d+)?)\b", user_response)
-        move_time = float(time_matches[0]) if time_matches else self.default_time
-
-        # Execute movements
-        for direction in directions:
-            if direction in self.movement_strategies:
-                # Get wheel speeds (speeds can be different)
-                left, right = self.movement_strategies[direction](current_speed)
-
-                # Move the robot
-                print(
-                    f"Moving {direction} at speed {current_speed} for {move_time} seconds"
-                )
-                self.robobo.moveWheelsByTime(left, right, move_time)
-        return True
-
-    def get_text_command(self):
+        super().__init__(robobo, sim, default_speed, default_time)
+        
+    def get_command(self):
         """
-        Get command from user via dialog box
+        Obtiene un comando de texto del usuario usando un cuadro de diálogo.
+        
+        Returns:
+            Texto del comando 
         """
         return simpledialog.askstring("Input", "Enter command:")
 
-    def get_chatgpt_text(self, command):
+    def process_natural_language(self, user_input):
         """
-        Process natural language command through ChatGPT to get robot control commands
+        Procesa lenguaje natural mediante ChatGPT para obtener comandos de robot.
+        
+        Args:
+            user_input: Texto en lenguaje natural
+            
+        Returns:
+            Comando de robot procesado por ChatGPT
         """
         try:
             response = client.chat.completions.create(
@@ -161,12 +75,11 @@ class RoboboController:
                         Responde ÚNICAMENTE con el comando extraído, sin explicaciones ni formato adicional.
                         """,
                     },
-                    {"role": "user", "content": command},
+                    {"role": "user", "content": user_input},
                 ],
                 temperature=0,
             )
 
-            # Log the response for debugging
             print(
                 f"Generated response from ChatGPT: {response.choices[0].message.content}"
             )
@@ -175,11 +88,10 @@ class RoboboController:
 
         except Exception as e:
             print(f"Error calling ChatGPT API: {e}")
-            return "stop"  # Fallback to stop command on error
+            return "stop"  
 
 
 def main(ip="localhost"):
-    # Initialize simulator and robot
     sim = RoboboSim(ip)
     sim.connect()
     sim.resetSimulation()
@@ -187,28 +99,31 @@ def main(ip="localhost"):
     robobo = Robobo(ip)
     robobo.connect()
 
-    controller = RoboboController(robobo, sim)
+    controller = ChatGPTRoboboController(robobo, sim)
 
-    print("Robobo ChatGPT Controller")
-    print("=========================")
-    print("Enter natural language commands to control Robobo.")
-    print("Type 'exit' to end the program.")
+    print("Introduce frases para controlar el robot.")
+    print("Ejemplos:")
+    print("- \"Avanza un poco\": forward")
+    print("- \"Retrocede a velocidad 30\": back speed 30")
+    print("- \"Gira a la derecha durante 3 segundos\": right time 3")
+    print("- \"Avanza girando a la izquierda a velocidad 25\": forward-left speed 25")
+    print("Escribe 'quit' para salir.")
 
     try:
         while True:
-            # Get user command
-            user_response = controller.get_text_command()
+            # Obtener comando del usuario
+            user_response = controller.get_command()
 
-            if user_response is None or user_response.lower() == "exit":
+            if user_response is None or user_response.lower() == "quit":
                 print("Exiting program")
                 break
 
-            # Process through ChatGPT
-            chatgpt_command = controller.get_chatgpt_text(user_response)
+            # Procesar a través de ChatGPT
+            chatgpt_command = controller.process_natural_language(user_response)
             print(f"Interpreted command: {chatgpt_command}")
 
-            # Execute the command
-            result = controller.parse_command(chatgpt_command)
+            # Ejecutar el comando
+            result = controller.parse_command(chatgpt_command, language="en")
 
             if result is False:
                 break
@@ -216,10 +131,9 @@ def main(ip="localhost"):
     except KeyboardInterrupt:
         print("\nProgram interrupted by user")
     finally:
-        # Clean up
+        # Detener motores y desconectar al finalizar
         robobo.stopMotors()
         sim.disconnect()
-        print("Disconnected from Robobo and simulator")
 
 
 if __name__ == "__main__":

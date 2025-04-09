@@ -3,12 +3,40 @@
 \usepackage[margin=1in,left=1.5in,includefoot]{geometry}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
 
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\small,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
 % Header & Footer Stuff
-
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\lhead{Fundamentos de Robótica Intelixente}
+\lhead{Fundamentos de Robótica Inteligente}
 \rhead{614G030302425}
 % \fancyfoot{}
 % \lfoot{Pablo Chantada Saborido \& José Romero Conde}
@@ -22,113 +50,134 @@
     \line(1,0){430}
 \end{center}
 
+\section*{Introducción}
 
-\subsection*{Ejercicio 1}
+Como configuración de la aplicación de Robobo utilizamos "Random Behaviour in Worlds" con "Horizontal Flip Front Camera" desactivado. Para evitar la repetición de código, implementamos una clase base \texttt{RoboboController} que implementa la funcionalidad común, y clases derivadas para cada tipo de interfaz: \texttt{TextRoboboController}, \texttt{VoiceRoboboController}, \texttt{ChatGPTRoboboController} y \texttt{VectorRoboboController}.
 
-Este ejercicio implementa un controlador básico del robot Robobo mediante teclado.
-$$
-\text{Teclas de control: } &\begin{cases}
-\text{w} &\rightarrow \text{Avance} \
-\text{s} &\rightarrow \text{Retroceso} \
-\text{a} &\rightarrow \text{Giro izquierda} \
-\text{d} &\rightarrow \text{Giro derecha} \
-\text{q} &\rightarrow \text{Detener y salir} \
-\end{cases}
-$$
-El sistema utiliza la biblioteca pynput para capturar los eventos de teclado y controla el robot estableciendo velocidades a las ruedas (SPEED=10)(\text{SPEED} = 10)
-(SPEED=10).
+Cada controlador implementa su propio método \texttt{get\_command()} para obtener instrucciones del usuario, mientras que comparten la lógica de movimiento, emociones y efectos.
 
+\section*{Ejercicio 1: Movimiento con Teclado}
 
-\subsection*{Ejercicio 2}
+Este ejercicio implementa un controlador básico del robot Robobo mediante teclado utilizando la biblioteca \texttt{pynput}.
 
-Este ejercicio permite controlar el robot Robobo mediante comandos de texto introducidos en una interfaz gráfica.
-$$\begin{align}
-\text{Movimientos básicos: } &\begin{cases}
-\text{forward} &\rightarrow (v, v) \
-\text{back} &\rightarrow (-v, -v) \
-\text{left} &\rightarrow (-v, v) \
-\text{right} &\rightarrow (v, -v)
-\end{cases}
-\end{align}$$
-$$\begin{align}
-\text{Movimientos compuestos: } &\begin{cases}
-\text{forward-left} &\rightarrow (v/2, v) \
-\text{forward-right} &\rightarrow (v, v/2) \
-\text{back-left} &\rightarrow (-v, -v/2) \
-\text{back-right} &\rightarrow (-v/2, -v)
-\end{cases}
-\end{align}$$
-Admite parámetros:
+Control: W (adelante), S (atrás), A (izquierda), D (derecha), Q (detener y salir).
 
-speed X: Establece velocidad a XX
-X
-time Y: Establece duración a YY
-Y segundos
+El robot utiliza una velocidad constante (SPEED=10) y detiene los motores al soltar cualquier tecla. Los movimientos de izquierda y derecha giran el robot de forma estacionaria.
 
-\subsection*{Ejercicio 2b}
+\section*{Ejercicio 2: Movimiento con Cuadro de Texto}
 
-Extensión del ejercicio 2 que utiliza reconocimiento de voz en español y añade control de emociones y LEDs.
-$$\begin{align}
-\text{Movimientos: } &\begin{cases}
-\text{delante} \
-\text{atrás} \
-\text{izquierda} \
-\text{derecha}
-\end{cases} \quad
-\text{Emociones: } \begin{cases}
-\text{feliz} \
-\text{triste} \
-\text{enfadado}
-\end{cases} \quad
-\text{Colores LED: } \begin{cases}
-\text{rojo} \
-\text{verde} \
-\text{azul}
-\end{cases}
-\end{align}$$
-Utiliza la biblioteca speech\_recognition con reconocimiento Google (language="es").
+Este ejercicio permite controlar el robot Robobo mediante comandos de texto introducidos en una interfaz gráfica con cuadros de diálogo.
 
-\subsection*{Ejercicio 3}
+Movimientos básicos: forward, back, left, right.
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.7\linewidth]{captura}
-	\caption{chatgpt}
-	\label{fig:captura}
-\end{figure}
+Movimientos compuestos: forward-left, forward-right, back-left, back-right.
 
+Admite parámetros adicionales:
+\begin{itemize}
+\item speed X: Establece velocidad a X
+\item time Y: Establece duración a Y segundos
+\end{itemize}
 
-\subsection*{Ejercicio 4}
+La implementación se basa en la clase \texttt{TextRoboboController} que hereda de la clase base \texttt{RoboboController}, modificando únicamente la obtención de los comandos mediante el diálogo anteriormente mencionado.
+
+\section*{Ejercicio 2b: Movimiento con STT}
+
+Apartado opcional del ejercicio 2 que utiliza reconocimiento de voz en español y añade control de emociones y LEDs.
+
+Movimientos: delante, atrás, izquierda, derecha.
+
+Emociones: feliz, triste, enfadado.
+
+Colores LED: rojo, verde, azul.
+
+Utilizando la biblioteca \texttt{speech\_recognition} con reconocimiento Google (\texttt{language="es"}). Cambiamos el idioma de los comandos para facilitar la comprobación de su funcionalidad, el tiempo de recepción de comandos debe ser cambiado en el propio código; inicialmente está puesto a 4,5 segundos.
+
+\section*{Ejercicio 3: Definición de prompt para ChatGPT}
+
+Este ejercicio consiste en la definición de un prompt específico para ChatGPT que permite extraer comandos de movimiento para el robot a partir de frases en lenguaje natural. A continuación se muestra el contenido del prompt que utilizamos para el entrenamiento:
+
+\begin{lstlisting}[language=markdown]
+Necesito que extraigas comandos de movimiento para un robot a partir de frases en lenguaje natural. 
+
+Los comandos permitidos son:
+- forward: para mover hacia adelante
+- back: para mover hacia atras
+- left: para girar a la izquierda
+- right: para girar a la derecha
+- stop: para detener el movimiento
+
+Tambien puedes combinar los comandos de direccion para movimientos compuestos como:
+- forward-left: para avanzar girando a la izquierda
+- forward-right: para avanzar girando a la derecha
+- back-left: para retroceder girando a la izquierda
+- back-right: para retroceder girando a la derecha
+
+Ademas, puedes incluir parametros:
+- speed X: donde X es un numero entero que indica la velocidad
+- time Y: donde Y es un numero que indica los segundos de movimiento
+
+Ejemplos:
+- "Avanza un poco": forward
+- "Retrocede a velocidad 30": back speed 30
+- "Gira a la derecha durante 3 segundos": right time 3
+- "Avanza girando a la izquierda a velocidad 25": forward-left speed 25
+
+Responde UNICAMENTE con el comando extraido, sin explicaciones ni formato adicional.
+\end{lstlisting}
+
+La ejecución del entrenamiento se puede comprobar al \href{ej3}{final del informe}.
+
+\section*{Ejercicio 4: Movimiento con ChatGPT}
 
 Este ejercicio integra ChatGPT para interpretar comandos en lenguaje natural y convertirlos en instrucciones para el robot.
-$$\begin{aligned}
-	\text{Entrada:} &\text{ "Avanza un poco"} \
-	\text{Procesamiento ChatGPT} &\downarrow \
-	\text{Salida:} &\text{ "forward"}
-\end{aligned}$$
-El sistema utiliza un prompt específico para extraer comandos válidos para el robot a partir del lenguaje natural.
 
-\subsection*{Ejercicio 5}
+El usuario introduce una frase (ej: "Avanza un poco"), ChatGPT la procesa y devuelve un comando (indicado en el ejercicio 3, ej: "forward"), que el controlador ejecuta. Utilizamos temperatura 0 en este caso, ya que queremos únicamente los comandos establecidos.
 
-Este ejercicio avanza en la integración con ChatGPT, generando un vector de control completo para el robot.
-$$\begin{aligned}
-	\text{Vector de control:} &[v_x, v_y, \text{emoción}, \text{sonido}, \text{texto}] \
-	\text{Ejemplo:} &[50, 50, \text{"happy"}, \text{"happy"}, \text{"¡Avanzando!"}]
-\end{aligned}$$
+\newpage
+
+\section*{Ejercicio 5: Movimiento con vector de ChatGPT}
+
+Este ejercicio, a diferencia del anterior, genera un vector de control completo para el robot.
+
+Vector de control: [vx, vy, emoción, sonido, texto]
+
+Donde vx, vy son las velocidades de las ruedas (-100 a 100), emoción y sonido pueden ser "happy", "sad" o "angry", y texto es un mensaje que el robot emite.
+
+El controlador ejecuta todos los aspectos simultáneamente y detiene el robot después de 3 segundos. Fue necesario adaptar el entrenamiento del ejercicio 3 usando el siguiente texto:
+
+\begin{lstlisting}
+Necesito que generes comandos de control para un robot Robobo a partir de frases en lenguaje natural.
+
+Tu respuesta DEBE ser un vector de 5 elementos con el siguiente formato exacto: [vx, vy, emocion, sonido, texto]
+
 Donde:
+- vx y vy son valores numericos entre -100 y 100 que representan las velocidades de las ruedas derecha e izquierda, usa 20 como valor por defecto
+- emocion es un string que debe ser uno de los siguientes: "happy", "sad", "angry"
+- sonido es un string que debe ser uno de los siguientes: "happy", "sad", "angry"
+- texto es un string con el mensaje que el robot debe decir
 
-vx,vy∈[−100,100]v_x, v_y \in [-100, 100]
-vx​,vy​∈[−100,100] son las velocidades de las ruedas
+Ejemplos de comandos y sus respuestas:
+- "Avanza rapido con cara feliz": [50, 50, "happy", "happy", "Avanzando a toda velocidad!"]
+- "Gira a la derecha lentamente con cara triste": [-20, 20, "sad", "sad", "Girando a la derecha..."]
 
-emocioˊn∈{"happy","sad","angry"}\text{emoción} \in \{\text{"happy"}, \text{"sad"}, \text{"angry"}\}
-emocioˊn∈{"happy","sad","angry"}
-sonido∈{"happy","sad","angry"}\text{sonido} \in \{\text{"happy"}, \text{"sad"}, \text{"angry"}\}
-sonido∈{"happy","sad","angry"}
-texto\text{texto}
-texto es un mensaje que el robot pronunciará
+Para los movimientos, considera:
+- Avanzar: valores positivos iguales en vx y vy
+- Retroceder: valores negativos iguales en vx y vy
+- Girar a la derecha: vx positivo, vy negativo
+- Girar a la izquierda: vx negativo, vy positivo                        
+- Velocidad rapida: valores cercanos a 100
+- Velocidad lenta: valores cercanos a 20
+
+Responde UNICAMENTE con el vector, sin explicaciones ni texto adicional.
+\end{lstlisting}
 
 
-El controlador ejecuta todos los parámetros y detiene el robot después de 3 segundos por seguridad.
+\newpage
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{chat_gpt_response.png}
+    \caption{Entrenamiento de ChatGPT para movimiento de Robobo}
+    \label{fig:ej3}
+\end{figure}
 
 \end{document}
-
