@@ -1,0 +1,1881 @@
+
+Running with the following configuration:
+Root directory: /Users/pepe/carrera/3/2/vca/practicas/p2
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: resnet50
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 128
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+Running with the following configuration:
+Root directory: /Users/pepe/carrera/3/2/vca/practicas/p2
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: vgg_19
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 128
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+Running with the following configuration:
+Root directory: /Users/pepe/carrera/3/2/vca/practicas/p2
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: convnext_base
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 128
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+Running with the following configuration:
+Root directory: /Users/pepe/carrera/3/2/vca/practicas/p2
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: efficientnet_b4
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 128
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+Running with the following configuration:
+Root directory: /Users/pepe/carrera/3/2/vca/practicas/p2
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: efficientnet_b7
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 128
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+Running with the following configuration:
+Root directory: /home/clown/Downloads/Archivo/
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: resnet50
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 32
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+--
+Class counts before balancing: Counter({1: 148, 2: 147, 0: 88})
+weights for balancing: Counter({0.006756756756756757: 148, 0.006802721088435374: 147, 0.011363636363636364: 88})
+--
+
+Using device: cuda:0
+Epoch 1/500
+----------
+  Batch 0: Loss: 1.1881, Acc: 0.2812
+  Train Loss: 1.1703 Acc: 0.3473
+Epoch 2/500
+----------
+  Batch 0: Loss: 1.1651, Acc: 0.3438
+  Train Loss: 1.1632 Acc: 0.3629
+Epoch 3/500
+----------
+  Batch 0: Loss: 1.1671, Acc: 0.4375
+  Train Loss: 1.1461 Acc: 0.4282
+Epoch 4/500
+----------
+  Batch 0: Loss: 1.1474, Acc: 0.4375
+  Train Loss: 1.1407 Acc: 0.4256
+Epoch 5/500
+----------
+  Batch 0: Loss: 1.1076, Acc: 0.6250
+  Train Loss: 1.1205 Acc: 0.4569
+Epoch 6/500
+----------
+  Batch 0: Loss: 1.1490, Acc: 0.4062
+  Train Loss: 1.1280 Acc: 0.4386
+  No improvement in loss for 1 epochs.
+Epoch 7/500
+----------
+  Batch 0: Loss: 1.0997, Acc: 0.4688
+  Train Loss: 1.1178 Acc: 0.4256
+Epoch 8/500
+----------
+  Batch 0: Loss: 1.1101, Acc: 0.3750
+  Train Loss: 1.1001 Acc: 0.4700
+Epoch 9/500
+----------
+  Batch 0: Loss: 1.1304, Acc: 0.3750
+  Train Loss: 1.1052 Acc: 0.4569
+  No improvement in loss for 1 epochs.
+Epoch 10/500
+----------
+  Batch 0: Loss: 0.9976, Acc: 0.6562
+  Train Loss: 1.0912 Acc: 0.5274
+Epoch 11/500
+----------
+  Batch 0: Loss: 1.2076, Acc: 0.3125
+  Train Loss: 1.1067 Acc: 0.4439
+  No improvement in loss for 1 epochs.
+Epoch 12/500
+----------
+  Batch 0: Loss: 1.1170, Acc: 0.4062
+  Train Loss: 1.1013 Acc: 0.4543
+  No improvement in loss for 2 epochs.
+Epoch 13/500
+----------
+  Batch 0: Loss: 1.0843, Acc: 0.5312
+  Train Loss: 1.1081 Acc: 0.4778
+  No improvement in loss for 3 epochs.
+Epoch 14/500
+----------
+  Batch 0: Loss: 1.0395, Acc: 0.5625
+  Train Loss: 1.0844 Acc: 0.4961
+Epoch 15/500
+----------
+  Batch 0: Loss: 1.0744, Acc: 0.5000
+  Train Loss: 1.0903 Acc: 0.4856
+  No improvement in loss for 1 epochs.
+Epoch 16/500
+----------
+  Batch 0: Loss: 0.9804, Acc: 0.6875
+  Train Loss: 1.0885 Acc: 0.4752
+  No improvement in loss for 2 epochs.
+Epoch 17/500
+----------
+  Batch 0: Loss: 1.1302, Acc: 0.4062
+  Train Loss: 1.0712 Acc: 0.4987
+Epoch 18/500
+----------
+  Batch 0: Loss: 1.0762, Acc: 0.5312
+  Train Loss: 1.0724 Acc: 0.5065
+  No improvement in loss for 1 epochs.
+Epoch 19/500
+----------
+  Batch 0: Loss: 1.0795, Acc: 0.5312
+  Train Loss: 1.0769 Acc: 0.5300
+  No improvement in loss for 2 epochs.
+Epoch 20/500
+----------
+  Batch 0: Loss: 1.1624, Acc: 0.3750
+  Train Loss: 1.0705 Acc: 0.5379
+Epoch 21/500
+----------
+  Batch 0: Loss: 1.0600, Acc: 0.5938
+  Train Loss: 1.1004 Acc: 0.4569
+  No improvement in loss for 1 epochs.
+Epoch 22/500
+----------
+  Batch 0: Loss: 1.0865, Acc: 0.5000
+  Train Loss: 1.0599 Acc: 0.5222
+Epoch 23/500
+----------
+  Batch 0: Loss: 1.0413, Acc: 0.5938
+  Train Loss: 1.0601 Acc: 0.5170
+  No improvement in loss for 1 epochs.
+Epoch 24/500
+----------
+  Batch 0: Loss: 1.0689, Acc: 0.5000
+  Train Loss: 1.0437 Acc: 0.5379
+Epoch 25/500
+----------
+  Batch 0: Loss: 1.0176, Acc: 0.5938
+  Train Loss: 1.0558 Acc: 0.5300
+  No improvement in loss for 1 epochs.
+Epoch 26/500
+----------
+  Batch 0: Loss: 1.1188, Acc: 0.4375
+  Train Loss: 1.0623 Acc: 0.5196
+  No improvement in loss for 2 epochs.
+Epoch 27/500
+----------
+  Batch 0: Loss: 1.0798, Acc: 0.4375
+  Train Loss: 1.0451 Acc: 0.5352
+  No improvement in loss for 3 epochs.
+Epoch 28/500
+----------
+  Batch 0: Loss: 1.1423, Acc: 0.4688
+  Train Loss: 1.0619 Acc: 0.5352
+  No improvement in loss for 4 epochs.
+Epoch 29/500
+----------
+  Batch 0: Loss: 1.0665, Acc: 0.5000
+  Train Loss: 1.0250 Acc: 0.5770
+Epoch 30/500
+----------
+  Batch 0: Loss: 1.0957, Acc: 0.4062
+  Train Loss: 1.0434 Acc: 0.5483
+  No improvement in loss for 1 epochs.
+Epoch 31/500
+----------
+  Batch 0: Loss: 0.9721, Acc: 0.6562
+  Train Loss: 1.0628 Acc: 0.5509
+  No improvement in loss for 2 epochs.
+Epoch 32/500
+----------
+  Batch 0: Loss: 1.0821, Acc: 0.5000
+  Train Loss: 1.0525 Acc: 0.5352
+  No improvement in loss for 3 epochs.
+Epoch 33/500
+----------
+  Batch 0: Loss: 1.0671, Acc: 0.5625
+  Train Loss: 1.0425 Acc: 0.5587
+  No improvement in loss for 4 epochs.
+Epoch 34/500
+----------
+  Batch 0: Loss: 0.9314, Acc: 0.6875
+  Train Loss: 1.0095 Acc: 0.5927
+Epoch 35/500
+----------
+  Batch 0: Loss: 0.9969, Acc: 0.5938
+  Train Loss: 0.9838 Acc: 0.6449
+Epoch 36/500
+----------
+  Batch 0: Loss: 0.9795, Acc: 0.5625
+  Train Loss: 0.9986 Acc: 0.5979
+  No improvement in loss for 1 epochs.
+Epoch 37/500
+----------
+  Batch 0: Loss: 0.9331, Acc: 0.6875
+  Train Loss: 1.0230 Acc: 0.5718
+  No improvement in loss for 2 epochs.
+Epoch 38/500
+----------
+  Batch 0: Loss: 1.0180, Acc: 0.5938
+  Train Loss: 1.0118 Acc: 0.5953
+  No improvement in loss for 3 epochs.
+Epoch 39/500
+----------
+  Batch 0: Loss: 1.0194, Acc: 0.6562
+  Train Loss: 1.0251 Acc: 0.5927
+  No improvement in loss for 4 epochs.
+Epoch 40/500
+----------
+  Batch 0: Loss: 1.0745, Acc: 0.5312
+  Train Loss: 1.0024 Acc: 0.6162
+  No improvement in loss for 5 epochs.
+Epoch 41/500
+----------
+  Batch 0: Loss: 1.0018, Acc: 0.6250
+  Train Loss: 1.0447 Acc: 0.5379
+  No improvement in loss for 6 epochs.
+Epoch 42/500
+----------
+  Batch 0: Loss: 0.9526, Acc: 0.6875
+  Train Loss: 1.0536 Acc: 0.5561
+  No improvement in loss for 7 epochs.
+Epoch 43/500
+----------
+  Batch 0: Loss: 0.9700, Acc: 0.6562
+  Train Loss: 1.0211 Acc: 0.5796
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 43 epochs.
+Epoch 44/500
+----------
+  Batch 0: Loss: 0.9592, Acc: 0.6250
+  Train Loss: 1.0219 Acc: 0.5901
+  No improvement in loss for 9 epochs.
+Epoch 45/500
+----------
+  Batch 0: Loss: 0.9429, Acc: 0.6562
+  Train Loss: 1.0261 Acc: 0.5796
+  No improvement in loss for 10 epochs.
+Epoch 46/500
+----------
+  Batch 0: Loss: 1.0900, Acc: 0.5312
+  Train Loss: 1.0533 Acc: 0.5587
+  No improvement in loss for 11 epochs.
+Epoch 47/500
+----------
+  Batch 0: Loss: 0.9932, Acc: 0.6250
+  Train Loss: 0.9868 Acc: 0.6319
+  No improvement in loss for 12 epochs.
+Epoch 48/500
+----------
+  Batch 0: Loss: 1.1354, Acc: 0.4375
+  Train Loss: 0.9943 Acc: 0.6162
+  No improvement in loss for 13 epochs.
+Epoch 49/500
+----------
+  Batch 0: Loss: 1.0525, Acc: 0.6250
+  Train Loss: 0.9886 Acc: 0.6214
+  No improvement in loss for 14 epochs.
+Epoch 50/500
+----------
+  Batch 0: Loss: 1.0454, Acc: 0.5625
+  Train Loss: 1.0136 Acc: 0.5849
+  No improvement in loss for 15 epochs.
+Epoch 51/500
+----------
+  Batch 0: Loss: 1.1190, Acc: 0.4688
+  Train Loss: 1.0126 Acc: 0.5875
+  No improvement in loss for 16 epochs.
+Epoch 52/500
+----------
+  Batch 0: Loss: 1.0571, Acc: 0.5000
+  Train Loss: 1.0360 Acc: 0.5666
+  No improvement in loss for 17 epochs.
+Epoch 53/500
+----------
+  Batch 0: Loss: 0.8602, Acc: 0.7812
+  Train Loss: 0.9574 Acc: 0.6554
+Epoch 54/500
+----------
+  Batch 0: Loss: 0.9883, Acc: 0.5312
+  Train Loss: 1.0004 Acc: 0.5927
+  No improvement in loss for 1 epochs.
+Epoch 55/500
+----------
+  Batch 0: Loss: 0.9989, Acc: 0.6562
+  Train Loss: 0.9695 Acc: 0.6580
+  No improvement in loss for 2 epochs.
+Epoch 56/500
+----------
+  Batch 0: Loss: 1.0229, Acc: 0.5938
+  Train Loss: 1.0034 Acc: 0.6005
+  No improvement in loss for 3 epochs.
+Epoch 57/500
+----------
+  Batch 0: Loss: 0.9547, Acc: 0.6250
+  Train Loss: 0.9952 Acc: 0.6005
+  No improvement in loss for 4 epochs.
+Epoch 58/500
+----------
+  Batch 0: Loss: 1.0483, Acc: 0.5625
+  Train Loss: 0.9907 Acc: 0.6240
+  No improvement in loss for 5 epochs.
+Epoch 59/500
+----------
+  Batch 0: Loss: 1.1209, Acc: 0.5000
+  Train Loss: 1.0026 Acc: 0.5927
+  No improvement in loss for 6 epochs.
+Epoch 60/500
+----------
+  Batch 0: Loss: 0.9607, Acc: 0.6875
+  Train Loss: 0.9623 Acc: 0.6554
+  No improvement in loss for 7 epochs.
+Epoch 61/500
+----------
+  Batch 0: Loss: 1.0261, Acc: 0.5938
+  Train Loss: 0.9814 Acc: 0.6397
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 61 epochs.
+Epoch 62/500
+----------
+  Batch 0: Loss: 1.0541, Acc: 0.5625
+  Train Loss: 0.9621 Acc: 0.6580
+  No improvement in loss for 9 epochs.
+Epoch 63/500
+----------
+  Batch 0: Loss: 0.8964, Acc: 0.6875
+  Train Loss: 0.9632 Acc: 0.6449
+  No improvement in loss for 10 epochs.
+Epoch 64/500
+----------
+  Batch 0: Loss: 1.0866, Acc: 0.5000
+  Train Loss: 0.9354 Acc: 0.6867
+Epoch 65/500
+----------
+  Batch 0: Loss: 1.0093, Acc: 0.5625
+  Train Loss: 0.9815 Acc: 0.6188
+  No improvement in loss for 1 epochs.
+Epoch 66/500
+----------
+  Batch 0: Loss: 0.8560, Acc: 0.7188
+  Train Loss: 0.9645 Acc: 0.6423
+  No improvement in loss for 2 epochs.
+Epoch 67/500
+----------
+  Batch 0: Loss: 0.8387, Acc: 0.7812
+  Train Loss: 0.9555 Acc: 0.6554
+  No improvement in loss for 3 epochs.
+Epoch 68/500
+----------
+  Batch 0: Loss: 1.0889, Acc: 0.5000
+  Train Loss: 0.9811 Acc: 0.6319
+  No improvement in loss for 4 epochs.
+Epoch 69/500
+----------
+  Batch 0: Loss: 1.0017, Acc: 0.5938
+  Train Loss: 0.9585 Acc: 0.6658
+  No improvement in loss for 5 epochs.
+Epoch 70/500
+----------
+  Batch 0: Loss: 1.0015, Acc: 0.6562
+  Train Loss: 0.9412 Acc: 0.6789
+  No improvement in loss for 6 epochs.
+Epoch 71/500
+----------
+  Batch 0: Loss: 1.0357, Acc: 0.5625
+  Train Loss: 0.9234 Acc: 0.6997
+Epoch 72/500
+----------
+  Batch 0: Loss: 0.9298, Acc: 0.6562
+  Train Loss: 0.9663 Acc: 0.6475
+  No improvement in loss for 1 epochs.
+Epoch 73/500
+----------
+  Batch 0: Loss: 0.9431, Acc: 0.6562
+  Train Loss: 0.9151 Acc: 0.7023
+Epoch 74/500
+----------
+  Batch 0: Loss: 0.8651, Acc: 0.8125
+  Train Loss: 0.9554 Acc: 0.6606
+  No improvement in loss for 1 epochs.
+Epoch 75/500
+----------
+  Batch 0: Loss: 0.9881, Acc: 0.5938
+  Train Loss: 0.9315 Acc: 0.6841
+  No improvement in loss for 2 epochs.
+Epoch 76/500
+----------
+  Batch 0: Loss: 1.0134, Acc: 0.5938
+  Train Loss: 0.9689 Acc: 0.6345
+  No improvement in loss for 3 epochs.
+Epoch 77/500
+----------
+  Batch 0: Loss: 0.9165, Acc: 0.7188
+  Train Loss: 0.9824 Acc: 0.6319
+  No improvement in loss for 4 epochs.
+Epoch 78/500
+----------
+  Batch 0: Loss: 0.9460, Acc: 0.6562
+  Train Loss: 0.9233 Acc: 0.6893
+  No improvement in loss for 5 epochs.
+Epoch 79/500
+----------
+  Batch 0: Loss: 1.0553, Acc: 0.5312
+  Train Loss: 0.9170 Acc: 0.7050
+  No improvement in loss for 6 epochs.
+Epoch 80/500
+----------
+  Batch 0: Loss: 0.9608, Acc: 0.6875
+  Train Loss: 0.9756 Acc: 0.6423
+  No improvement in loss for 7 epochs.
+Epoch 81/500
+----------
+  Batch 0: Loss: 1.0490, Acc: 0.5625
+  Train Loss: 0.9296 Acc: 0.6971
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 81 epochs.
+Epoch 82/500
+----------
+  Batch 0: Loss: 0.8679, Acc: 0.7188
+  Train Loss: 0.9306 Acc: 0.6736
+  No improvement in loss for 9 epochs.
+Epoch 83/500
+----------
+  Batch 0: Loss: 0.9851, Acc: 0.5938
+  Train Loss: 0.9510 Acc: 0.6606
+  No improvement in loss for 10 epochs.
+Epoch 84/500
+----------
+  Batch 0: Loss: 1.0270, Acc: 0.5938
+  Train Loss: 0.9748 Acc: 0.6449
+  No improvement in loss for 11 epochs.
+Epoch 85/500
+----------
+  Batch 0: Loss: 0.9362, Acc: 0.7188
+  Train Loss: 0.9758 Acc: 0.6397
+  No improvement in loss for 12 epochs.
+Epoch 86/500
+----------
+  Batch 0: Loss: 0.9849, Acc: 0.6562
+  Train Loss: 0.9342 Acc: 0.6736
+  No improvement in loss for 13 epochs.
+Epoch 87/500
+----------
+  Batch 0: Loss: 0.8660, Acc: 0.8125
+  Train Loss: 0.9486 Acc: 0.6632
+  No improvement in loss for 14 epochs.
+Epoch 88/500
+----------
+  Batch 0: Loss: 0.8854, Acc: 0.7500
+  Train Loss: 0.9340 Acc: 0.6867
+  No improvement in loss for 15 epochs.
+Epoch 89/500
+----------
+  Batch 0: Loss: 0.9136, Acc: 0.7188
+  Train Loss: 0.9392 Acc: 0.6815
+  No improvement in loss for 16 epochs.
+Epoch 90/500
+----------
+  Batch 0: Loss: 0.9618, Acc: 0.6562
+  Train Loss: 0.9203 Acc: 0.6971
+  No improvement in loss for 17 epochs.
+Epoch 91/500
+----------
+  Batch 0: Loss: 0.8650, Acc: 0.8125
+  Train Loss: 0.9222 Acc: 0.7076
+  No improvement in loss for 18 epochs.
+Epoch 92/500
+----------
+  Batch 0: Loss: 0.8861, Acc: 0.7500
+  Train Loss: 0.9596 Acc: 0.6501
+  No improvement in loss for 19 epochs.
+Epoch 93/500
+----------
+  Batch 0: Loss: 0.9731, Acc: 0.6562
+  Train Loss: 0.9137 Acc: 0.7023
+Epoch 94/500
+----------
+  Batch 0: Loss: 0.9532, Acc: 0.6875
+  Train Loss: 0.9319 Acc: 0.6945
+  No improvement in loss for 1 epochs.
+Epoch 95/500
+----------
+  Batch 0: Loss: 0.9410, Acc: 0.6562
+  Train Loss: 0.9122 Acc: 0.7023
+Epoch 96/500
+----------
+  Batch 0: Loss: 0.8983, Acc: 0.7188
+  Train Loss: 0.9241 Acc: 0.6841
+  No improvement in loss for 1 epochs.
+Epoch 97/500
+----------
+  Batch 0: Loss: 0.9513, Acc: 0.6562
+  Train Loss: 0.9388 Acc: 0.6710
+  No improvement in loss for 2 epochs.
+Epoch 98/500
+----------
+  Batch 0: Loss: 0.9906, Acc: 0.5938
+  Train Loss: 0.9401 Acc: 0.6710
+  No improvement in loss for 3 epochs.
+Epoch 99/500
+----------
+  Batch 0: Loss: 0.8906, Acc: 0.7188
+  Train Loss: 0.9095 Acc: 0.7128
+Epoch 100/500
+----------
+  Batch 0: Loss: 0.8055, Acc: 0.8750
+  Train Loss: 0.9376 Acc: 0.6893
+  No improvement in loss for 1 epochs.
+Epoch 101/500
+----------
+  Batch 0: Loss: 0.9213, Acc: 0.6875
+  Train Loss: 0.9542 Acc: 0.6580
+  No improvement in loss for 2 epochs.
+Epoch 102/500
+----------
+  Batch 0: Loss: 1.0406, Acc: 0.5938
+  Train Loss: 0.9462 Acc: 0.6789
+  No improvement in loss for 3 epochs.
+Epoch 103/500
+----------
+  Batch 0: Loss: 0.9390, Acc: 0.6250
+  Train Loss: 0.9397 Acc: 0.6815
+  No improvement in loss for 4 epochs.
+Epoch 104/500
+----------
+  Batch 0: Loss: 0.9526, Acc: 0.6562
+  Train Loss: 0.9434 Acc: 0.6684
+  No improvement in loss for 5 epochs.
+Epoch 105/500
+----------
+  Batch 0: Loss: 0.9572, Acc: 0.7188
+  Train Loss: 0.9352 Acc: 0.6867
+  No improvement in loss for 6 epochs.
+Epoch 106/500
+----------
+  Batch 0: Loss: 0.9116, Acc: 0.7188
+  Train Loss: 0.8923 Acc: 0.7232
+Epoch 107/500
+----------
+  Batch 0: Loss: 0.9931, Acc: 0.6250
+  Train Loss: 0.9098 Acc: 0.6997
+  No improvement in loss for 1 epochs.
+Epoch 108/500
+----------
+  Batch 0: Loss: 0.8575, Acc: 0.8125
+  Train Loss: 0.9280 Acc: 0.7023
+  No improvement in loss for 2 epochs.
+Epoch 109/500
+----------
+  Batch 0: Loss: 0.9776, Acc: 0.6250
+  Train Loss: 0.8979 Acc: 0.7311
+  No improvement in loss for 3 epochs.
+Epoch 110/500
+----------
+  Batch 0: Loss: 1.0283, Acc: 0.5938
+  Train Loss: 0.9112 Acc: 0.7050
+  No improvement in loss for 4 epochs.
+Epoch 111/500
+----------
+  Batch 0: Loss: 0.8857, Acc: 0.7188
+  Train Loss: 0.9254 Acc: 0.6867
+  No improvement in loss for 5 epochs.
+Epoch 112/500
+----------
+  Batch 0: Loss: 0.9798, Acc: 0.5938
+  Train Loss: 0.9410 Acc: 0.6710
+  No improvement in loss for 6 epochs.
+Epoch 113/500
+----------
+  Batch 0: Loss: 0.8406, Acc: 0.8125
+  Train Loss: 0.9068 Acc: 0.7180
+  No improvement in loss for 7 epochs.
+Epoch 114/500
+----------
+  Batch 0: Loss: 0.9067, Acc: 0.7500
+  Train Loss: 0.9001 Acc: 0.7180
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 114 epochs.
+Epoch 115/500
+----------
+  Batch 0: Loss: 0.9234, Acc: 0.6875
+  Train Loss: 0.9616 Acc: 0.6554
+  No improvement in loss for 9 epochs.
+Epoch 116/500
+----------
+  Batch 0: Loss: 0.8950, Acc: 0.7500
+  Train Loss: 0.9212 Acc: 0.6919
+  No improvement in loss for 10 epochs.
+Epoch 117/500
+----------
+  Batch 0: Loss: 0.8529, Acc: 0.7812
+  Train Loss: 0.9198 Acc: 0.7076
+  No improvement in loss for 11 epochs.
+Epoch 118/500
+----------
+  Batch 0: Loss: 0.9769, Acc: 0.5938
+  Train Loss: 0.8911 Acc: 0.7311
+Epoch 119/500
+----------
+  Batch 0: Loss: 0.9401, Acc: 0.6562
+  Train Loss: 0.9152 Acc: 0.7050
+  No improvement in loss for 1 epochs.
+Epoch 120/500
+----------
+  Batch 0: Loss: 0.9401, Acc: 0.6875
+  Train Loss: 0.9374 Acc: 0.6893
+  No improvement in loss for 2 epochs.
+Epoch 121/500
+----------
+  Batch 0: Loss: 0.9766, Acc: 0.5938
+  Train Loss: 0.9486 Acc: 0.6527
+  No improvement in loss for 3 epochs.
+Epoch 122/500
+----------
+  Batch 0: Loss: 0.8511, Acc: 0.7812
+  Train Loss: 0.9010 Acc: 0.7258
+  No improvement in loss for 4 epochs.
+Epoch 123/500
+----------
+  Batch 0: Loss: 0.9195, Acc: 0.7188
+  Train Loss: 0.8934 Acc: 0.7206
+  No improvement in loss for 5 epochs.
+Epoch 124/500
+----------
+  Batch 0: Loss: 0.8018, Acc: 0.8125
+  Train Loss: 0.8996 Acc: 0.7180
+  No improvement in loss for 6 epochs.
+Epoch 125/500
+----------
+  Batch 0: Loss: 1.0515, Acc: 0.5312
+  Train Loss: 0.9391 Acc: 0.6762
+  No improvement in loss for 7 epochs.
+Epoch 126/500
+----------
+  Batch 0: Loss: 0.8111, Acc: 0.8125
+  Train Loss: 0.8974 Acc: 0.7337
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 126 epochs.
+Epoch 127/500
+----------
+  Batch 0: Loss: 0.9739, Acc: 0.6875
+  Train Loss: 0.9391 Acc: 0.6841
+  No improvement in loss for 9 epochs.
+Epoch 128/500
+----------
+  Batch 0: Loss: 0.9690, Acc: 0.6562
+  Train Loss: 0.8976 Acc: 0.7180
+  No improvement in loss for 10 epochs.
+Epoch 129/500
+----------
+  Batch 0: Loss: 0.8793, Acc: 0.7500
+  Train Loss: 0.9014 Acc: 0.7206
+  No improvement in loss for 11 epochs.
+Epoch 130/500
+----------
+  Batch 0: Loss: 0.8915, Acc: 0.7500
+  Train Loss: 0.9206 Acc: 0.7023
+  No improvement in loss for 12 epochs.
+Epoch 131/500
+----------
+  Batch 0: Loss: 0.9531, Acc: 0.6250
+  Train Loss: 0.9277 Acc: 0.6919
+  No improvement in loss for 13 epochs.
+Epoch 132/500
+----------
+  Batch 0: Loss: 0.9737, Acc: 0.6562
+  Train Loss: 0.9262 Acc: 0.6893
+  No improvement in loss for 14 epochs.
+Epoch 133/500
+----------
+  Batch 0: Loss: 0.9343, Acc: 0.6875
+  Train Loss: 0.9184 Acc: 0.6919
+  No improvement in loss for 15 epochs.
+Epoch 134/500
+----------
+  Batch 0: Loss: 0.9319, Acc: 0.6875
+  Train Loss: 0.8722 Acc: 0.7467
+Epoch 135/500
+----------
+  Batch 0: Loss: 0.7767, Acc: 0.8438
+  Train Loss: 0.8774 Acc: 0.7363
+  No improvement in loss for 1 epochs.
+Epoch 136/500
+----------
+  Batch 0: Loss: 0.9082, Acc: 0.7188
+  Train Loss: 0.9239 Acc: 0.6867
+  No improvement in loss for 2 epochs.
+Epoch 137/500
+----------
+  Batch 0: Loss: 0.8169, Acc: 0.8438
+  Train Loss: 0.9106 Acc: 0.7128
+  No improvement in loss for 3 epochs.
+Epoch 138/500
+----------
+  Batch 0: Loss: 0.8609, Acc: 0.7500
+  Train Loss: 0.9101 Acc: 0.7102
+  No improvement in loss for 4 epochs.
+Epoch 139/500
+----------
+  Batch 0: Loss: 0.9052, Acc: 0.6875
+  Train Loss: 0.9017 Acc: 0.7154
+  No improvement in loss for 5 epochs.
+Epoch 140/500
+----------
+  Batch 0: Loss: 0.9040, Acc: 0.6875
+  Train Loss: 0.8920 Acc: 0.7232
+  No improvement in loss for 6 epochs.
+Epoch 141/500
+----------
+  Batch 0: Loss: 1.0937, Acc: 0.5312
+  Train Loss: 0.9457 Acc: 0.6658
+  No improvement in loss for 7 epochs.
+Epoch 142/500
+----------
+  Batch 0: Loss: 1.0600, Acc: 0.4688
+  Train Loss: 0.9372 Acc: 0.6815
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 142 epochs.
+Epoch 143/500
+----------
+  Batch 0: Loss: 0.8226, Acc: 0.8125
+  Train Loss: 0.9002 Acc: 0.7180
+  No improvement in loss for 9 epochs.
+Epoch 144/500
+----------
+  Batch 0: Loss: 0.8188, Acc: 0.7812
+  Train Loss: 0.8678 Acc: 0.7493
+Epoch 145/500
+----------
+  Batch 0: Loss: 0.9138, Acc: 0.6875
+  Train Loss: 0.8907 Acc: 0.7258
+  No improvement in loss for 1 epochs.
+Epoch 146/500
+----------
+  Batch 0: Loss: 0.8995, Acc: 0.7500
+  Train Loss: 0.9062 Acc: 0.7180
+  No improvement in loss for 2 epochs.
+Epoch 147/500
+----------
+  Batch 0: Loss: 0.8818, Acc: 0.7500
+  Train Loss: 0.8924 Acc: 0.7128
+  No improvement in loss for 3 epochs.
+Epoch 148/500
+----------
+  Batch 0: Loss: 0.9487, Acc: 0.6562
+  Train Loss: 0.8968 Acc: 0.7102
+  No improvement in loss for 4 epochs.
+Epoch 149/500
+----------
+  Batch 0: Loss: 0.8880, Acc: 0.7500
+  Train Loss: 0.9091 Acc: 0.7076
+  No improvement in loss for 5 epochs.
+Epoch 150/500
+----------
+  Batch 0: Loss: 0.9672, Acc: 0.6562
+  Train Loss: 0.9363 Acc: 0.6841
+  No improvement in loss for 6 epochs.
+Epoch 151/500
+----------
+  Batch 0: Loss: 0.9162, Acc: 0.7500
+  Train Loss: 0.9155 Acc: 0.7076
+  No improvement in loss for 7 epochs.
+Epoch 152/500
+----------
+  Batch 0: Loss: 0.8309, Acc: 0.7812
+  Train Loss: 0.8961 Acc: 0.7206
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 152 epochs.
+Epoch 153/500
+----------
+  Batch 0: Loss: 0.8637, Acc: 0.7812
+  Train Loss: 0.8948 Acc: 0.7285
+  No improvement in loss for 9 epochs.
+Epoch 154/500
+----------
+  Batch 0: Loss: 0.8743, Acc: 0.7188
+  Train Loss: 0.9226 Acc: 0.7023
+  No improvement in loss for 10 epochs.
+Epoch 155/500
+----------
+  Batch 0: Loss: 0.9702, Acc: 0.6562
+  Train Loss: 0.9117 Acc: 0.7076
+  No improvement in loss for 11 epochs.
+Epoch 156/500
+----------
+  Batch 0: Loss: 0.9863, Acc: 0.5625
+  Train Loss: 0.9124 Acc: 0.7023
+  No improvement in loss for 12 epochs.
+Epoch 157/500
+----------
+  Batch 0: Loss: 0.9022, Acc: 0.7812
+  Train Loss: 0.8980 Acc: 0.7311
+  No improvement in loss for 13 epochs.
+Epoch 158/500
+----------
+  Batch 0: Loss: 0.8565, Acc: 0.7812
+  Train Loss: 0.8773 Acc: 0.7546
+  No improvement in loss for 14 epochs.
+Epoch 159/500
+----------
+  Batch 0: Loss: 0.8606, Acc: 0.7812
+  Train Loss: 0.8948 Acc: 0.7232
+  No improvement in loss for 15 epochs.
+Epoch 160/500
+----------
+  Batch 0: Loss: 0.9597, Acc: 0.6250
+  Train Loss: 0.9113 Acc: 0.7050
+  No improvement in loss for 16 epochs.
+Epoch 161/500
+----------
+  Batch 0: Loss: 0.9064, Acc: 0.6875
+  Train Loss: 0.9507 Acc: 0.6527
+  No improvement in loss for 17 epochs.
+Epoch 162/500
+----------
+  Batch 0: Loss: 0.9204, Acc: 0.6875
+  Train Loss: 0.9123 Acc: 0.6997
+  No improvement in loss for 18 epochs.
+Epoch 163/500
+----------
+  Batch 0: Loss: 0.9404, Acc: 0.6562
+  Train Loss: 0.8936 Acc: 0.7311
+  No improvement in loss for 19 epochs.
+Epoch 164/500
+----------
+  Batch 0: Loss: 1.0054, Acc: 0.6250
+  Train Loss: 0.9086 Acc: 0.7023
+  No improvement in loss for 20 epochs.
+  Early stopping triggered after 164 epochs.
+Training completed in 11m 1s
+Final Accuracy: 0.7023
+Using device: cuda:0
+Test Accuracy: 0.6610
+F1 Score: 0.6418
+
+Running with the following configuration:
+Root directory: /home/clown/Downloads/Archivo/
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: vgg_19
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 32
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+--
+Class counts before balancing: Counter({1: 148, 2: 147, 0: 88})
+weights for balancing: Counter({0.006756756756756757: 148, 0.006802721088435374: 147, 0.011363636363636364: 88})
+--
+
+
+Running with the following configuration:
+Root directory: /home/clown/Downloads/Archivo/
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: convnext_base
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 32
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+--
+Class counts before balancing: Counter({1: 148, 2: 147, 0: 88})
+weights for balancing: Counter({0.006756756756756757: 148, 0.006802721088435374: 147, 0.011363636363636364: 88})
+--
+
+
+Running with the following configuration:
+Root directory: /home/clown/Downloads/Archivo/
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: efficientnet_b4
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 32
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+--
+Class counts before balancing: Counter({1: 148, 2: 147, 0: 88})
+weights for balancing: Counter({0.006756756756756757: 148, 0.006802721088435374: 147, 0.011363636363636364: 88})
+--
+
+Using device: cuda:0
+Epoch 1/500
+----------
+  Batch 0: Loss: 1.2786, Acc: 0.4062
+  Train Loss: 1.2872 Acc: 0.3159
+Epoch 2/500
+----------
+  Batch 0: Loss: 1.2746, Acc: 0.3750
+  Train Loss: 1.2774 Acc: 0.3786
+Epoch 3/500
+----------
+  Batch 0: Loss: 1.2736, Acc: 0.4375
+  Train Loss: 1.2802 Acc: 0.3499
+  No improvement in loss for 1 epochs.
+Epoch 4/500
+----------
+  Batch 0: Loss: 1.2750, Acc: 0.3438
+  Train Loss: 1.2758 Acc: 0.4047
+Epoch 5/500
+----------
+  Batch 0: Loss: 1.2951, Acc: 0.2188
+  Train Loss: 1.2835 Acc: 0.3655
+  No improvement in loss for 1 epochs.
+Epoch 6/500
+----------
+  Batch 0: Loss: 1.2777, Acc: 0.4062
+  Train Loss: 1.2735 Acc: 0.3708
+Epoch 7/500
+----------
+  Batch 0: Loss: 1.2677, Acc: 0.5938
+
+Running with the following configuration:
+Root directory: /home/clown/Downloads/Archivo/
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: resnet50
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 32
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+--
+Class counts before balancing: Counter({1: 148, 2: 147, 0: 88})
+weights for balancing: Counter({0.006756756756756757: 148, 0.006802721088435374: 147, 0.011363636363636364: 88})
+--
+
+Using device: cuda:0
+Epoch 1/500
+----------
+  Batch 0: Loss: 1.1702, Acc: 0.4375
+  Train Loss: 1.1642 Acc: 0.3629
+Epoch 2/500
+----------
+  Batch 0: Loss: 1.1630, Acc: 0.3750
+  Train Loss: 1.1715 Acc: 0.3629
+  No improvement in loss for 1 epochs.
+Epoch 3/500
+----------
+  Batch 0: Loss: 1.1955, Acc: 0.2500
+  Train Loss: 1.1611 Acc: 0.3681
+Epoch 4/500
+----------
+  Batch 0: Loss: 1.1907, Acc: 0.3125
+  Train Loss: 1.1517 Acc: 0.4386
+Epoch 5/500
+----------
+  Batch 0: Loss: 1.1159, Acc: 0.5000
+  Train Loss: 1.1441 Acc: 0.4308
+Epoch 6/500
+----------
+  Batch 0: Loss: 1.1686, Acc: 0.4062
+  Train Loss: 1.1236 Acc: 0.4543
+Epoch 7/500
+----------
+  Batch 0: Loss: 1.1207, Acc: 0.4688
+  Train Loss: 1.1126 Acc: 0.4830
+Epoch 8/500
+----------
+  Batch 0: Loss: 1.1133, Acc: 0.4062
+  Train Loss: 1.1007 Acc: 0.4804
+Epoch 9/500
+----------
+  Batch 0: Loss: 1.0823, Acc: 0.5000
+  Train Loss: 1.1181 Acc: 0.4804
+  No improvement in loss for 1 epochs.
+Epoch 10/500
+----------
+  Batch 0: Loss: 1.2117, Acc: 0.3438
+  Train Loss: 1.1277 Acc: 0.4674
+  No improvement in loss for 2 epochs.
+Epoch 11/500
+----------
+  Batch 0: Loss: 1.0165, Acc: 0.5625
+  Train Loss: 1.0938 Acc: 0.5091
+Epoch 12/500
+----------
+  Batch 0: Loss: 1.1200, Acc: 0.5312
+  Train Loss: 1.1098 Acc: 0.4778
+  No improvement in loss for 1 epochs.
+Epoch 13/500
+----------
+  Batch 0: Loss: 1.0284, Acc: 0.5625
+  Train Loss: 1.1070 Acc: 0.4621
+  No improvement in loss for 2 epochs.
+Epoch 14/500
+----------
+  Batch 0: Loss: 1.1615, Acc: 0.4375
+  Train Loss: 1.0767 Acc: 0.5300
+Epoch 15/500
+----------
+  Batch 0: Loss: 1.1724, Acc: 0.3438
+  Train Loss: 1.0942 Acc: 0.4752
+  No improvement in loss for 1 epochs.
+Epoch 16/500
+----------
+  Batch 0: Loss: 1.1431, Acc: 0.4062
+  Train Loss: 1.0880 Acc: 0.4883
+  No improvement in loss for 2 epochs.
+Epoch 17/500
+----------
+  Batch 0: Loss: 1.0241, Acc: 0.5312
+  Train Loss: 1.0663 Acc: 0.5326
+Epoch 18/500
+----------
+  Batch 0: Loss: 1.0535, Acc: 0.5000
+  Train Loss: 1.0759 Acc: 0.4961
+  No improvement in loss for 1 epochs.
+Epoch 19/500
+----------
+  Batch 0: Loss: 1.0617, Acc: 0.5000
+  Train Loss: 1.0661 Acc: 0.5300
+Epoch 20/500
+----------
+  Batch 0: Loss: 1.0705, Acc: 0.5312
+  Train Loss: 1.0752 Acc: 0.5352
+  No improvement in loss for 1 epochs.
+Epoch 21/500
+----------
+  Batch 0: Loss: 1.1496, Acc: 0.5312
+  Train Loss: 1.0712 Acc: 0.5405
+  No improvement in loss for 2 epochs.
+Epoch 22/500
+----------
+  Batch 0: Loss: 0.9900, Acc: 0.5938
+  Train Loss: 1.0510 Acc: 0.5483
+Epoch 23/500
+----------
+  Batch 0: Loss: 1.0927, Acc: 0.4375
+  Train Loss: 1.0667 Acc: 0.5117
+  No improvement in loss for 1 epochs.
+Epoch 24/500
+----------
+  Batch 0: Loss: 1.0239, Acc: 0.5312
+  Train Loss: 1.0685 Acc: 0.5248
+  No improvement in loss for 2 epochs.
+Epoch 25/500
+----------
+  Batch 0: Loss: 1.0280, Acc: 0.5938
+  Train Loss: 1.0397 Acc: 0.5587
+Epoch 26/500
+----------
+  Batch 0: Loss: 1.0537, Acc: 0.5312
+  Train Loss: 1.0549 Acc: 0.5431
+  No improvement in loss for 1 epochs.
+Epoch 27/500
+----------
+  Batch 0: Loss: 1.1376, Acc: 0.4062
+  Train Loss: 1.0305 Acc: 0.5718
+Epoch 28/500
+----------
+  Batch 0: Loss: 1.0425, Acc: 0.5625
+  Train Loss: 1.0711 Acc: 0.5352
+  No improvement in loss for 1 epochs.
+Epoch 29/500
+----------
+  Batch 0: Loss: 1.0427, Acc: 0.5625
+  Train Loss: 1.0564 Acc: 0.5561
+  No improvement in loss for 2 epochs.
+Epoch 30/500
+----------
+  Batch 0: Loss: 1.0407, Acc: 0.5625
+  Train Loss: 1.0234 Acc: 0.5875
+Epoch 31/500
+----------
+  Batch 0: Loss: 0.9784, Acc: 0.5938
+  Train Loss: 1.0446 Acc: 0.5535
+  No improvement in loss for 1 epochs.
+Epoch 32/500
+----------
+  Batch 0: Loss: 0.9665, Acc: 0.6875
+  Train Loss: 1.0197 Acc: 0.5901
+Epoch 33/500
+----------
+  Batch 0: Loss: 0.9826, Acc: 0.6250
+  Train Loss: 1.0108 Acc: 0.6005
+Epoch 34/500
+----------
+  Batch 0: Loss: 1.0598, Acc: 0.5312
+  Train Loss: 1.0461 Acc: 0.5509
+  No improvement in loss for 1 epochs.
+Epoch 35/500
+----------
+  Batch 0: Loss: 0.9892, Acc: 0.6562
+  Train Loss: 1.0475 Acc: 0.5431
+  No improvement in loss for 2 epochs.
+Epoch 36/500
+----------
+  Batch 0: Loss: 1.0884, Acc: 0.5312
+  Train Loss: 1.0223 Acc: 0.5927
+  No improvement in loss for 3 epochs.
+Epoch 37/500
+----------
+  Batch 0: Loss: 1.1317, Acc: 0.4688
+  Train Loss: 1.0406 Acc: 0.5822
+  No improvement in loss for 4 epochs.
+Epoch 38/500
+----------
+  Batch 0: Loss: 1.1713, Acc: 0.4375
+  Train Loss: 1.0529 Acc: 0.5483
+  No improvement in loss for 5 epochs.
+Epoch 39/500
+----------
+  Batch 0: Loss: 1.0944, Acc: 0.5000
+  Train Loss: 1.0359 Acc: 0.5640
+  No improvement in loss for 6 epochs.
+Epoch 40/500
+----------
+  Batch 0: Loss: 0.9482, Acc: 0.7500
+  Train Loss: 1.0567 Acc: 0.5457
+  No improvement in loss for 7 epochs.
+Epoch 41/500
+----------
+  Batch 0: Loss: 1.0848, Acc: 0.5625
+  Train Loss: 1.0449 Acc: 0.5509
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 41 epochs.
+Epoch 42/500
+----------
+  Batch 0: Loss: 1.1054, Acc: 0.5000
+  Train Loss: 1.0460 Acc: 0.5666
+  No improvement in loss for 9 epochs.
+Epoch 43/500
+----------
+  Batch 0: Loss: 1.0010, Acc: 0.6250
+  Train Loss: 1.0047 Acc: 0.6057
+Epoch 44/500
+----------
+  Batch 0: Loss: 0.9138, Acc: 0.6875
+  Train Loss: 1.0241 Acc: 0.5744
+  No improvement in loss for 1 epochs.
+Epoch 45/500
+----------
+  Batch 0: Loss: 1.0805, Acc: 0.5312
+  Train Loss: 1.0152 Acc: 0.5901
+  No improvement in loss for 2 epochs.
+Epoch 46/500
+----------
+  Batch 0: Loss: 0.9539, Acc: 0.7188
+  Train Loss: 0.9890 Acc: 0.6214
+Epoch 47/500
+----------
+  Batch 0: Loss: 1.0517, Acc: 0.6250
+  Train Loss: 1.0240 Acc: 0.5901
+  No improvement in loss for 1 epochs.
+Epoch 48/500
+----------
+  Batch 0: Loss: 0.9446, Acc: 0.6875
+  Train Loss: 1.0037 Acc: 0.6084
+  No improvement in loss for 2 epochs.
+Epoch 49/500
+----------
+  Batch 0: Loss: 1.1869, Acc: 0.4062
+  Train Loss: 1.0254 Acc: 0.5796
+  No improvement in loss for 3 epochs.
+Epoch 50/500
+----------
+  Batch 0: Loss: 1.1141, Acc: 0.5312
+  Train Loss: 1.0218 Acc: 0.5953
+  No improvement in loss for 4 epochs.
+Epoch 51/500
+----------
+  Batch 0: Loss: 1.1001, Acc: 0.4375
+  Train Loss: 1.0174 Acc: 0.5875
+  No improvement in loss for 5 epochs.
+Epoch 52/500
+----------
+  Batch 0: Loss: 0.9250, Acc: 0.7188
+  Train Loss: 0.9637 Acc: 0.6501
+Epoch 53/500
+----------
+  Batch 0: Loss: 1.0199, Acc: 0.5625
+  Train Loss: 0.9548 Acc: 0.6684
+Epoch 54/500
+----------
+  Batch 0: Loss: 1.1001, Acc: 0.4688
+  Train Loss: 1.0079 Acc: 0.6005
+  No improvement in loss for 1 epochs.
+Epoch 55/500
+----------
+  Batch 0: Loss: 0.9735, Acc: 0.6562
+  Train Loss: 0.9732 Acc: 0.6449
+  No improvement in loss for 2 epochs.
+Epoch 56/500
+----------
+  Batch 0: Loss: 0.9826, Acc: 0.6250
+  Train Loss: 0.9843 Acc: 0.6266
+  No improvement in loss for 3 epochs.
+Epoch 57/500
+----------
+  Batch 0: Loss: 0.9656, Acc: 0.6250
+  Train Loss: 0.9959 Acc: 0.6136
+  No improvement in loss for 4 epochs.
+Epoch 58/500
+----------
+  Batch 0: Loss: 0.8727, Acc: 0.7188
+  Train Loss: 1.0151 Acc: 0.5927
+  No improvement in loss for 5 epochs.
+Epoch 59/500
+----------
+  Batch 0: Loss: 1.0323, Acc: 0.5625
+  Train Loss: 0.9830 Acc: 0.6423
+  No improvement in loss for 6 epochs.
+Epoch 60/500
+----------
+  Batch 0: Loss: 0.9817, Acc: 0.5938
+  Train Loss: 1.0144 Acc: 0.5979
+  No improvement in loss for 7 epochs.
+Epoch 61/500
+----------
+  Batch 0: Loss: 1.0848, Acc: 0.5000
+  Train Loss: 0.9616 Acc: 0.6527
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 61 epochs.
+Epoch 62/500
+----------
+  Batch 0: Loss: 0.9312, Acc: 0.7188
+  Train Loss: 1.0242 Acc: 0.5796
+  No improvement in loss for 9 epochs.
+Epoch 63/500
+----------
+  Batch 0: Loss: 0.9765, Acc: 0.6562
+  Train Loss: 0.9898 Acc: 0.6240
+  No improvement in loss for 10 epochs.
+Epoch 64/500
+----------
+  Batch 0: Loss: 0.9761, Acc: 0.6250
+  Train Loss: 0.9922 Acc: 0.6084
+  No improvement in loss for 11 epochs.
+Epoch 65/500
+----------
+  Batch 0: Loss: 1.0988, Acc: 0.5312
+  Train Loss: 0.9842 Acc: 0.6345
+  No improvement in loss for 12 epochs.
+Epoch 66/500
+----------
+  Batch 0: Loss: 0.9700, Acc: 0.6250
+  Train Loss: 0.9823 Acc: 0.6266
+  No improvement in loss for 13 epochs.
+Epoch 67/500
+----------
+  Batch 0: Loss: 0.9380, Acc: 0.6562
+  Train Loss: 1.0050 Acc: 0.6084
+  No improvement in loss for 14 epochs.
+Epoch 68/500
+----------
+  Batch 0: Loss: 0.8669, Acc: 0.7812
+  Train Loss: 0.9673 Acc: 0.6554
+  No improvement in loss for 15 epochs.
+Epoch 69/500
+----------
+  Batch 0: Loss: 1.0743, Acc: 0.5625
+  Train Loss: 0.9621 Acc: 0.6554
+  No improvement in loss for 16 epochs.
+Epoch 70/500
+----------
+  Batch 0: Loss: 0.9665, Acc: 0.6250
+  Train Loss: 0.9687 Acc: 0.6527
+  No improvement in loss for 17 epochs.
+Epoch 71/500
+----------
+  Batch 0: Loss: 0.9932, Acc: 0.6562
+  Train Loss: 0.9890 Acc: 0.6292
+  No improvement in loss for 18 epochs.
+Epoch 72/500
+----------
+  Batch 0: Loss: 0.9371, Acc: 0.7188
+  Train Loss: 0.9651 Acc: 0.6606
+  No improvement in loss for 19 epochs.
+Epoch 73/500
+----------
+  Batch 0: Loss: 1.0104, Acc: 0.5938
+  Train Loss: 0.9471 Acc: 0.6762
+Epoch 74/500
+----------
+  Batch 0: Loss: 0.9133, Acc: 0.7188
+  Train Loss: 0.9286 Acc: 0.6945
+Epoch 75/500
+----------
+  Batch 0: Loss: 0.9245, Acc: 0.6562
+  Train Loss: 0.9421 Acc: 0.6684
+  No improvement in loss for 1 epochs.
+Epoch 76/500
+----------
+  Batch 0: Loss: 0.8928, Acc: 0.7188
+  Train Loss: 0.9386 Acc: 0.6762
+  No improvement in loss for 2 epochs.
+Epoch 77/500
+----------
+  Batch 0: Loss: 0.9253, Acc: 0.6875
+  Train Loss: 0.9114 Acc: 0.7050
+Epoch 78/500
+----------
+  Batch 0: Loss: 0.9114, Acc: 0.7188
+  Train Loss: 0.9622 Acc: 0.6475
+  No improvement in loss for 1 epochs.
+Epoch 79/500
+----------
+  Batch 0: Loss: 0.9374, Acc: 0.7188
+  Train Loss: 0.9242 Acc: 0.6945
+  No improvement in loss for 2 epochs.
+Epoch 80/500
+----------
+  Batch 0: Loss: 0.7648, Acc: 0.9062
+  Train Loss: 0.9207 Acc: 0.6971
+  No improvement in loss for 3 epochs.
+Epoch 81/500
+----------
+  Batch 0: Loss: 1.0485, Acc: 0.5625
+  Train Loss: 0.9790 Acc: 0.6319
+  No improvement in loss for 4 epochs.
+Epoch 82/500
+----------
+  Batch 0: Loss: 1.0231, Acc: 0.6562
+  Train Loss: 0.9403 Acc: 0.6684
+  No improvement in loss for 5 epochs.
+Epoch 83/500
+----------
+  Batch 0: Loss: 0.9552, Acc: 0.6562
+  Train Loss: 0.9467 Acc: 0.6684
+  No improvement in loss for 6 epochs.
+Epoch 84/500
+----------
+  Batch 0: Loss: 0.9153, Acc: 0.6875
+  Train Loss: 0.9354 Acc: 0.6867
+  No improvement in loss for 7 epochs.
+Epoch 85/500
+----------
+  Batch 0: Loss: 0.9913, Acc: 0.6250
+  Train Loss: 0.9400 Acc: 0.6789
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 85 epochs.
+Epoch 86/500
+----------
+  Batch 0: Loss: 0.9683, Acc: 0.6562
+  Train Loss: 0.9241 Acc: 0.6997
+  No improvement in loss for 9 epochs.
+Epoch 87/500
+----------
+  Batch 0: Loss: 0.8990, Acc: 0.7188
+  Train Loss: 0.9495 Acc: 0.6658
+  No improvement in loss for 10 epochs.
+Epoch 88/500
+----------
+  Batch 0: Loss: 1.0569, Acc: 0.5312
+  Train Loss: 0.9451 Acc: 0.6841
+  No improvement in loss for 11 epochs.
+Epoch 89/500
+----------
+  Batch 0: Loss: 0.8846, Acc: 0.7188
+  Train Loss: 0.9378 Acc: 0.6815
+  No improvement in loss for 12 epochs.
+Epoch 90/500
+----------
+  Batch 0: Loss: 0.9509, Acc: 0.6562
+  Train Loss: 0.9644 Acc: 0.6501
+  No improvement in loss for 13 epochs.
+Epoch 91/500
+----------
+  Batch 0: Loss: 0.9568, Acc: 0.6562
+  Train Loss: 0.9448 Acc: 0.6736
+  No improvement in loss for 14 epochs.
+Epoch 92/500
+----------
+  Batch 0: Loss: 0.8488, Acc: 0.8125
+  Train Loss: 0.8993 Acc: 0.7232
+Epoch 93/500
+----------
+  Batch 0: Loss: 0.9955, Acc: 0.6562
+  Train Loss: 0.9361 Acc: 0.6789
+  No improvement in loss for 1 epochs.
+Epoch 94/500
+----------
+  Batch 0: Loss: 0.9258, Acc: 0.7188
+  Train Loss: 0.9298 Acc: 0.6945
+  No improvement in loss for 2 epochs.
+Epoch 95/500
+----------
+  Batch 0: Loss: 1.0020, Acc: 0.5938
+  Train Loss: 0.9213 Acc: 0.6841
+  No improvement in loss for 3 epochs.
+Epoch 96/500
+----------
+  Batch 0: Loss: 0.9504, Acc: 0.6562
+  Train Loss: 0.9202 Acc: 0.6997
+  No improvement in loss for 4 epochs.
+Epoch 97/500
+----------
+  Batch 0: Loss: 0.8812, Acc: 0.7500
+  Train Loss: 0.9046 Acc: 0.7258
+  No improvement in loss for 5 epochs.
+Epoch 98/500
+----------
+  Batch 0: Loss: 0.8889, Acc: 0.7500
+  Train Loss: 0.9168 Acc: 0.7076
+  No improvement in loss for 6 epochs.
+Epoch 99/500
+----------
+  Batch 0: Loss: 0.8362, Acc: 0.8438
+  Train Loss: 0.8993 Acc: 0.7258
+Epoch 100/500
+----------
+  Batch 0: Loss: 0.9505, Acc: 0.6562
+  Train Loss: 0.9241 Acc: 0.6945
+  No improvement in loss for 1 epochs.
+Epoch 101/500
+----------
+  Batch 0: Loss: 0.8516, Acc: 0.7500
+  Train Loss: 0.9122 Acc: 0.7206
+  No improvement in loss for 2 epochs.
+Epoch 102/500
+----------
+  Batch 0: Loss: 0.9380, Acc: 0.7188
+  Train Loss: 0.9268 Acc: 0.6919
+  No improvement in loss for 3 epochs.
+Epoch 103/500
+----------
+  Batch 0: Loss: 0.9941, Acc: 0.6250
+  Train Loss: 0.9012 Acc: 0.7258
+  No improvement in loss for 4 epochs.
+Epoch 104/500
+----------
+  Batch 0: Loss: 0.8714, Acc: 0.7812
+  Train Loss: 0.9170 Acc: 0.7050
+  No improvement in loss for 5 epochs.
+Epoch 105/500
+----------
+  Batch 0: Loss: 0.9330, Acc: 0.6562
+  Train Loss: 0.9222 Acc: 0.6893
+  No improvement in loss for 6 epochs.
+Epoch 106/500
+----------
+  Batch 0: Loss: 0.9777, Acc: 0.5938
+  Train Loss: 0.9067 Acc: 0.7128
+  No improvement in loss for 7 epochs.
+Epoch 107/500
+----------
+  Batch 0: Loss: 0.8547, Acc: 0.7188
+  Train Loss: 0.9732 Acc: 0.6292
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 107 epochs.
+Epoch 108/500
+----------
+  Batch 0: Loss: 0.9309, Acc: 0.7188
+  Train Loss: 0.9347 Acc: 0.6867
+  No improvement in loss for 9 epochs.
+Epoch 109/500
+----------
+  Batch 0: Loss: 0.8843, Acc: 0.7188
+  Train Loss: 0.9551 Acc: 0.6658
+  No improvement in loss for 10 epochs.
+Epoch 110/500
+----------
+  Batch 0: Loss: 0.9508, Acc: 0.6562
+  Train Loss: 0.9234 Acc: 0.6945
+  No improvement in loss for 11 epochs.
+Epoch 111/500
+----------
+  Batch 0: Loss: 0.9551, Acc: 0.6875
+  Train Loss: 0.9197 Acc: 0.7023
+  No improvement in loss for 12 epochs.
+Epoch 112/500
+----------
+  Batch 0: Loss: 0.8492, Acc: 0.8125
+  Train Loss: 0.9084 Acc: 0.7180
+  No improvement in loss for 13 epochs.
+Epoch 113/500
+----------
+  Batch 0: Loss: 0.9856, Acc: 0.6562
+  Train Loss: 0.9205 Acc: 0.6893
+  No improvement in loss for 14 epochs.
+Epoch 114/500
+----------
+  Batch 0: Loss: 0.8996, Acc: 0.7188
+  Train Loss: 0.9405 Acc: 0.6762
+  No improvement in loss for 15 epochs.
+Epoch 115/500
+----------
+  Batch 0: Loss: 0.8270, Acc: 0.7812
+  Train Loss: 0.9173 Acc: 0.7128
+  No improvement in loss for 16 epochs.
+Epoch 116/500
+----------
+  Batch 0: Loss: 0.9133, Acc: 0.6875
+  Train Loss: 0.8868 Acc: 0.7363
+Epoch 117/500
+----------
+  Batch 0: Loss: 0.8986, Acc: 0.7188
+  Train Loss: 0.9580 Acc: 0.6554
+  No improvement in loss for 1 epochs.
+Epoch 118/500
+----------
+  Batch 0: Loss: 0.8022, Acc: 0.8125
+  Train Loss: 0.9316 Acc: 0.6919
+  No improvement in loss for 2 epochs.
+Epoch 119/500
+----------
+  Batch 0: Loss: 0.9268, Acc: 0.6875
+  Train Loss: 0.9187 Acc: 0.7050
+  No improvement in loss for 3 epochs.
+Epoch 120/500
+----------
+  Batch 0: Loss: 0.7512, Acc: 0.9062
+  Train Loss: 0.9093 Acc: 0.7154
+  No improvement in loss for 4 epochs.
+Epoch 121/500
+----------
+  Batch 0: Loss: 0.9041, Acc: 0.7188
+  Train Loss: 0.9537 Acc: 0.6606
+  No improvement in loss for 5 epochs.
+Epoch 122/500
+----------
+  Batch 0: Loss: 0.8454, Acc: 0.7812
+  Train Loss: 0.9311 Acc: 0.6893
+  No improvement in loss for 6 epochs.
+Epoch 123/500
+----------
+  Batch 0: Loss: 1.0779, Acc: 0.5625
+  Train Loss: 0.9492 Acc: 0.6736
+  No improvement in loss for 7 epochs.
+Epoch 124/500
+----------
+  Batch 0: Loss: 0.8486, Acc: 0.7188
+  Train Loss: 0.8947 Acc: 0.7206
+  No improvement in loss for 8 epochs.
+  Learning rate early stopping triggered after 124 epochs.
+Epoch 125/500
+----------
+  Batch 0: Loss: 0.9612, Acc: 0.6562
+  Train Loss: 0.9444 Acc: 0.6606
+  No improvement in loss for 9 epochs.
+Epoch 126/500
+----------
+  Batch 0: Loss: 0.8573, Acc: 0.7500
+  Train Loss: 0.9237 Acc: 0.6867
+  No improvement in loss for 10 epochs.
+Epoch 127/500
+----------
+  Batch 0: Loss: 0.9360, Acc: 0.6562
+  Train Loss: 0.9357 Acc: 0.6815
+  No improvement in loss for 11 epochs.
+Epoch 128/500
+----------
+  Batch 0: Loss: 0.7960, Acc: 0.8438
+  Train Loss: 0.8901 Acc: 0.7389
+  No improvement in loss for 12 epochs.
+Epoch 129/500
+----------
+  Batch 0: Loss: 0.8146, Acc: 0.8125
+  Train Loss: 0.9259 Acc: 0.7023
+  No improvement in loss for 13 epochs.
+Epoch 130/500
+----------
+  Batch 0: Loss: 0.9541, Acc: 0.6562
+  Train Loss: 0.9439 Acc: 0.6658
+  No improvement in loss for 14 epochs.
+Epoch 131/500
+----------
+  Batch 0: Loss: 0.9217, Acc: 0.7188
+  Train Loss: 0.9207 Acc: 0.7050
+  No improvement in loss for 15 epochs.
+Epoch 132/500
+----------
+  Batch 0: Loss: 0.8502, Acc: 0.7500
+  Train Loss: 0.8894 Acc: 0.7076
+  No improvement in loss for 16 epochs.
+Epoch 133/500
+----------
+  Batch 0: Loss: 0.9926, Acc: 0.5938
+  Train Loss: 0.9121 Acc: 0.7128
+  No improvement in loss for 17 epochs.
+Epoch 134/500
+----------
+  Batch 0: Loss: 0.8748, Acc: 0.7188
+  Train Loss: 0.9408 Acc: 0.6710
+  No improvement in loss for 18 epochs.
+Epoch 135/500
+----------
+  Batch 0: Loss: 0.9750, Acc: 0.6875
+  Train Loss: 0.8882 Acc: 0.7415
+  No improvement in loss for 19 epochs.
+Epoch 136/500
+----------
+  Batch 0: Loss: 1.0313, Acc: 0.6250
+  Train Loss: 0.9450 Acc: 0.6789
+  No improvement in loss for 20 epochs.
+  Early stopping triggered after 136 epochs.
+Training completed in 9m 6s
+Final Accuracy: 0.6789
+Using device: cuda:0
+Test Accuracy: 0.6949
+F1 Score: 0.6912
+
+Running with the following configuration:
+Root directory: /home/clown/Downloads/Archivo/
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: vgg_19
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 32
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+--
+Class counts before balancing: Counter({1: 148, 2: 147, 0: 88})
+weights for balancing: Counter({0.006756756756756757: 148, 0.006802721088435374: 147, 0.011363636363636364: 88})
+--
+
+Using device: cuda:0
+Epoch 1/500
+----------
+
+Running with the following configuration:
+Root directory: /home/clown/Downloads/Archivo/
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: convnext_base
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 32
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+--
+Class counts before balancing: Counter({1: 148, 2: 147, 0: 88})
+weights for balancing: Counter({0.006756756756756757: 148, 0.006802721088435374: 147, 0.011363636363636364: 88})
+--
+
+
+Running with the following configuration:
+Root directory: /home/clown/Downloads/Archivo/
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: efficientnet_b4
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 32
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+--
+Class counts before balancing: Counter({1: 148, 2: 147, 0: 88})
+weights for balancing: Counter({0.006756756756756757: 148, 0.006802721088435374: 147, 0.011363636363636364: 88})
+--
+
+
+Running with the following configuration:
+Root directory: /home/clown/Downloads/Archivo/
+Data Augmentation: True
+Docked classification: True
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: efficientnet_b7
+MLP head: True
+Show: False
+Model path: modelParams
+Loading pretrained model: False
+Class balancing: Balanced
+Batch size: 32
+Number of workers: 8
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+--
+Class counts before balancing: Counter({1: 148, 2: 147, 0: 88})
+weights for balancing: Counter({0.006756756756756757: 148, 0.006802721088435374: 147, 0.011363636363636364: 88})
+--
+
