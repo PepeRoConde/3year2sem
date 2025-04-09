@@ -568,19 +568,27 @@ class ShipClassifier:
         """
         if self.model is None:
             return "Please create a model (ShipClassifier.create_model()) before training"
-
         try:
-            self.model.load_state_dict(torch.load(path))
-            print(f"Model loaded from {path}")
+            try:
+                self.model.load_state_dict(torch.load(path,map_location=self.device))
+                print(f"Model loaded from {path}")
+    
+    
+            except:
+                # cargamos lo que podamos del clasificador
+    
+                self.partial_load_model(path)
+                print(f"Model partially loaded from {path}")
             
         except:
-            
+            # no va a cargar NADA del clasificador
             new_state_dict = self.model.state_dict()
             
-            for name, param in torch.load(path).items():
+            for name, param in torch.load(path,map_location=self.device).items():
                 if 'classifier.1' not in name:  # Skip the classifier layer
                     new_state_dict[name] = param
             self.model.load_state_dict(new_state_dict)
+            print(f"Model partially loaded from {path}, no classifier has been loaded")
 
 
     def partial_load_model(self,original_model_path):

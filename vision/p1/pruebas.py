@@ -19,7 +19,7 @@ testset = ShipDataset(root_dir='/Users/pepe/carrera/3/2/vca/practicas/p2',
                       train=False, 
                       dataAugmentation=False, 
                       docked=docked,
-                      train_ratio=0.8)
+                      train_ratio=0.5)
 
 testloader = DataLoader(
         trainset, 
@@ -32,4 +32,4 @@ testloader = DataLoader(
         batch_size=512, 
         num_workers=8)
 
-classifier.plotgrid(testset,rows=8,cols=8)
+classifier.plotgrid(testset, dataAugmentation, rows=8,cols=8)

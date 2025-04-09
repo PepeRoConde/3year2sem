@@ -33,8 +33,10 @@ def parse_arguments():
                         help='Use a 2-layer MLP in the head of the model')
     parser.add_argument('--model_path', type=str, default='modelParams',
                         help='Path to save or load the model')
+    parser.add_argument('--model_save_path', type=str, default=None,
+                        help='Path to save the model, useful if want to load from a path and save to a different one')
     parser.add_argument('--save', action='store_true',
-                        help='Save the model parameters if the location specified by --model_path, or in modelParams otherwise')
+                        help='Save the model parameters if the location specified by --model_path or --model_save_path (use the latter if dont want to override with the loaded one), or in modelParams otherwise')
     parser.add_argument('--load_model', action='store_true',
                         help='Load a pretrained model instead of training')
     parser.add_argument('--arquitecture', type=str, default='efficientnet_b4',
@@ -100,7 +102,9 @@ if __name__ == "__main__":
     print(f"MLP head: {args.mlp_head}")
     print(f"Show: {args.show}")
     print(f"Model path: {args.model_path}")
-    print(f"Loading pretrained model: {args.load_model}")
+    print(f"Model save path: {args.model_save_path}")
+    print(f"Saving: {args.save}")
+    print(f"Loading model from file: {args.load_model}")
     print(f"Class balancing: {'Unbalanced' if args.unbalanced else 'Balanced'}")
     print(f"Batch size: {args.batch_size}")
     print(f"Number of workers: {args.num_workers}")
@@ -219,7 +223,10 @@ if __name__ == "__main__":
                             dataAugmentation=args.data_augmentation)
         
         if args.save:
-            classifier.save_model(args.model_path)
+            if args.model_save_path:
+                classifier.save_model(args.model_save_path)
+            else:
+                classifier.save_model(args.model_path)
     
     # Test individual images if provided
     if args.test_images:
