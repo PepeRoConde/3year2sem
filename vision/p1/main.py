@@ -38,14 +38,14 @@ def parse_arguments():
     parser.add_argument('--save', action='store_true',
                         help='Save the model parameters if the location specified by --model_path or --model_save_path (use the latter if dont want to override with the loaded one), or in modelParams otherwise')
     parser.add_argument('--load_model', action='store_true',
-                        help='Load a pretrained model instead of training')
+                        help='Load a pretrained msodel instead of training')
     parser.add_argument('--arquitecture', type=str, default='efficientnet_b4',
                         help='Model arquitecture, default efficientnet_b4.')
     
     # Training parameters
     parser.add_argument('--batch_size', type=int, default=512,
                         help='Batch size for training and testing')
-    parser.add_argument('--num_workers', type=int, default=8,
+    parser.add_argument('--num_workers', type=int, default=4,
                         help='Number of workers for data loading')
     parser.add_argument('--num_epochs', type=int, default=15,
                         help='Number of epochs for training')
@@ -59,6 +59,8 @@ def parse_arguments():
                         help='Lambda for L2 weight decay regularization.')
     parser.add_argument('--show', action='store_true',
                         help='Show figures instead of saving them')
+    parser.add_argument('--figure_path', type=str, default='figures',
+                        help='Path to save the figures')
     parser.add_argument('--device', type=str, default='mps',
                         help='Device, default mps.')
     
@@ -101,6 +103,7 @@ if __name__ == "__main__":
     print(f"Model arquitecture: {args.arquitecture}")
     print(f"MLP head: {args.mlp_head}")
     print(f"Show: {args.show}")
+    print(f"Saving figures to {args.figure_path}")
     print(f"Model path: {args.model_path}")
     print(f"Model save path: {args.model_save_path}")
     print(f"Saving: {args.save}")
@@ -166,7 +169,8 @@ if __name__ == "__main__":
                                 docked=args.docked,
                                 mlp_head=args.mlp_head,
                                 device=args.device,
-                                arquitecture=args.arquitecture)
+                                arquitecture=args.arquitecture,
+                                figure_path=args.figure_path)
     
     if args.load_model:
         if args.docked:

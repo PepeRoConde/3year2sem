@@ -13,13 +13,13 @@ from scipy.special import softmax
 from sklearn.metrics import f1_score, confusion_matrix
 
 class ShipClassifier:
-    def __init__(self, pretrained=True, docked=True, mlp_head=True, arquitecture='efficientnet_b4', device='mps'):
-
+    def __init__(self, pretrained=True, docked=True, mlp_head=True, arquitecture='efficientnet_b4', device='mps', figure_path='figures'):
         self.pretrained = pretrained
         self.docked = docked
         self.mlp_head = mlp_head
         self.device = device
         self.arquitecture = arquitecture
+        self.figure_path = figure_path
 
         self.model = None
         self.create_model(pretrained, docked)
@@ -650,7 +650,7 @@ class ShipClassifier:
             plt.show()
         else:
             current_directory_path = os.getcwd()
-            subfolder_path = os.path.join(current_directory_path, 'figures')
+            subfolder_path = os.path.join(current_directory_path, self.figure_path)
             
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
@@ -671,7 +671,7 @@ class ShipClassifier:
         else:
             
             current_directory_path = os.getcwd()
-            subfolder_path = os.path.join(current_directory_path, 'figures')
+            subfolder_path = os.path.join(current_directory_path, self.figure_path)
             
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
@@ -715,7 +715,7 @@ class ShipClassifier:
             plt.show()
         else:
             current_directory_path = os.getcwd()
-            subfolder_path = os.path.join(current_directory_path, 'figures')
+            subfolder_path = os.path.join(current_directory_path, self.figure_path)
             
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
@@ -758,7 +758,7 @@ class ShipClassifier:
             plt.show()
         else:
             current_directory_path = os.getcwd()
-            subfolder_path = os.path.join(current_directory_path, 'figures')
+            subfolder_path = os.path.join(current_directory_path, self.figure_path)
             
             if not os.path.exists(subfolder_path):
                 os.makedirs(subfolder_path)
