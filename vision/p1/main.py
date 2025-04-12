@@ -172,7 +172,7 @@ if __name__ == "__main__":
                                 arquitecture=args.arquitecture,
                                 figure_path=args.figure_path)
     
-    if args.load_model:
+    if args.load_model or (args.pretrained and args.docked):
         if args.docked:
             # Load a pre-trained model
             try:

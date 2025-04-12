@@ -382,7 +382,7 @@ class ShipClassifier:
         )
         
         if criterion is None:
-            criterion = nn.CrossEntropyLoss()
+            criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
             
         print(f"Using device: {self.device}")
     

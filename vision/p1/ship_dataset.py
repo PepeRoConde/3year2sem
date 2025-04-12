@@ -45,8 +45,8 @@ class ShipDataset(Dataset):
         self.docked = docked
         
         self.base_transform = transforms.Compose([
-            #RandomLargestSquareCrop(),
-            transforms.Resize((180,320)),
+            RandomLargestSquareCrop(),
+            transforms.Resize((224,224)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
@@ -60,10 +60,11 @@ class ShipDataset(Dataset):
 
         self.crop_transform = transforms.Compose([
             RandomLargestSquareCrop(),
-            #transforms.Resize((350,350)),
-            #transforms.RandomCrop(224), 
-            transforms.Resize((196,350)),
-            transforms.RandomCrop((180,320)), 
+            transforms.Resize((350,350)),
+            transforms.RandomCrop(224), 
+            # intento de rectangulo
+            # transforms.Resize((196,350)),
+            # transforms.RandomCrop((180,320)), 
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
