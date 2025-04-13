@@ -236,4 +236,4 @@ if __name__ == "__main__":
     if args.test_images:
         classifier.load_model(args.model_path)
         print("\nTesting individual images:")
-        test_single_images(classifier, args.test_images, device=args.device,docked=args.docked)
+        classifier.test_single_images(args.test_images)

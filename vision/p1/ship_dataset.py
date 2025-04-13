@@ -52,23 +52,13 @@ class ShipDataset(Dataset):
         ])
 
         self.augmentation_transform = transforms.Compose([
-            transforms.RandomHorizontalFlip(),    
-            transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.1),
-            transforms.RandomAffine(degrees=10, translate=(0.15, 0.15), scale=(0.7, 1.15), shear=2),
-            transforms.RandomGrayscale(p=0.15), 
+            transforms.RandomHorizontalFlip(0.5),    
+            transforms.ColorJitter(brightness=0.15, contrast=0.15, saturation=0.15, hue=0.05),
+            transforms.RandomAffine(degrees=3, translate=(0.05, 0.05), scale=(0.5, 1), shear=1),
+            transforms.RandomGrayscale(p=0.2), 
+            transforms.GaussianBlur(3, sigma=(0.1, 1))
         ])
-
-        self.crop_transform = transforms.Compose([
-            RandomLargestSquareCrop(),
-            transforms.Resize((350,350)),
-            transforms.RandomCrop(224), 
-            # intento de rectangulo
-            # transforms.Resize((196,350)),
-            # transforms.RandomCrop((180,320)), 
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        ])
-
+        
         self.additional_transform = transform
 
         # Collect image paths and labels
@@ -95,7 +85,7 @@ class ShipDataset(Dataset):
 
         # 2. Cropped-ship images (only if dataAugmentation is True)
         
-        if self.dataAugmentation:
+        if self.dataAugmentation and (not self.docked):
             cropped_dir = os.path.join(root_dir, "cropedImages")
             for filename in os.listdir(cropped_dir):
                 if filename.startswith("s-") and filename.endswith(".jpg"):
@@ -162,12 +152,7 @@ class ShipDataset(Dataset):
 
         # Apply appropriate transforms
         if self.dataAugmentation:
-            if img_type == "no_ship" or img_type == "regular_ship":
-                # Apply crop transform for no-ship and regular-ship images
-                image = self.crop_transform(self.augmentation_transform(image))
-            else:
-                # Cropped ship images already processed
-                image = self.base_transform(self.augmentation_transform(image))
+            image = self.base_transform(self.augmentation_transform(image))
         else:
             # No data augmentation, just apply base transform
             image = self.base_transform(image)

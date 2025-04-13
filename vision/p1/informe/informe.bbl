@@ -1,0 +1,23 @@
+\begin{thebibliography}{1}
+
+\bibitem{DBLP:journals/corr/abs-1711-05101}
+Ilya Loshchilov and Frank Hutter.
+\newblock Fixing weight decay regularization in adam.
+\newblock {\em CoRR}, abs/1711.05101, 2017.
+
+\bibitem{srivastava2014dropout}
+Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan Salakhutdinov.
+\newblock Dropout: A simple way to prevent neural networks from overfitting.
+\newblock {\em Journal of Machine Learning Research}, 15:1929--1958, 2014.
+
+\bibitem{DBLP:journals/corr/SzegedyVISW15}
+Christian Szegedy, Vincent Vanhoucke, Sergey Ioffe, Jonathon Shlens, and Zbigniew Wojna.
+\newblock Rethinking the inception architecture for computer vision.
+\newblock {\em CoRR}, abs/1512.00567, 2015.
+
+\bibitem{tan2019efficientnet}
+Mingxing Tan and Quoc~V. Le.
+\newblock Efficientnet: Rethinking model scaling for convolutional neural networks.
+\newblock {\em arXiv preprint arXiv:1905.11946}, 2019.
+
+\end{thebibliography}

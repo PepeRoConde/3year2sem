@@ -1,4 +1,5 @@
 import torchvision.models as models
+from torchvision import transforms
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -8,6 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import time
 import os
+from PIL import Image
 from tqdm import tqdm
 from scipy.special import softmax
 from sklearn.metrics import f1_score, confusion_matrix
@@ -767,7 +769,7 @@ class ShipClassifier:
             file_path = os.path.join(subfolder_path, file_name)
             
             plt.savefig(file_path)
-    def test_single_images(self, image_paths, docked=True):
+    def test_single_images(self, image_paths):
         """
         Test the classifier on individual images
         
@@ -784,7 +786,7 @@ class ShipClassifier:
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
         
-        if docked:
+        if self.docked:
             labels = ["No Ship", "Ship (Undocked)", "Ship (Docked)"]
         else:
             labels = ["No Ship", "Ship"]
