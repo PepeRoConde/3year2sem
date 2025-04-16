@@ -30,7 +30,7 @@
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\lhead{Visión por Computador Aplicada}
+\lhead{\emph{Visión por Computador Aplicada}}
 \rhead{614G030332425}
 % \fancyfoot{}
 % \lfoot{Pablo Chantada Saborido \& José Romero Conde}
@@ -103,6 +103,8 @@ Máis tarde, non obstante probamos con outros tamaños para o parelelepípedo, c
 	\label{fig:comparativa}
 	\caption{Comparativa de adestramento con imaxes rectangulares (esquerda) e cadradas (dereita)}
 \end{figure}
+
+
 
 
 
@@ -200,10 +202,18 @@ Na tabla a continuación mostránse os resultados da precisión das prediccións
 \cline{2-5}
                                & \multicolumn{2}{c|}{Non preentrenado}                        & \multicolumn{2}{c|}{Preentrenado}                            \\ \cline{2-5} 
                                & \multicolumn{1}{c|}{Non aumento de datos} & Aumento de datos & \multicolumn{1}{c|}{Non aumento de datos} & Aumento de datos \\ \hline
-\multicolumn{1}{|l|}{2 clases} & \multicolumn{1}{c|}{89\%}                 & 89\%             & \multicolumn{1}{c|}{100\%}                & 96\%             \\ \hline
-\multicolumn{1}{|l|}{3 clases} & \multicolumn{1}{c|}{67\%}                 & 66\%             & \multicolumn{1}{c|}{86\%}                 & 79\%             \\ \hline
+\multicolumn{1}{|l|}{2 clases} & \multicolumn{1}{c|}{94\%}                 & 84\%             & \multicolumn{1}{c|}{100\%}                & 98\%             \\ \hline
+\multicolumn{1}{|l|}{3 clases} & \multicolumn{1}{c|}{76\%}                 & 67\%             & \multicolumn{1}{c|}{86\%}                 & 83\%             \\ \hline
 \end{tabular}
 \end{table}
+
+Sobre estos resultados podense facer as seguintes reflexións:
+\begin{itemize}
+	\item Que o modelo esté preentrenado ou non supón unha gran diferencia, sobretodo no caso de aumento de datos. Esto é loxico e esperable. Que ocurra máis claramente no caso de aumento de datos xustificase con que: ó seren un problema máis difícil, vai ser maior a axuda que supón ter os parámetros preentrenados.
+	\item O aumento de datos sempre ofrece peores resultados que non facelo. Esto pode parecer alarmante, e indicador de que fixemos un mal aumento de datos. Pero hai varias cousas que matizar. En primer lugar, como en calqueira caso as imaxes rectangulares recortanse a cadrados, sempre hai algún timpo de aumento de datos, entón na táboa realmente estase a mostrar a comparativa de aumento de datos ou moito aumento de datos. Ademáis é posible que con máis épocas a Rede seguise adestrándose ata o punto de que con aumento de datos exista unha mellora. Ó final o obxectivo do aumento de datos e impoñer restriccións sobre o que debe aprender ca esperanza de que xeneralice mellor; por tanto, ó enfrentar á Rede a un problema maior, que lle custe máis é esperable.
+	\item En calqueira caso vemos que no problema de clasificación en dúas clases non fai falla aumento de datos.
+\end{itemize}
+
 
 \section{Conclusión}
 
@@ -218,15 +228,15 @@ Agradecemos que o conxunto de datos desta práctica fora realista porque intenta
     \centering
     \begin{minipage}{0.55\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.7\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
 \end{figure}
 \subsubsection{Sen Aumento de datos e con Preentrenado}
@@ -234,15 +244,15 @@ Agradecemos que o conxunto de datos desta práctica fora realista porque intenta
     \centering
     \begin{minipage}{0.55\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.7\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
 \end{figure}
 \subsubsection{Con Aumento de datos e sen Preentrenado}
@@ -250,15 +260,15 @@ Agradecemos que o conxunto de datos desta práctica fora realista porque intenta
     \centering
     \begin{minipage}{0.55\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.7\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
 \end{figure}
 \subsubsection{Con Aumento de datos e con Preentrenado}
@@ -266,15 +276,15 @@ Agradecemos que o conxunto de datos desta práctica fora realista porque intenta
     \centering
     \begin{minipage}{0.55\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.7\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png}
     \end{minipage}
 \end{figure}
 \subsection{Segundo exercicio}
@@ -283,15 +293,15 @@ Agradecemos que o conxunto de datos desta práctica fora realista porque intenta
     \centering
     \begin{minipage}{0.55\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.7\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
 \end{figure}
 \subsubsection{Sen Aumento de datos e con Preentrenado}
@@ -299,15 +309,15 @@ Agradecemos que o conxunto de datos desta práctica fora realista porque intenta
     \centering
     \begin{minipage}{0.55\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.7\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
 \end{figure}
 \subsubsection{Con Aumento de datos e sen Preentrenado}
@@ -315,15 +325,15 @@ Agradecemos que o conxunto de datos desta práctica fora realista porque intenta
     \centering
     \begin{minipage}{0.55\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.7\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
 \end{figure}
 \subsubsection{Con Aumento de datos e con Preentrenado}
@@ -331,15 +341,15 @@ Agradecemos que o conxunto de datos desta práctica fora realista porque intenta
     \centering
     \begin{minipage}{0.55\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
     \begin{minipage}{0.7\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../figures/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png}
+        \includegraphics[width=\linewidth]{../ultimas_figuras/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png}
     \end{minipage}
 \end{figure}
 
@@ -357,7 +367,7 @@ Para probar o primeiro e segundo exercicio con novas imaxes pode facerse algo as
 \end{clibox}
 
 
-Donde o programa respondería con:
+Donde o programa respondería con \footnote{As imaxes \texttt{imagen.jpg}, \texttt{imagen2.jpg} e \texttt{imagen3.jpg} poden atoparse na entrega e se examínanse, pode verse como efectivamente, a primeira é unha imaxen de barco atracado, a segunda e a mesma imaxen pero recortada (sen ruído a confianza da rede aumenta levemente) e a terceira é tamén un recorte da primeira pero esta vez do chan (consideramos oportuno que a Rede clasifique este tipo de imaxes como clase 0, é dicir, sabe que non hai un barco).}:
 
 \begin{clibox}
 

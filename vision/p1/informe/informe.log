@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.2.18)  13 APR 2025 23:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.2.18)  15 APR 2025 16:25
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -642,7 +642,7 @@ Package pdftex.def Info: cadrado.png  used on input line 101.
 <aumentoDatosEx1.png, id=142, 866.23625pt x 557.08125pt>
 File: aumentoDatosEx1.png Graphic file (type png)
 <use aumentoDatosEx1.png>
-Package pdftex.def Info: aumentoDatosEx1.png  used on input line 120.
+Package pdftex.def Info: aumentoDatosEx1.png  used on input line 122.
 (pdftex.def)             Requested size: 390.25536pt x 250.97325pt.
 
 
@@ -652,32 +652,32 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.126 \item U
+l.128 \item U
              n \textbf{MLP} (Perceptrón Multicapa ou \emph{Multi-layer Perc...{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc} <./rectangulo.png> <./cadrado.png>]
-LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 126.
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 128.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 126.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 128.
  [5
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.135 	\item \textbf
+l.137 	\item \textbf
                     {Capacidade do modelo.} Orixinalmente usamos a Efficient... <./aumentoDatosEx1.png>]
 <cmEj1.png, id=163, 393.1488pt x 366.4089pt>
 File: cmEj1.png Graphic file (type png)
 <use cmEj1.png>
-Package pdftex.def Info: cmEj1.png  used on input line 142.
+Package pdftex.def Info: cmEj1.png  used on input line 144.
 (pdftex.def)             Requested size: 151.76964pt x 141.44525pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 150--152
+Underfull \hbox (badness 10000) in paragraph at lines 152--154
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 150--152
+Underfull \hbox (badness 10000) in paragraph at lines 152--154
 
  []
 
@@ -685,170 +685,170 @@ Underfull \hbox (badness 10000) in paragraph at lines 150--152
 <cmEj2.png, id=177, 550.055pt x 510.90875pt>
 File: cmEj2.png Graphic file (type png)
 <use cmEj2.png>
-Package pdftex.def Info: cmEj2.png  used on input line 164.
+Package pdftex.def Info: cmEj2.png  used on input line 166.
 (pdftex.def)             Requested size: 151.76964pt x 140.96419pt.
 <docked.jpg, id=179, 770.88pt x 433.62pt>
 File: docked.jpg Graphic file (type jpg)
 <use docked.jpg>
-Package pdftex.def Info: docked.jpg  used on input line 182.
+Package pdftex.def Info: docked.jpg  used on input line 184.
 (pdftex.def)             Requested size: 195.12767pt x 109.7545pt.
 <undocked.jpg, id=180, 770.88pt x 433.62pt>
 File: undocked.jpg Graphic file (type jpg)
 <use undocked.jpg>
-Package pdftex.def Info: undocked.jpg  used on input line 187.
+Package pdftex.def Info: undocked.jpg  used on input line 189.
 (pdftex.def)             Requested size: 195.12767pt x 109.7545pt.
  [7
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.193 \newpage
+l.195 \newpage
                <./cmEj2.png> <./docked.jpg (PNG copy)> <./undocked.jpg (PNG copy)>]
-Overfull \hbox (17.26968pt too wide) in paragraph at lines 199--206
+Overfull \hbox (17.26968pt too wide) in paragraph at lines 201--208
 [][] 
  []
 
 [8]
-<../figures/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png, id=193, 867.24pt x 361.35pt>
-File: ../figures/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 221.
+<../ultimas_figuras/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png, id=193, 867.24pt x 361.35pt>
+File: ../ultimas_figuras/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 231.
 (pdftex.def)             Requested size: 238.49232pt x 99.36879pt.
-<../figures/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png, id=194, 578.16pt x 433.62pt>
-File: ../figures/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 225.
+<../ultimas_figuras/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png, id=194, 578.16pt x 433.62pt>
+File: ../ultimas_figuras/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 235.
 (pdftex.def)             Requested size: 130.08733pt x 97.56029pt.
-<../figures/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png, id=195, 1156.32pt x 578.16pt>
-File: ../figures/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 229.
+<../ultimas_figuras/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png, id=195, 1156.32pt x 578.16pt>
+File: ../ultimas_figuras/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 239.
 (pdftex.def)             Requested size: 303.53267pt x 151.76486pt.
-<../figures/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png, id=196, 867.24pt x 361.35pt>
-File: ../figures/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 237.
+<../ultimas_figuras/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png, id=196, 867.24pt x 361.35pt>
+File: ../ultimas_figuras/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 247.
 (pdftex.def)             Requested size: 238.49232pt x 99.36879pt.
-<../figures/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png, id=197, 578.16pt x 433.62pt>
-File: ../figures/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 241.
+<../ultimas_figuras/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png, id=197, 578.16pt x 433.62pt>
+File: ../ultimas_figuras/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 251.
 (pdftex.def)             Requested size: 130.08733pt x 97.56029pt.
-<../figures/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png, id=198, 1156.32pt x 578.16pt>
-File: ../figures/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 245.
+<../ultimas_figuras/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png, id=198, 1156.32pt x 578.16pt>
+File: ../ultimas_figuras/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 255.
 (pdftex.def)             Requested size: 303.53267pt x 151.76486pt.
-<../figures/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png, id=199, 867.24pt x 361.35pt>
-File: ../figures/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 253.
+<../ultimas_figuras/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png, id=199, 867.24pt x 361.35pt>
+File: ../ultimas_figuras/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 263.
 (pdftex.def)             Requested size: 238.49232pt x 99.36879pt.
-<../figures/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png, id=200, 578.16pt x 433.62pt>
-File: ../figures/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 257.
+<../ultimas_figuras/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png, id=200, 578.16pt x 433.62pt>
+File: ../ultimas_figuras/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 267.
 (pdftex.def)             Requested size: 130.08733pt x 97.56029pt.
-<../figures/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png, id=201, 1156.32pt x 578.16pt>
-File: ../figures/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 261.
+<../ultimas_figuras/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png, id=201, 1156.32pt x 578.16pt>
+File: ../ultimas_figuras/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png  used on input line 271.
 (pdftex.def)             Requested size: 303.53267pt x 151.76486pt.
- [9 <../figures/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png> <../figures/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png> <../figures/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png> <../figures/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png> <../figures/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png> <../figures/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png>]
-<../figures/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png, id=212, 867.24pt x 361.35pt>
-File: ../figures/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 269.
+ [9 <../ultimas_figuras/LOSS__A_False_P_False_D_False_MLP_True_efficientnet_b4.png> <../ultimas_figuras/CM__A_False_P_False_D_False_MLP_True_efficientnet_b4.png> <../ultimas_figuras/GRID__A_False_P_False_D_False_MLP_True_efficientnet_b4.png> <../ultimas_figuras/LOSS__A_False_P_True_D_False_MLP_True_efficientnet_b4.png> <../ultimas_figuras/CM__A_False_P_True_D_False_MLP_True_efficientnet_b4.png> <../ultimas_figuras/GRID__A_False_P_True_D_False_MLP_True_efficientnet_b4.png>]
+<../ultimas_figuras/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png, id=212, 867.24pt x 361.35pt>
+File: ../ultimas_figuras/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 279.
 (pdftex.def)             Requested size: 238.49232pt x 99.36879pt.
-<../figures/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png, id=213, 578.16pt x 433.62pt>
-File: ../figures/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 273.
+<../ultimas_figuras/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png, id=213, 578.16pt x 433.62pt>
+File: ../ultimas_figuras/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 283.
 (pdftex.def)             Requested size: 130.08733pt x 97.56029pt.
-<../figures/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png, id=214, 1156.32pt x 578.16pt>
-File: ../figures/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 277.
+<../ultimas_figuras/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png, id=214, 1156.32pt x 578.16pt>
+File: ../ultimas_figuras/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png  used on input line 287.
 (pdftex.def)             Requested size: 303.53267pt x 151.76486pt.
-<../figures/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png, id=215, 867.24pt x 361.35pt>
-File: ../figures/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 286.
+<../ultimas_figuras/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png, id=215, 867.24pt x 361.35pt>
+File: ../ultimas_figuras/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 296.
 (pdftex.def)             Requested size: 238.49232pt x 99.36879pt.
-<../figures/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png, id=216, 578.16pt x 433.62pt>
-File: ../figures/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 290.
+<../ultimas_figuras/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png, id=216, 578.16pt x 433.62pt>
+File: ../ultimas_figuras/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 300.
 (pdftex.def)             Requested size: 130.08733pt x 97.56029pt.
-<../figures/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png, id=217, 1156.32pt x 578.16pt>
-File: ../figures/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 294.
+<../ultimas_figuras/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png, id=217, 1156.32pt x 578.16pt>
+File: ../ultimas_figuras/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 304.
 (pdftex.def)             Requested size: 303.53267pt x 151.76486pt.
- [10 <../figures/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png> <../figures/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png> <../figures/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png> <../figures/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png> <../figures/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png> <../figures/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png>]
-<../figures/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png, id=228, 867.24pt x 361.35pt>
-File: ../figures/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 302.
+ [10 <../ultimas_figuras/LOSS__A_True_P_False_D_False_MLP_True_efficientnet_b4.png> <../ultimas_figuras/CM__A_True_P_False_D_False_MLP_True_efficientnet_b4.png> <../ultimas_figuras/GRID__A_True_P_False_D_False_MLP_True_efficientnet_b4.png> <../ultimas_figuras/LOSS__A_True_P_True_D_False_MLP_True_efficientnet_b4.png> <../ultimas_figuras/CM__A_True_P_True_D_False_MLP_True_efficientnet_b4.png> <../ultimas_figuras/GRID__A_True_P_True_D_False_MLP_True_efficientnet_b4.png>]
+<../ultimas_figuras/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png, id=228, 867.24pt x 361.35pt>
+File: ../ultimas_figuras/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 312.
 (pdftex.def)             Requested size: 238.49232pt x 99.36879pt.
-<../figures/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png, id=229, 578.16pt x 433.62pt>
-File: ../figures/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 306.
+<../ultimas_figuras/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png, id=229, 578.16pt x 433.62pt>
+File: ../ultimas_figuras/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 316.
 (pdftex.def)             Requested size: 130.08733pt x 97.56029pt.
-<../figures/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png, id=230, 1156.32pt x 578.16pt>
-File: ../figures/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 310.
+<../ultimas_figuras/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png, id=230, 1156.32pt x 578.16pt>
+File: ../ultimas_figuras/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 320.
 (pdftex.def)             Requested size: 303.53267pt x 151.76486pt.
-<../figures/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png, id=231, 867.24pt x 361.35pt>
-File: ../figures/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 318.
+<../ultimas_figuras/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png, id=231, 867.24pt x 361.35pt>
+File: ../ultimas_figuras/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 328.
 (pdftex.def)             Requested size: 238.49232pt x 99.36879pt.
-<../figures/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png, id=232, 578.16pt x 433.62pt>
-File: ../figures/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 322.
+<../ultimas_figuras/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png, id=232, 578.16pt x 433.62pt>
+File: ../ultimas_figuras/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 332.
 (pdftex.def)             Requested size: 130.08733pt x 97.56029pt.
-<../figures/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png, id=233, 1156.32pt x 578.16pt>
-File: ../figures/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 326.
+<../ultimas_figuras/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png, id=233, 1156.32pt x 578.16pt>
+File: ../ultimas_figuras/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png  used on input line 336.
 (pdftex.def)             Requested size: 303.53267pt x 151.76486pt.
- [11 <../figures/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png> <../figures/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png> <../figures/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png> <../figures/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png> <../figures/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png> <../figures/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png>]
-<../figures/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png, id=244, 867.24pt x 361.35pt>
-File: ../figures/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 334.
+ [11 <../ultimas_figuras/LOSS__A_False_P_False_D_True_MLP_True_efficientnet_b4.png> <../ultimas_figuras/CM__A_False_P_False_D_True_MLP_True_efficientnet_b4.png> <../ultimas_figuras/GRID__A_False_P_False_D_True_MLP_True_efficientnet_b4.png> <../ultimas_figuras/LOSS__A_False_P_True_D_True_MLP_True_efficientnet_b4.png> <../ultimas_figuras/CM__A_False_P_True_D_True_MLP_True_efficientnet_b4.png> <../ultimas_figuras/GRID__A_False_P_True_D_True_MLP_True_efficientnet_b4.png>]
+<../ultimas_figuras/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png, id=244, 867.24pt x 361.35pt>
+File: ../ultimas_figuras/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 344.
 (pdftex.def)             Requested size: 238.49232pt x 99.36879pt.
-<../figures/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png, id=245, 578.16pt x 433.62pt>
-File: ../figures/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 338.
+<../ultimas_figuras/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png, id=245, 578.16pt x 433.62pt>
+File: ../ultimas_figuras/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 348.
 (pdftex.def)             Requested size: 130.08733pt x 97.56029pt.
-<../figures/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png, id=246, 1156.32pt x 578.16pt>
-File: ../figures/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
-<use ../figures/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png>
-Package pdftex.def Info: ../figures/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 342.
+<../ultimas_figuras/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png, id=246, 1156.32pt x 578.16pt>
+File: ../ultimas_figuras/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png Graphic file (type png)
+<use ../ultimas_figuras/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png>
+Package pdftex.def Info: ../ultimas_figuras/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png  used on input line 352.
 (pdftex.def)             Requested size: 303.53267pt x 151.76486pt.
- [12 <../figures/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png> <../figures/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png> <../figures/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png> <../figures/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png> <../figures/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png> <../figures/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png>]
-LaTeX Font Info:    Trying to load font information for TS1+cmtt on input line 352.
+ [12 <../ultimas_figuras/LOSS__A_True_P_False_D_True_MLP_True_efficientnet_b4.png> <../ultimas_figuras/CM__A_True_P_False_D_True_MLP_True_efficientnet_b4.png> <../ultimas_figuras/GRID__A_True_P_False_D_True_MLP_True_efficientnet_b4.png> <../ultimas_figuras/LOSS__A_True_P_True_D_True_MLP_True_efficientnet_b4.png> <../ultimas_figuras/CM__A_True_P_True_D_True_MLP_True_efficientnet_b4.png> <../ultimas_figuras/GRID__A_True_P_True_D_True_MLP_True_efficientnet_b4.png>]
+LaTeX Font Info:    Trying to load font information for TS1+cmtt on input line 362.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/base/ts1cmtt.fd
 File: ts1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
-Underfull \hbox (badness 10000) in paragraph at lines 352--353
+Underfull \hbox (badness 10000) in paragraph at lines 362--363
 []\TS1/cmtt/m/n/10 $ \OT1/cmtt/m/n/10 python main.py --load[]model --model[]path ex1params --test[]images imagen.jpg
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 354--355
+Underfull \hbox (badness 10000) in paragraph at lines 364--365
 []\TS1/cmtt/m/n/10 $ \OT1/cmtt/m/n/10 python main.py --load[]model --docked --model[]path ex2params --test[]images
  []
 
-<ejecucion.png, id=257, 915.42pt x 586.19pt>
+<ejecucion.png, id=258, 915.42pt x 586.19pt>
 File: ejecucion.png Graphic file (type png)
 <use ejecucion.png>
-Package pdftex.def Info: ejecucion.png  used on input line 393.
+Package pdftex.def Info: ejecucion.png  used on input line 403.
 (pdftex.def)             Requested size: 346.89732pt x 222.13734pt.
 [13 <./ejecucion.png>] (./informe.bbl) [14] (./informe.aux)
  ***********
@@ -859,18 +859,18 @@ Package rerunfilecheck Info: File `informe.out' has not changed.
 (rerunfilecheck)             Checksum: 565FE48820684937A96C2C5EA118CAF4;4275.
  ) 
 Here is how much of TeX's memory you used:
- 23466 strings out of 474116
- 436894 string characters out of 5743682
+ 23470 strings out of 474116
+ 438276 string characters out of 5743682
  1942187 words of memory out of 5000000
- 45412 multiletter control sequences out of 15000+600000
- 567157 words of font info for 70 fonts, out of 8000000 for 9000
+ 45414 multiletter control sequences out of 15000+600000
+ 567325 words of font info for 71 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  83i,12n,93p,1039b,578s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on informe.pdf (14 pages, 19537705 bytes).
+</usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb>
+Output written on informe.pdf (14 pages, 19987591 bytes).
 PDF statistics:
- 352 PDF objects out of 1000 (max. 8388607)
- 237 compressed objects within 3 object streams
- 46 named destinations out of 1000 (max. 500000)
+ 359 PDF objects out of 1000 (max. 8388607)
+ 242 compressed objects within 3 object streams
+ 47 named destinations out of 1000 (max. 500000)
  346 words of extra memory for PDF output out of 10000 (max. 10000000)
 
