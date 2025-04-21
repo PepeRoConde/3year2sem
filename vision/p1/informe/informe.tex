@@ -67,7 +67,7 @@
 Despois de analizar o enunciado da práctica, e de examinar as imaxes unha por unha, chegamos ás seguientes observacións:
 \begin{itemize}
 	\item Entre as imaxes de barcos existe unha gran variación: de pose, escala, condicións de iluminación, proporción que ocupa na escena real (en metros) e proporción que ocupa na imaxen (píxeles). Ademáis os elementos en sí (barcos e peiraos) presentan moita variación interclase (aínda que os barcos sexan todos industrais; son distintos entre eles, e os peiraos poden estar baleiros ou cheos de montañas de area) e incluso unha maior similitude intraclase (sobretodo no caso barco-atracado contra barco-non-atracado).
-	\item O alcance da práctica desta asignatura era suficientemente limitado como para resolver o problema dun xeito satisfactorio. Creemos que poderíamos entrenar unha Rede de Neuronas Artificiais (RNN) para resolver un subproblema o un problema maior con fin de que a Rede principal o teña máis doado para aprender. No obstante non é o que se pide, aínda que preferiríamos resolver o problema dunha forma \emph{máis científica} (en vez de simplemente darlle os datos á rede e que ela aprenda) por cuestións de tempo e alcance non foi posibel.
+	\item O alcance da práctica desta asignatura era suficientemente limitado como para resolver o problema dun xeito satisfactorio. Creemos que poderíamos entrenar unha Rede de Neuronas Artificiais (RNA) para resolver un subproblema o un problema maior con fin de que a Rede principal o teña máis doado para aprender. No obstante non é o que se pide, aínda que preferiríamos resolver o problema dunha forma \emph{máis científica} (en vez de simplemente darlle os datos á rede e que ela aprenda) por cuestións de tempo e alcance non foi posibel.
 	\item En calqueira escenario (sexa unha práctica con fins docentes ou un traballo no mundo real) existe un problema co cómputo, no noso caso porque disponemos de poucos recursos para adestrar a Rede e no caso real porque o cálculo é posible que precise ser ou a tempo real ou nun sistema embebido, en calqueira caso recursos límitados. 
 \end{itemize}
 
@@ -83,11 +83,9 @@ Na hora da creación do \emph{baseline} preferimos ser cautos e explorar moitas 
 Describimos agora o noso modelo \emph{baseline}, que evaluamos para iterar e comparar resultados. O modelo componse dos seguientes elementos:
 
 \begin{itemize}
-	\item  \textbf{EfficientNet.} \cite{tan2019efficientnet} Usámola como CNN (\emph{Convolutional Neural Network}) de partida. Orixinalmente pensamos que tiña como requirimiento que as imaxes sexan de tamaño $(244,244,3)$. E como as imaxes son (i) rectangulares (ii) de distinto tamaño entre sí; tivemos que implementar un recortador automático de \emph{o cadrado máis grande} que chamamos desde os \texttt{DataLoader} de adestramento e proba. Máis tarde decatámonos que a Rede era realmente capaz de procesar imaxes de calqueira tamaño porque ten ó final un \texttt{Global Pooling}. No obstante, como de calqueira xeito os \emph{mini-batches} tiñan que ser todos do mesmo tamaño decidimos quedarnos ca idea de recortalas imaxes da forma mencionada. \\
+	\item  \textbf{EfficientNet.} \cite{tan2019efficientnet} Usámola como CNN (\emph{Convolutional Neural Network}) de partida. Orixinalmente pensamos que tiña como requirimiento que as imaxes sexan de tamaño $(244,244,3)$. E como as imaxes son (i) rectangulares (ii) de distinto tamaño entre sí; tivemos que implementar un recortador automático de \emph{o cadrado máis grande} \footnote{Este operador recorta a imaxe rectangular nun cadrado tan alto como a imaxe e centrado aleatoriamente. De xeito que se se chama varias veces sobre a mesma imaxe, producira distintos cadrados cada vez. Por tanto é unha regularización na que a nosa hipótesis é: para clasificar a imaxe rectangular, cun cadrado basta.} que chamamos desde os \texttt{DataLoader} de adestramento e proba. Máis tarde decatámonos que a Rede era realmente capaz de procesar imaxes de calqueira tamaño porque ten ó final un \texttt{Global Pooling}. No obstante, como de calqueira xeito os \emph{mini-batches} tiñan que ser todos do mesmo tamaño decidimos quedarnos ca idea de recortalas imaxes da forma mencionada. \\
 
-En iteracións posteriores, probamos con outros tamaños, coa esperanza de que imaxes rectangulares ofrezcan mellores resultados (en vez das cadradas) porque estas teñen máis información. Para a nosa sorpresa a evidencia demostrou moito mellor rendimento con imaxes cadradas. Hipotizamos que débese a que como da mesma imaxe rectangular, os cadrados resultantes do resultado aleatorio son realmente distintos entre sí, recortar rectangulos en cadrados pode supor un bo aumento de datos implícito. A continuación pódense ver as curvas de pérdida e precisión dos dous adestramentos. Apreciamos cas imaxes cadradas que o adestramento levou máis tempo, foi \emph{máis difícil} pero a cambio xeneraliza moito mellor (a liña discontinua mostra a precisión en proba). 
-
-(As condicións do adestramento que se mostra foron: sen aumento de datos e sen preentrenado, pero probamos con todas as combinación e a conclusión e consistente.)\\
+En iteracións posteriores, probamos con outros tamaños, coa esperanza de que imaxes rectangulares ofrezcan mellores resultados (en vez das cadradas) porque estas teñen máis información. Para a nosa sorpresa a evidencia demostrou moito mellor rendimento con imaxes cadradas. Hipotizamos que débese a que como da mesma imaxe rectangular, os cadrados resultantes do resultado aleatorio son realmente distintos entre sí, recortar rectangulos en cadrados pode supor un bo aumento de datos implícito. A continuación pódense ver as curvas de pérdida e precisión dos dous adestramentos. Apreciamos cas imaxes cadradas que o adestramento levou máis tempo e non converxe tan rápidamente, foi \emph{máis difícil} pero a cambio xeneraliza moito mellor (a liña discontinua mostra a precisión en proba). \footnote{As condicións do adestramento que se mostra foron: sen aumento de datos e sen preentrenado, pero probamos con todas as combinación e a conclusión e consistente.}\\
 
 
 
@@ -126,23 +124,23 @@ En xeral a motivación para escoller esta rede e non outra débese á terceira o
 	\label{fig:aumento}
 \end{figure}
 
-Sobre o aumento de datos comentar que a relación dos hiperparámetros que o definen e problemática para nos faceren probas: se cambiamos varios de unha vez non está necesariamente claro a cal dos cambiados débese a mellora ou empeora do rendimiento; se, en cambio, cambiamos só un de cada vez, a búsqueda no espacio de hiperparámetros do aumento de datos vólvese prohibitiva. E por isto que sabemos que a nosa configuración debe ser subóptima, pero non temos nada para evitalo.
-\item Un \textbf{MLP} (\emph{Multi-layer Perceptron}) de tres capas, sobre a saída da Rede. A saída da última capa \texttt{nn.Softmax()} ten 2 ou 3 neuronas según se quería clasificar en \{no barco, barco\} o en \{no barco, barco no amarrado, barco amarrado\}. Tamén probamos con un perceptrón simple (unha capa) pero a evidencia demostrou que os resultados eran mellores con tres. Como o número de neuronas na primeira capa (a saída da CNN) era máis grande ca o número de exemplos, a rede podería ter aprendido unha solución trivial co conxunto de adestramento e non xeneralizar en absoluto. Por esto mismo decantamos por usar \emph{DropOut} \cite{srivastava2014dropout} en diversas zonas da Rede. 
+Sobre o aumento de datos comentar que a relación dos hiperparámetros que o definen e problemática para nos faceren probas: se cambiamos varios de unha vez non está necesariamente claro a cal dos cambiados débese a mellora ou empeora do rendimiento; se, en cambio, cambiamos só un de cada vez, a búsqueda no espacio de hiperparámetros do aumento de datos vólvese prohibitiva \footnote{Se un pásase cas fluctuacións de cor, non conseguirá imaxes útiles nin converxirá a Rede, se un quédase corto será como non ter feito nada. As modificacións que atopamos axeitadas foron guiadas pola nosa (non entrenada) intuición e con probas.}. E por isto que sabemos que a nosa configuración debe ser subóptima, pero non temos nada para evitalo.
+\item Un \textbf{MLP} (\emph{Multi-layer Perceptron}) de tres capas, sobre a saída da Rede. A saída da última capa \texttt{nn.Softmax()} ten 2 ou 3 neuronas según se quería clasificar en \{no barco, barco\} o en \{no barco, barco no amarrado, barco amarrado\}. Tamén probamos con un perceptrón simple (unha capa) pero a evidencia demostrou que os resultados eran mellores con tres \footnote{Estos resultados poden reproducirse executando o \texttt{main.py} con e sin \texttt{--mlp\_head} (se non se especifica non se engaden capas).}. Como o número de neuronas na primeira capa (a saída da CNN) era máis grande ca o número de exemplos, a rede podería ter aprendido unha solución trivial co conxunto de adestramento e non xeneralizar en absoluto. Por esto mismo decantamos por usar \emph{DropOut} \cite{srivastava2014dropout} en diversas zonas da Rede. 
 \end{itemize}
 
 \subsection{Adestramento e evaluación}
 
 O adestramento foi díficil e indentificamos algúns problemas para os que atopamos solución. Aquí preséntanse:
 \begin{itemize}
-	\item \textbf{Datos non balanceados.} Observamos que a Rede marcaba todas as imaxes coma barcos. Esto débese ó desbalanceo dos datos (147 contra 88) dónde unha solución tan trivial e erronea como solo predecir unha clase non estaba tan penalizado con metricas como a precisión. Afrontamos isto alterando a probabilidade de ocurrencia das clases de forma que se antes, ó escolleren unha imaxe de \texttt{DataLoader}, $p(X=barco) = \frac{147}{147+88}$ ahora $p(X = barco) = 0.5$. Para elo usamos a utilidad \texttt{WeightedRandomSampler} de torch.
+	\item \textbf{Datos non balanceados.} Observamos que nunha primera instancia a Rede marcaba todas as imaxes coma barcos. Esto débese a que non estaba tan penalizado na función de pérdida debido ó desbalanceo dos datos (147 contra 88) dónde unha solución tan trivial e erronea como solo predecir unha clase non estaba tan penalizado con metricas como a precisión. Afrontamos isto alterando a probabilidade de ocurrencia das clases de forma que se antes, ó escolleren unha imaxe de \texttt{DataLoader}, $p(X=barco) = \frac{147}{147+88}$ ahora $p(X = barco) = 0.5$. Para elo usamos a utilidad \texttt{WeightedRandomSampler} de torch.
 	\item \textbf{Similitud nos datos.} Non creemos conveniente que a Rede esté totalmente segura de que un barco non está (igual é pequeno ou está ocluído) cando ela dí que non hai barco na imaxe. Por isto, e para que xeneralice millor adoptamos a idea de \cite{DBLP:journals/corr/SzegedyVISW15} onde as etiquetas en vez de ser [0, 1] para non-barco e [1, 0] para barco, son [$\epsilon$,$1 - \epsilon$] e [$1- \epsilon$,$\epsilon$] respectivamente, onde fixamos $\epsilon = 0.1$.
-	\item \textbf{Capacidade do modelo.} Orixinalmente usamos a EfficientNetB0, pero apreciando malos resultados decidimos mudar á EfficientNetB3 e logo á EfficientNetB4, que é un pouco máis grande pero precisamente como narran no artículo, é eficiente. Probamos con outras alternativas como ResNet e VGGNet sen conseguiren melloras nos resultados que pagasen a pena a diferencia no consumo de recursos.
+	\item \textbf{Capacidade do modelo.} Orixinalmente usamos a EfficientNetB0, pero apreciando malos resultados decidimos mudar á EfficientNetB3 e logo á EfficientNetB4, que é un pouco máis grande pero precisamente como narran no artículo \cite{tan2019efficientnet}, é eficiente. Probamos con outras alternativas como ResNet e VGGNet sen conseguiren melloras nos resultados que pagasen a pena a diferencia no consumo de recursos.
 	\item \textbf{Mínimos locais.} Para aliviar as consecuencias da dificultade do adestramento implementamos un \texttt{learning\_rate} que, con unha certa paciencia, mediaba a sua valor. \footnote{Esta paciencia mencionada e a do \emph{earlystopping} poden ambas ser axustadas como \emph{flags} no noso \emph{script}.}
-	\item \textbf{Sobreajuste e xeneralización.} Para cercionarnos de que a Rede aprendía correctamente, engadimos unha penalización da norma euclídea dos parámetros na función de perdida, é dicir, regularización Tikhonov. Atopar valores axeitados para $\lambda$ foi especialmente difícil.
+	\item \textbf{Sobreajuste e xeneralización.} Para cercionarnos de que a Rede aprendía correctamente, engadimos unha penalización da norma euclídea dos parámetros na función de perdida, é dicir, regularización Tikhonov \cite{lewkowycz2021trainingdynamicsdeepnetworks}. Atopar valores axeitados para $\lambda$ foi especialmente difícil.
 \end{itemize}
 
 
-\begin{wrapfigure}[10]{l}{0.35\textwidth}
+\begin{wrapfigure}[14]{l}{0.35\textwidth}
 	\includegraphics[width=1\linewidth]{cmEj1} 
 	\label{fig:cmEj1}
 	%\caption{Matriz de confusión para el primer ejercicio}
@@ -151,31 +149,31 @@ O adestramento foi díficil e indentificamos algúns problemas para os que atopa
 
 Outras consideracións sobre o adestramento que consideramos menos profundas e más ordinarias son: como optimizador usamos AdamW \cite{DBLP:journals/corr/abs-1711-05101} con un \texttt{learning\_rate} de $10^{-3}$ ou $10^{-4}$. Usamos un \texttt{batch\_size} de 32.
 
-Con respecto ós resultados obtidos nesta primeira iteración, poden observarse a grandes rasgos na matriz de confusión da esquerda. Figuras das curvas de pérdida e precisión en aprendizaxe ou das etiquetas predichas pola Rede para algunhas imágenes en concreto poden atoparse para este exercicio e o seguiente no Apéndice ó final del documento. \\
+Con respecto ós resultados obtidos nesta primeira iteración, poden observarse a grandes rasgos na matriz de confusión da esquerda. A precisión no conxunto de datos de proba e perfecta. Creemos, non obstante que non é esta a única metrica que un pode evaluar. Figuras das curvas de pérdida e precisión en aprendizaxe ou das etiquetas predichas pola Rede para algunhas imágenes en concreto \footnote{Atopamos especialmente útiles estas figuras xa que podíamos ver que imaxes levaban a Rede ó fracaso durante as iteracións. Deste xeito, podiamos \emph{debuggear} un problema de visión e non simplemente un adestramento de Redes Neuronais calquera.} poden atoparse para este exercicio e o seguiente no Apéndice ó final del documento.  \\
 \\
 \newpage 
 \section{Clasificación Docked/Undocked}
 
 Concebimos este exercicio como unha extensión do anterior, deste xeito pensamos en reutilizar todas as representacións aprendidas.
 \begin{itemize}
-	\item Cando especifícase \texttt{pretrained=True}, a nosa Rede non toma os parámetros de Imagenet, senon do exercicio anterior. Deste xeito xa ten moito aprendido e o proceso de optimización será más doado.
+	\item Cando especifícase \texttt{pretrained=True}, a nosa Rede non toma os parámetros de Imagenet (como tiñamos feito ate agora, xa que é o defecto ó descargar parámetros para a Rede), senon do exercicio anterior. Deste xeito xa ten moito aprendido e o proceso de optimización será más doado.
 	\item Como agora a cabeza da Rede ten 3 neuronas pero antes tiña 2, en vez de inicializar aleatoriamente as tres neuronas, dous copianse e só unha inicializase aleatoriamente. De novo, deste xeito ten menos traballo por diante. De calqueira xeito esperaríamos que a rede mude moito os seus parámetros durante o adestramento e esta inicialización soamente é unha inicialización aforturanda, pero por suposto é preciso adestrar a Rede (con moitas épocas).
 
 \end{itemize}
 
 
-\begin{wrapfigure}[14]{l}{0.35\textwidth}
+\begin{wrapfigure}[13]{l}{0.35\textwidth}
 	\includegraphics[width=1\linewidth]{cmEj2} 
 	\label{fig:cmEj2}
 	%\caption{Matriz de confusión para el segundo ejercicio}
 \end{wrapfigure}
 
-Ainda que a priori semella que son peores resultados que no exercicio 1, queremos sinalar as seguintes observacións:
+Ainda que a priori semella que son peores resultados que no exercicio 1(agora non conseguimos a perfectitude), queremos sinalar as seguintes observacións:
 
 \begin{itemize}
-	\item Agora o problema orixinal (barco contra no barco) está totalmente resolto (no barco ten a etiqueta 0). A isto encontramoslle a seguiente intuición: que a Rede se esforce nun problema máis complexo fai que sexa máis capaz de resolver o problema sinxelo.
+	\item Agora o problema orixinal (barco contra no barco) está totalmente resolto \footnote{Nas figuras do anexo pódese ver como, se úsasemos o segundo exercicio para resolver o primeiro (xuntar as últimas duas columnas e filas) tendríamos mellores resultados que se intentásemos resolver o primeiro problema directamente.}. A isto encontramoslle a seguiente intuición: que a Rede se esforce nun problema máis complexo fai que sexa máis capaz de resolver o problema sinxelo.
 	\item As diferenzas entre as clases atracado contra no atracado son realmente sutiles (ver Figura \ref{fig:comparativaDoked}) e a un humano que non foi \emph{adestrado} cas etiquetas tamén pode resultarlle complexo resolver. 
-	\item Non obstante en xeneral poderíamos dicir que malia non seren a clasificación perfecta, polo  menos é bastante diagonal.
+	\item Non obstante en xeneral poderíamos dicir que malia non seren a clasificación perfecta, polo  menos é bastante diagonal, e os errores concentranse onde intuitivamente pensaríamos, e dicir, entre as clases \emph{barco atracado} e \emph{barco non atracado}.
 \end{itemize}
 
 
@@ -212,8 +210,10 @@ Na tabla a continuación mostránse os resultados da precisión das prediccións
 Sobre estos resultados podense facer as seguintes reflexións:
 \begin{itemize}
 	\item Que o modelo esté preentrenado ou non supón unha gran diferencia, sobretodo no caso de aumento de datos. Esto é loxico e esperable. Que ocurra máis claramente no caso de aumento de datos xustificase con que: ó seren un problema máis difícil, vai ser maior a axuda que supón ter os parámetros preentrenados.
-	\item O aumento de datos sempre ofrece peores resultados que non facelo. Esto pode parecer alarmante, e indicador de que fixemos un mal aumento de datos. Pero hai varias cousas que matizar. En primer lugar, como en calqueira caso as imaxes rectangulares recortanse a cadrados, sempre hai algún timpo de aumento de datos, entón na táboa realmente estase a mostrar a comparativa de aumento de datos ou moito aumento de datos. Ademáis é posible que con máis épocas a Rede seguise adestrándose ata o punto de que con aumento de datos exista unha mellora. Ó final o obxectivo do aumento de datos e impoñer restriccións sobre o que debe aprender ca esperanza de que xeneralice mellor; por tanto, ó enfrentar á Rede a un problema maior, que lle custe máis é esperable.
-	\item En calqueira caso vemos que no problema de clasificación en dúas clases non fai falla aumento de datos.
+	\item O aumento de datos sempre ofrece peores resultados que non facelo. Esto pode parecer alarmante, e indicador de que fixemos un mal aumento de datos. Pero hai varias cousas que matizar. En primero lugar, como en calqueira caso as imaxes rectangulares recortanse a cadrados, sempre hai algún timpo de aumento de datos, entón na táboa realmente estase a mostrar a comparativa de aumento de datos ou moito aumento de datos. Ademáis é posible que con máis épocas a Rede seguise adestrándose ata o punto de que con aumento de datos exista unha mellora. Ó final o obxectivo do aumento de datos e impoñer restriccións sobre o que debe aprender ca esperanza de que xeneralice mellor; por tanto, ó enfrentar á Rede a un problema maior, que lle custe máis é esperable. En calqueira caso vemos que no problema de clasificación en dúas clases non fai falla aumento de datos.
+	\item O problema de 3 clases ofrece un rendemento sempre peor, o cal é esperable por dous motivos: (i) son máis clases (ii) hai unha gran similitude entre as clases \emph{barco atracado} e \emph{barco non atracado}.
+	\item Para a combinación 3 clases, non preentrenado, aumento de datos, por ser 3 clases e ter un 67\% de precisión en test podría parecer que a Rede chegou a unha solución trivial (asignar a todas as imaxes de barcos a mesma clase e de ahí a metrica) pero observando as figuras do Anexo pódese ver que non, que a Rede esta cando menos encamiñada (a matriz de confusión segue sendo diagonal malia moito error nas duas clases con barco).
+	\item Para a combinación 2 clases, preentrenado, non aumento de datos, podría parecer que a Rede sobreentrena, e de ahí a perfectitude, máis temos que recordar que as métricas son no conxunto de datos de proba.
 \end{itemize}
 
 

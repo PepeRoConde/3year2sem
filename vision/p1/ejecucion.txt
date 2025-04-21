@@ -22356,3 +22356,51 @@ Using device: cuda:0
 Test Accuracy: 0.8305
 F1 Score: 0.8197
 Model saved to ex2paramsDA
+
+Running with the following configuration:
+Root directory: /Users/pepe/carrera/3/2/vca/practicas/p2
+Data Augmentation: False
+Docked classification: False
+Not training model: False
+Training data ratio: 0.8
+Pretrained: False
+Model arquitecture: efficientnet_b4
+MLP head: True
+Show: False
+Saving figures to figures
+Model path: modelParams
+Model save path: None
+Saving: False
+Loading model from file: False
+Class balancing: Balanced
+Batch size: 16
+Number of workers: 4
+Number of epochs: 500
+Early stopping patience: 20
+Learning rate: 0.0001
+L2 regularization lambda: 1e-06
+Learning rate decay patience: 8
+Test images: []
+
+
+--
+Class counts before balancing: Counter({1: 147, 0: 88})
+weights for balancing: Counter({0.006802721088435374: 147, 0.011363636363636364: 88})
+--
+
+Using device: mps
+Epoch 1/500
+----------
+  Batch 0: Loss: 0.8729, Acc: 0.6250
+  Train Loss: 0.8825 Acc: 0.4809
+Epoch 2/500
+----------
+  Batch 0: Loss: 0.8771, Acc: 0.5625
+  Train Loss: 0.8747 Acc: 0.5489
+Epoch 3/500
+----------
+  Batch 0: Loss: 0.8980, Acc: 0.4375
+  Train Loss: 0.8720 Acc: 0.5872
+Epoch 4/500
+----------
+  Batch 0: Loss: 0.8760, Acc: 0.4375

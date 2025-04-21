@@ -1,5 +1,9 @@
 \begin{thebibliography}{1}
 
+\bibitem{lewkowycz2021trainingdynamicsdeepnetworks}
+Aitor Lewkowycz and Guy Gur-Ari.
+\newblock On the training dynamics of deep networks with $l_2$ regularization, 2021.
+
 \bibitem{DBLP:journals/corr/abs-1711-05101}
 Ilya Loshchilov and Frank Hutter.
 \newblock Fixing weight decay regularization in adam.
