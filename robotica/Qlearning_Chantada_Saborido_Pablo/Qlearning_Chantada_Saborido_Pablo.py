@@ -36,11 +36,6 @@ def update_q_table(q_table, state, action, reward, new_state):
     # Aplicar la ecuación 
     new_q = current_q + ALPHA * (reward + GAMMA * max_future_q - current_q)
     
-    if new_q > 0:
-        new_q = min(new_q, 1.0)
-    else:
-        new_q = max(new_q, -1.0)
-
     # Actualizar la tabla  
     q_table[state, action] = new_q
     
