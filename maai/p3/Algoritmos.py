@@ -1,5 +1,6 @@
 from AlgoritmoAprendizaxeReforzo import AlgoritmoAprendizaxeReforzo
 import numpy as np
+from tqdm import tqdm
 from typing import Tuple, Dict, List, Any
 
 class MonteCarlo(AlgoritmoAprendizaxeReforzo):
@@ -56,7 +57,8 @@ class MonteCarlo(AlgoritmoAprendizaxeReforzo):
     def adestra(self, num_episodios, num_maximo_pasos, verboso):
         self.tasa_decaemento = (self.epsilon_0 - self.epsilon_min) / num_episodios 
 
-        for episodio in range(num_episodios):
+        barra_progreso = tqdm(range(num_episodios), desc=f"{self.__class__.__name__} Training")
+        for episodio in barra_progreso:
             
             if self.epsilon_decae:
                 self.actualiza_epsilon(episodio)
@@ -80,9 +82,12 @@ class MonteCarlo(AlgoritmoAprendizaxeReforzo):
             self.recompensas_episodios.append(recompensa_total)
             
             if episodio % verboso == 0:
-                print(f'Episodio {episodio}/{num_episodios}. Recompensa: {recompensa_total:.2f}')
+                barra_progreso.set_postfix({
+                    "reward": f"{recompensa_total:.2f}",
+                    "epsilon": f"{self.epsilon:.4f}"
+                })
 
-            self.garda_q()
+        self.garda_q()
 
 class DiferenciaTemporal(AlgoritmoAprendizaxeReforzo):
     def __init__(self, 
@@ -126,26 +131,28 @@ class DiferenciaTemporal(AlgoritmoAprendizaxeReforzo):
         self.q[*estado, accion] = valor_actual + self.alpha * DT_error
 
     def actualiza_alpha(self, paso):
-        self.alpha = self.alpha_0/(paso**self.beta)
+        self.alpha = self.alpha_0/((1+paso)**self.beta)
 
     def adestra(self, num_episodios, num_maximo_pasos, verboso):
         self.tasa_decaemento = (self.epsilon_0 - self.epsilon_min) / num_episodios 
 
-        for episodio in range(num_episodios):
+
+        barra_progreso = tqdm(range(num_episodios), desc=f"{self.__class__.__name__} Training")
+        for episodio in barra_progreso:
 
             if self.epsilon_decae:
                 self.actualiza_epsilon(episodio)
 
             if self.alpha_decae:
-                self.alpha = self.alpha/np.log(episodio+2)
+                self.actualiza_alpha(episodio)
 
             estado, _ = self.env.reset()
             historial_episodio = []
             recompensa_total = 0
+            estado_dis = self.discretiza_estado(estado)
 
             for paso in range(num_maximo_pasos):
 
-                estado_dis = self.discretiza_estado(estado)
                 accion_dis = self.politica(estado_dis)
                 accion = self.continua_accion(accion_dis)
                 estado_seguinte, recompensa, feito, truncado, _ = self.env.step(accion)
@@ -153,7 +160,7 @@ class DiferenciaTemporal(AlgoritmoAprendizaxeReforzo):
                 estado_seguinte_dis = self.discretiza_estado(estado_seguinte)
                 accion_seguinte_dis = self.politica(estado_seguinte_dis)
                 self.actualiza_q(estado_dis, accion_dis, recompensa, estado_seguinte_dis, accion_seguinte_dis)
-                estado_dis, accion_dis = estado_seguinte_dis, accion_seguinte_dis
+                estado_dis = estado_seguinte_dis 
 
                 if feito or truncado:
                     break
@@ -161,7 +168,11 @@ class DiferenciaTemporal(AlgoritmoAprendizaxeReforzo):
             self.recompensas_episodios.append(recompensa_total)
 
             if episodio % verboso == 0:
-                print(f'Episodio {episodio}/{num_episodios}. Recompensa: {recompensa_total:.2f}')
+                barra_progreso.set_postfix({
+                    "reward": f"{recompensa_total:.2f}",
+                    "epsilon": f"{self.epsilon:.4f}",
+                    "alpha": f"{self.alpha:.4f}"
+                })
 
         self.garda_q()
 
@@ -171,4 +182,4 @@ class Sarsa(DiferenciaTemporal):
 
 class Q_Aprendizaxe(DiferenciaTemporal):
     def seguinte_q(self, estado_seguinte, accion_seguinte):
-        return np.max(self.q[estado_seguinte])
+        return np.max(self.q[*estado_seguinte])

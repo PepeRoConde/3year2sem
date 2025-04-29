@@ -49,16 +49,36 @@ class AlgoritmoAprendizaxeReforzo(ABC):
         cota_inf = self.env.action_space.low[0]
         cota_sup = self.env.action_space.high[0]
         return np.linspace(cota_inf, cota_sup, self.discretizacion_accion)
-    
+ 
+
     def inicializa_q(self, inicializacion_informada):
         if inicializacion_informada:
-            # TODO implementar inicializacion informada
-            pass
+            q = np.zeros(tuple([*self.discretizacion_estado, self.discretizacion_accion]))
+            
+            for i in range(self.discretizacion_estado[0]):  # coseno
+                for j in range(self.discretizacion_estado[1]):  # seno
+                    for k in range(self.discretizacion_estado[2]):  # velocidad angular
+                        for a in range(self.discretizacion_accion):  # acción
+                            
+                            cos_theta = self.estados[0][i]
+                            sin_theta = self.estados[1][j]
+                            vel_ang = self.estados[2][k]
+                            accion = self.accions[a]
+                            
+                            posicion_bonus = -5.0 * (cos_theta + 1.0)  # Highest when cos(θ) = -1 (upright)
+                            posicion_bonus = 0
+                            velocidad_penalizacion = -0.1 * abs(vel_ang) 
+                            accion_bonus = -0.2 * vel_ang * accion  # se oponse en signo, sera positivo 
+                            
+                            q[i,j,k,a] = posicion_bonus + velocidad_penalizacion + accion_bonus
+            
+            return q
         else:
             return np.zeros(tuple([*self.discretizacion_estado, self.discretizacion_accion]))
 
     def garda_q(self):
-        np.save(self.nome_figura()+'.npy',self.q)
+        ruta = self.ruta_segura_gardado('parametros', self.nome_figura(), extension='.npy')
+        np.save(ruta, self.q)
 
     def carga_q(self,nome_arquivo):
         self.q = np.load(nome_arquivo)
@@ -120,8 +140,9 @@ class AlgoritmoAprendizaxeReforzo(ABC):
         return ruta_completa
     
     
-    def curva_aprendizaxe(self, cartafol=None, mostra=True, sigma=10):
-    
+    def curva_aprendizaxe(self, cartafol=None, mostra=True, sigma=None):
+        if not sigma: sigma = int(len(self.recompensas_episodios)/50)
+        
         plt.figure(figsize=(10, 6))
         plt.plot(gaussian_filter1d(self.recompensas_episodios,sigma))
         plt.xlabel("Episodios")
