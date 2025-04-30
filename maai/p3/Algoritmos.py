@@ -55,9 +55,9 @@ class MonteCarlo(AlgoritmoAprendizaxeReforzo):
             self.q[*estado, accion] = np.mean(recompensas[(estado, accion)])
 
     def adestra(self, num_episodios, num_maximo_pasos, verboso):
-        self.tasa_decaemento = (self.epsilon_0 - self.epsilon_min) / num_episodios 
+        self.tasa_decaemento_epsilon = (self.epsilon_0 - self.epsilon_min) / num_episodios 
 
-        barra_progreso = tqdm(range(num_episodios), desc=f"{self.__class__.__name__} Training")
+        barra_progreso = tqdm(range(num_episodios), desc=f"Adestramento de {self.__class__.__name__}")
         for episodio in barra_progreso:
             
             if self.epsilon_decae:
@@ -73,6 +73,16 @@ class MonteCarlo(AlgoritmoAprendizaxeReforzo):
                 accion_dis = self.politica(estado_dis)
                 accion = self.continua_accion(accion_dis)
                 estado, recompensa, feito, truncado, _ = self.env.step(accion)
+
+                if self.perturbacion and not self.determinista:
+                    if np.random.randint(20) == 0: # 1 entre 20 e un 5% de probablilidade
+                        if np.random.randint(1) == 0: # 50% de unha perturbacion ou outra
+                            perturbacion = self.continua_accion(0)
+                        else: 
+                            perturbacion = self.continua_accion(-1)
+                        estado, recompensa, feito, truncado, _ = self.env.step(perturbacion)
+
+
                 recompensa_total += recompensa
                 historial_episodio.append((estado_dis, accion_dis, recompensa))
 
@@ -95,6 +105,7 @@ class DiferenciaTemporal(AlgoritmoAprendizaxeReforzo):
                  epsilon: float = 0.1,
                  epsilon_min: float = 0.0001,
                  alpha: float = 0.1,
+                 alpha_min: float = 0.001,
                  beta: float = 0.6,
                  discretizacion_estado: int | list[int] = 20,
                  discretizacion_accion: int = 20,
@@ -116,6 +127,7 @@ class DiferenciaTemporal(AlgoritmoAprendizaxeReforzo):
                          epsilon_decae=epsilon_decae)
 
         self.alpha_0 = alpha
+        self.alpha_min = alpha_min
         self.beta = beta
         self.alpha_decae = alpha_decae
 
@@ -131,13 +143,16 @@ class DiferenciaTemporal(AlgoritmoAprendizaxeReforzo):
         self.q[*estado, accion] = valor_actual + self.alpha * DT_error
 
     def actualiza_alpha(self, paso):
-        self.alpha = self.alpha_0/((1+paso)**self.beta)
+        #self.alpha = self.alpha_0/((1+paso)**self.beta)
+        self.alpha = max(self.alpha_min, self.alpha_0 - self.tasa_decaemento_alpha * paso)
+
 
     def adestra(self, num_episodios, num_maximo_pasos, verboso):
-        self.tasa_decaemento = (self.epsilon_0 - self.epsilon_min) / num_episodios 
+        self.tasa_decaemento_epsilon = (self.epsilon_0 - self.epsilon_min) / num_episodios 
+        self.tasa_decaemento_alpha = (self.alpha_0 - self.alpha_min) / num_episodios 
 
 
-        barra_progreso = tqdm(range(num_episodios), desc=f"{self.__class__.__name__} Training")
+        barra_progreso = tqdm(range(num_episodios), desc=f"Adestramento de {self.__class__.__name__}")
         for episodio in barra_progreso:
 
             if self.epsilon_decae:
@@ -156,6 +171,15 @@ class DiferenciaTemporal(AlgoritmoAprendizaxeReforzo):
                 accion_dis = self.politica(estado_dis)
                 accion = self.continua_accion(accion_dis)
                 estado_seguinte, recompensa, feito, truncado, _ = self.env.step(accion)
+
+                if self.perturbacion and not self.determinista:
+                    if np.random.randint(20) == 0: # 1 entre 20 e un 5% de probablilidade
+                        if np.random.randint(1) == 0: # 50% de unha perturbacion ou outra
+                            perturbacion = self.continua_accion(0)
+                        else: 
+                            perturbacion = self.continua_accion(-1)
+                        estado_seguinte, recompensa, feito, truncado, _ = self.env.step(perturbacion)
+
                 recompensa_total += recompensa
                 estado_seguinte_dis = self.discretiza_estado(estado_seguinte)
                 accion_seguinte_dis = self.politica(estado_seguinte_dis)
@@ -183,3 +207,7 @@ class Sarsa(DiferenciaTemporal):
 class Q_Aprendizaxe(DiferenciaTemporal):
     def seguinte_q(self, estado_seguinte, accion_seguinte):
         return np.max(self.q[*estado_seguinte])
+
+class SarsaPromedio(DiferenciaTemporal):
+    def seguinte_q(self, estado_seguinte, accion_seguinte):
+        return np.mean(self.q[*estado_seguinte])

@@ -1,4 +1,4 @@
-from Algoritmos import MonteCarlo, Sarsa, Q_Aprendizaxe
+from Algoritmos import MonteCarlo, Sarsa, Q_Aprendizaxe, SarsaPromedio
 import argparse 
 
 def parsea_argumentos():
@@ -14,6 +14,7 @@ def parsea_argumentos():
     parser.add_argument('--epsilon', type=float, default=0.1)
     parser.add_argument('--epsilon_min', type=float, default=0.001)
     parser.add_argument('--alpha', type=float, default=0.1)
+    parser.add_argument('--alpha_min', type=float, default=0.001)
     parser.add_argument('--beta', type=float, default=0.6)
     parser.add_argument('--cartafol_figuras', type=str, default='figuras',help='Onde gardarasen as figuras. Non ten efecto se usase --mostra')
     parser.add_argument('--inicializacion_informada', action='store_true') # ainda non o implentei
@@ -24,14 +25,14 @@ def parsea_argumentos():
     parser.add_argument('--render', action='store_true', help='Se especificase se vera a tempo real nas probas (non mentras adestra)')
     parser.add_argument('--perturbacion', action='store_true', help='Se especificase aplicaranse perturbacions como definidas no enunciado da practica')
     parser.add_argument('--determinista', action='store_true', help='Se especificase, nin sera epsilon-politica nin habera perturbacions')
-    parser.add_argument('--algoritmos',type=list[str], default=['mc','s','q'])
+    parser.add_argument('--algoritmos',type=list[str], default=['m','s','q','p'])
 
     return parser.parse_args() 
 
 if __name__ == "__main__":
     arg = parsea_argumentos()
 
-    if 'mc' in arg.algoritmos:
+    if 'm' in arg.algoritmos:
         mc = MonteCarlo(gamma=arg.gamma, 
                     epsilon=arg.epsilon,
                     epsilon_min=arg.epsilon_min,
@@ -54,6 +55,7 @@ if __name__ == "__main__":
                     epsilon=arg.epsilon,
                     epsilon_min=arg.epsilon_min,
                     alpha=arg.alpha,
+                    alpha_min=arg.alpha_min,
                     alpha_decae=arg.alpha_decae,
                     beta=arg.beta,
                     epsilon_decae=arg.epsilon_decae,
@@ -74,6 +76,7 @@ if __name__ == "__main__":
                     epsilon=arg.epsilon,
                     epsilon_min=arg.epsilon_min,
                     alpha=arg.alpha,
+                    alpha_min=arg.alpha_min,
                     beta=arg.beta,
                     alpha_decae=arg.alpha_decae,
                     epsilon_decae=arg.epsilon_decae,
@@ -88,3 +91,24 @@ if __name__ == "__main__":
         q_aprendizaxe.curva_aprendizaxe(cartafol=arg.cartafol_figuras,mostra=arg.mostra)
         q_aprendizaxe.mostra_q(cartafol=arg.cartafol_figuras,mostra=arg.mostra)
         q_aprendizaxe.proba(num_episodios=arg.num_episodios_proba,render=arg.render)
+
+    if 'p' in arg.algoritmos:
+        sarsa_promedio = SarsaPromedio(gamma=arg.gamma, 
+                    epsilon=arg.epsilon,
+                    epsilon_min=arg.epsilon_min,
+                    alpha=arg.alpha,
+                    alpha_min=arg.alpha_min,
+                    beta=arg.beta,
+                    alpha_decae=arg.alpha_decae,
+                    epsilon_decae=arg.epsilon_decae,
+                    discretizacion_estado=arg.discretizacion_estado,
+                    discretizacion_accion=arg.discretizacion_accion,
+                    inicializacion_informada=arg.inicializacion_informada,
+                    perturbacion=arg.perturbacion,
+                    determinista=arg.determinista)
+        sarsa_promedio.adestra(num_episodios=arg.num_episodios,                      
+                    num_maximo_pasos=arg.num_maximo_pasos,
+                    verboso=arg.verboso)
+        sarsa_promedio.curva_aprendizaxe(cartafol=arg.cartafol_figuras,mostra=arg.mostra)
+        sarsa_promedio.mostra_q(cartafol=arg.cartafol_figuras,mostra=arg.mostra)
+        sarsa_promedio.proba(num_episodios=arg.num_episodios_proba,render=arg.render)

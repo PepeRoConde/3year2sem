@@ -65,7 +65,7 @@ class AlgoritmoAprendizaxeReforzo(ABC):
                             vel_ang = self.estados[2][k]
                             accion = self.accions[a]
                             
-                            posicion_bonus = -5.0 * (cos_theta + 1.0)  # Highest when cos(θ) = -1 (upright)
+                            posicion_bonus = -5.0 * (cos_theta + 1.0)
                             posicion_bonus = 0
                             velocidad_penalizacion = -0.1 * abs(vel_ang) 
                             accion_bonus = -0.2 * vel_ang * accion  # se oponse en signo, sera positivo 
@@ -107,10 +107,6 @@ class AlgoritmoAprendizaxeReforzo(ABC):
     def politica(self, estado):
         # chamada a politica epsilon avara para que dado un estado nos diga a seguinte accion. 
         # NOTE: como podese ver, non temos estructura de datos exlicita definida para a politica (nin para v) se non que, como a politica inferencia a apartires de Q, e cambiar a politica ten que ver sempre con cambiar Q, simplemente usamos Q.  xeito e computacionalmente mais eficiente
-        if self.perturbacion and not self.determinista:
-            if np.random.randint(20) == 0: # 1 entre 20 e un 5% de probablilidade
-                if np.random.randint(1) == 0: return 0 # 50% de unha perturbacion ou outra
-                else: return -1
         if (np.random.random() > self.epsilon) or self.determinista:
             return np.argmax(self.q[estado]) # explotacion
         else:
@@ -118,9 +114,9 @@ class AlgoritmoAprendizaxeReforzo(ABC):
     
     def nome_figura(self):
         try: # para os DT
-            return f"{self.__class__.__name__}__g_{self.gamma}_e_{self.epsilon_0}_alpha_{self.alpha_0}".replace(".", "%")
+            return f"{self.__class__.__name__}__de_{self.discretizacion_estado[0]}_pert_{self.perturbacion}_da_{self.discretizacion_accion}_g_{self.gamma}_e_{self.epsilon_0}_alpha_{self.alpha_0}".replace(".", "%")
         except: # para MC
-            return f"{self.__class__.__name__}__g_{self.gamma}_e_{self.epsilon_0}".replace(".", "%")
+            return f"{self.__class__.__name__}__de_{self.discretizacion_estado[0]}_pert_{self.perturbacion}_da_{self.discretizacion_accion}_g_{self.gamma}_e_{self.epsilon_0}_pv_{self.primeira_visita}".replace(".", "%")
     
     
     def ruta_segura_gardado(self, cartafol, nome_base, extension=".png"):
@@ -144,7 +140,7 @@ class AlgoritmoAprendizaxeReforzo(ABC):
         if not sigma: sigma = int(len(self.recompensas_episodios)/50)
         
         plt.figure(figsize=(10, 6))
-        plt.plot(gaussian_filter1d(self.recompensas_episodios,sigma))
+        plt.plot(gaussian_filter1d(self.recompensas_episodios,sigma),color=(215/255,155/255,0/255))
         plt.xlabel("Episodios")
         plt.ylabel("Recompensa total")
         plt.grid(True)
@@ -191,10 +187,11 @@ class AlgoritmoAprendizaxeReforzo(ABC):
     
     
     def actualiza_epsilon(self, paso):
-        self.epsilon = max(self.epsilon_min, self.epsilon_0 - self.tasa_decaemento * paso)
+        self.epsilon = max(self.epsilon_min, self.epsilon_0 - self.tasa_decaemento_epsilon * paso)
     
     def proba(self, num_episodios=1, render=True):
         
+        print(f'Probando {self.nome_figura()}')
         if render:
             self.env = gym.make('Pendulum-v1', render_mode='human') 
     
@@ -211,8 +208,16 @@ class AlgoritmoAprendizaxeReforzo(ABC):
                 estado_discreto = self.discretiza_estado(estado)
                 accion_discreta = self.politica(estado_discreto)
                 accion = self.continua_accion(accion_discreta)
-    
                 estado, recompensa, rematado, truncado, _ = self.env.step(accion)
+    
+                if self.perturbacion and not self.determinista:
+                    if np.random.randint(20) == 0: # 1 entre 20 e un 5% de probablilidade
+                        if np.random.randint(1) == 0: # 50% de unha perturbacion ou outra
+                            perturbacion = self.continua_accion(0)
+                        else: 
+                            perturbacion = self.continua_accion(-1)
+                        estado, recompensa, feito, truncado, _ = self.env.step(perturbacion)
+
                 recompensas_episodios += recompensa
     
             recompensas_totales.append(recompensas_episodios)
