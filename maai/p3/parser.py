@@ -72,7 +72,7 @@ def generate_latex_table(parsed_data):
     latex += "\\centering\n"
     latex += "\\begin{tabular}{|l|c|c|c|c|c|c|c|c|}\n"
     latex += "\\hline\n"
-    latex += "Algorithm & $d_e$ & $d_a$ & Pert & $\\gamma$ & $\\alpha$ & $\\epsilon$ & PV & Avg. Reward \\\\ \\hline\n"
+    latex += "Algoritmo & $d_e$ & $d_a$ & Perturbación & $\\gamma$ & $\\alpha$ & $\\epsilon$ & Primeira Visita & Recompensa en proba \\\\ \\hline\n"
     
     # Add data rows
     for data in parsed_data:
@@ -92,7 +92,7 @@ def generate_latex_table(parsed_data):
     
     # End LaTeX table
     latex += "\\end{tabular}\n"
-    latex += "\\caption{Reinforcement Learning Algorithm Performance Comparison}\n"
+    latex += "\\caption{Comparación de hiperparámetros e algoritmos.}\n"
     latex += "\\label{tab:rl_algorithms}\n"
     latex += "\\end{table}\n"
     

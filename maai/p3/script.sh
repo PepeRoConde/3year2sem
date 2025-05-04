@@ -4,8 +4,8 @@ DISCRETIZACION_ESTADO=30
 DISCRETIZACION_ACCION=30
 GAMMA=0.99
 VERBOSO=200
-NUM_EPISODIOS=50000
-CARTAFOL=cartafol_definitivo
+NUM_EPISODIOS=250000
+CARTAFOL=cartafol
 
 : > resultados.txt
 
@@ -53,7 +53,7 @@ python main.py --algoritmos mc --num_episodios $NUM_EPISODIOS --verboso $VERBOSO
   --discretizacion_estado $DISCRETIZACION_ESTADO --discretizacion_accion $DISCRETIZACION_ACCION \
   --gamma $GAMMA --alpha 0.6 --alpha_min 0.0005 --alpha_decae \
   --epsilon 0.5 --epsilon_min 0.0005 --epsilon_decae \
-  --inicializacion_informada --perturbacion --cartafol_figuras $CARTAFOL >> resultados.txt 
+  --inicializacion_informada --perturbacion --primeira_visita --cartafol_figuras $CARTAFOL >> resultados.txt 
 
 # SARSA e Expected SARSA con perturbacion
 python main.py --algoritmos s,sp --num_episodios $NUM_EPISODIOS --verboso $VERBOSO \
@@ -68,4 +68,4 @@ python main.py --algoritmos q --num_episodios $NUM_EPISODIOS --verboso $VERBOSO 
   --gamma $GAMMA --alpha 0.6 --alpha_min 0.0005 --alpha_decae \
   --epsilon 0.5 --epsilon_min 0.0005 --epsilon_decae \
   --inicializacion_informada --perturbacion --cartafol_figuras $CARTAFOL >> resultados.txt 
-
+z

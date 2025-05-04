@@ -1,24 +1,37 @@
-from Algoritmos import MonteCarlo, Sarsa, Q_Aprendizaxe
+from Algoritmos import MonteCarlo, Sarsa, Q_Aprendizaxe, SarsaPromedio
 import numpy as np
 
+# variables gloabais, cambiar aquí
+num_episodios, render = 1000, False
+
+
+
 print('<<mc>>')
-mc = Sarsa(discretizacion_estado=20,discretizacion_accion=30)
-mc.q = np.load('parametros/MonteCarlo__de_30_pert_False_da_30_g_0%99_e_0%5_pv_False.npy')
+mc = MonteCarlo(discretizacion_estado=30,discretizacion_accion=30)
+mc.q = np.load('parametros/MonteCarlo__de_30_pert_True_da_30_g_0%99_e_0%5_pv_True.npy')
 
-mc.proba()
-
-
+mc.proba(num_episodios=num_episodios, render=render)
 
 
-#print('<<sarsa>>')
-#sarsa = Sarsa(discretizacion_estado=20,discretizacion_accion=30)
-#sarsa.q = np.load('parametros/Sarsa__g_0%99_e_0%25_alpha_0%3.npy')
-
-#sarsa.proba()
 
 
-#print('<<aprendizaxeQ>>')
-#q = Q_Aprendizaxe(discretizacion_estado=25,discretizacion_accion=25)
-#q.q = np.load('parametros/Q_Aprendizaxe__de_25_da_25_g_0%99_e_0%4_alpha_0%5.npy')
+print('<<sarsa>>')
+sarsa = Sarsa(discretizacion_estado=30,discretizacion_accion=30)
+sarsa.q = np.load('parametros/Sarsa__de_30_pert_True_da_30_g_0%99_e_0%5_alpha_0%6.npy')
 
-#q.proba()
+sarsa.proba(num_episodios=num_episodios, render=render)
+
+
+
+print('<<sarsa promedio>>')
+sarsa_p = SarsaPromedio(discretizacion_estado=30,discretizacion_accion=30)
+sarsa_p.q = np.load('parametros/SarsaPromedio__de_30_pert_True_da_30_g_0%99_e_0%5_alpha_0%6.npy')
+
+sarsa_p.proba(num_episodios=num_episodios, render=render)
+
+
+print('<<aprendizaxeQ>>')
+q = Q_Aprendizaxe(discretizacion_estado=30,discretizacion_accion=30)
+q.q = np.load('parametros/Q_Aprendizaxe__de_30_pert_True_da_30_g_0%99_e_0%5_alpha_0%6.npy')
+
+q.proba(num_episodios=num_episodios, render=render)

@@ -1,0 +1,20 @@
+\begin{table}[ht]
+\centering
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\hline
+Algoritmo & $d_e$ & $d_a$ & Perturbación & $\gamma$ & $\alpha$ & $\epsilon$ & Primeira Visita & Recompensa en proba \\ \hline
+MonteCarlo & 30 & 30 & False & 00.99 & - & 00.5 & False & -504.88 \\ \hline
+MonteCarlo & 30 & 30 & False & 00.99 & - & 00.5 & True & -417.87 \\ \hline
+Sarsa & 30 & 30 & False & 00.99 & 00.6 & 00.5 & - & -98.71 \\ \hline
+Sarsa & 30 & 30 & False & 00.99 & 00.2 & 00.2 & - & -98.69 \\ \hline
+SarsaPromedio & 30 & 30 & False & 00.99 & 00.2 & 00.2 & - & -397.48 \\ \hline
+Q_Aprendizaxe & 30 & 30 & False & 00.99 & 00.6 & 00.5 & - & -132.64 \\ \hline
+Q_Aprendizaxe & 30 & 30 & False & 00.99 & 00.2 & 00.2 & - & -99.45 \\ \hline
+MonteCarlo & 30 & 30 & True & 00.99 & - & 00.5 & True & -585.19 \\ \hline
+Sarsa & 30 & 30 & True & 00.99 & 00.6 & 00.5 & - & -120.90 \\ \hline
+SarsaPromedio & 30 & 30 & True & 00.99 & 00.6 & 00.5 & - & -361.70 \\ \hline
+Q_Aprendizaxe & 30 & 30 & True & 00.99 & 00.6 & 00.5 & - & -141.05 \\ \hline
+\end{tabular}
+\caption{Comparación de hiperparámetros e algoritmos.}
+\label{tab:rl_algorithms}
+\end{table}
