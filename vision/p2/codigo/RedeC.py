@@ -5,15 +5,16 @@ import torch.nn as nn
 from torch import cat
 
 class UNet(nn.Module):
-    def __init__(self, canles_entrada=1, num_clases=1, canles_base=64, profundidade=4):
+    def __init__(self, canles_entrada=1, num_clases=1, canles_base=64, profundidade=4, probabilidade_dropout=0.0):
         super().__init__()
         self.profundidade = profundidade
+        self.probabilidade_dropout = probabilidade_dropout
         self.camino_contraente = nn.ModuleList()
         self.camino_expansivo = nn.ModuleList()
         self.maxpool = nn.MaxPool2d(2)
         self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
 
-        canles = canles_entrada # variable mutable
+        canles = canles_entrada
 
         # Camiño contraente
         for i in range(profundidade):
@@ -34,12 +35,17 @@ class UNet(nn.Module):
         self.derradeira_convolucion = nn.Conv2d(canles_base, num_clases, 1)
 
     def doble_convolucion(self, canles_entrada, canles_saida):
-        return nn.Sequential(
-            nn.Conv2d(canles_entrada, canles_saida, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(canles_saida, canles_saida, 3, padding=1),
+        capas = [
+            nn.Conv2d(canles_entrada, canles_saida, kernel_size=3, padding=1),
             nn.ReLU(inplace=True)
-        )
+        ]
+        if self.probabilidade_dropout > 0:
+            capas.append(nn.Dropout2d(p=self.probabilidade_dropout))
+        capas += [
+            nn.Conv2d(canles_saida, canles_saida, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True)
+        ]
+        return nn.Sequential(*capas)
 
     def forward(self, x):
         atallos = []
@@ -56,9 +62,8 @@ class UNet(nn.Module):
         # Camiño expansivo
         for capa, atallo in zip(self.camino_expansivo, reversed(atallos)):
             x = self.upsample(x)
-            x = axusta_tamano(atallo,x)
+            x = axusta_tamano(atallo, x)
             x = cat([atallo, x], dim=1)
             x = capa(x)
 
         return self.derradeira_convolucion(x)
-

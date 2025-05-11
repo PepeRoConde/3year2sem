@@ -15,7 +15,7 @@ def adestra_unha_epoca(modelo, cargador, funcion_perdida, optimizador, dispositi
 
         optimizador.zero_grad()
         saidas = modelo(imaxes)
-        perdida = funcion_perdida(saidas, mascaras)
+        perdida, _  = funcion_perdida(saidas, mascaras)
         perdida.backward()
         optimizador.step()
 
@@ -28,11 +28,13 @@ def adestra_unha_epoca(modelo, cargador, funcion_perdida, optimizador, dispositi
     return perdida_media
 
 
-def valida(modelo, cargador, funcion_perdida, dispositivo, epoca, verboso):
+def valida(modelo, cargador, funcion_perdida, dispositivo, epoca=1, verboso=True, tipo='VALIDACION'):
     
     modelo.train(mode=False) # indica á rede que xa no estamos en modo adestramento
     perdida_validacion = 0
     dice = 0
+    bce_total = 0
+    dice_p_total = 0
 
     with torch.no_grad():
 
@@ -41,24 +43,33 @@ def valida(modelo, cargador, funcion_perdida, dispositivo, epoca, verboso):
             mascaras = mascaras.to(dispositivo)
 
             saidas = modelo(imaxes)
-            perdida = funcion_perdida(saidas, mascaras)
+            perdida, (bce, dice_p) = funcion_perdida(saidas, mascaras)
             perdida_validacion += perdida.item()
 
             # Optional: calculate Dice or IoU metric
             prediccions = torch.sigmoid(saidas)
             prediccions = (prediccions > 0.5).float()
+           
+            bce_total += bce
+            dice_p_total += dice_p
             dice += coeficiente_dice(prediccions, mascaras)
 
-    perdida_media = perdida_validacion / len(cargador)
-    dice_medio = dice / len(cargador)
-    if verboso: print(f'VALIDACION: Perdida media: {perdida_media:.4f} || Dice medio: {dice_medio:.4f}')
-    return perdida_media, dice_medio
+    N = len(cargador)
 
-def adestra(modelo, cargador_adestramento, cargador_validacion, funcion_perdida, optimizador, dispositivo, epocas, paciencia, planificador_paso, verboso):
+    perdida_media = perdida_validacion / N
+    dice_medio = dice / N
+    bce_medio = bce_total / N
+    dice_p_medio = dice_p_total / N
+    if verboso: print(f'{tipo}: Perdida media: {perdida_media:.4f} || Dice medio: {dice_medio:.4f}')
+    return perdida_media, dice_medio, bce_medio, dice_p_medio
+
+def adestra(modelo, cargador_adestramento, cargador_validacion, funcion_perdida, optimizador, dispositivo, epocas, paciencia, planificador_paso, verboso, nome):
 
     perdidas = []
     perdidas_validacion = []
     dices = []
+    dices_p = []
+    bces = []
     mellor_perda_validacion = float('inf')
     conta_sen_mellora = 0
     paso = planificador_paso.get_last_lr()
@@ -66,8 +77,8 @@ def adestra(modelo, cargador_adestramento, cargador_validacion, funcion_perdida,
     for epoca in range(1, epocas + 1):
 
         p = adestra_unha_epoca(modelo, cargador_adestramento, funcion_perdida, optimizador, dispositivo, epoca)
-        pv, d = valida(modelo, cargador_validacion, funcion_perdida, dispositivo, epoca, verboso)
-        perdidas.append(float(p)); perdidas_validacion.append(float(pv)); dices.append(float(d))
+        pv, d, bce, dp = valida(modelo, cargador_validacion, funcion_perdida, dispositivo, epoca, verboso)
+        perdidas.append(float(p)); perdidas_validacion.append(float(pv)); dices.append(float(d)); dices_p.append(float(dp)); bces.append(float(bce))
          
         if (paso != planificador_paso.get_last_lr()) and verboso:
             print(f'Novo paso de aprendizaxe: {planificador_paso.get_last_lr()[0]}')
@@ -80,11 +91,11 @@ def adestra(modelo, cargador_adestramento, cargador_validacion, funcion_perdida,
             conta_sen_mellora += 1
             if conta_sen_mellora == paciencia:
                 print(f"Early stopping na época {epoca+1}. Mellor perda de validación: {mellor_perda_validacion:.4f}")
-                torch.save(modelo.state_dict(), f"../parametros/unet_perdida_val_{pv}.pth")
+                torch.save(modelo.state_dict(), f"../parametros/{nome}_ep{epoca}_perdVal{mellor_perda_validacion}.pth")
                 break
 
         planificador_paso.step(float(pv))
-    return perdidas, perdidas_validacion, dices
+    return perdidas, perdidas_validacion, dices, dices_p, bces
 
 # mirar si dice la dejo aqui o va en losses (igual losses y metricas?)
 # Utility Dice function (for binary segmentation)
