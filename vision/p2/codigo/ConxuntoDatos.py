@@ -12,7 +12,7 @@ import cv2
 
 class ConxuntoDatosOCT(Dataset):
     
-    def __init__(self, ruta, aumento_datos = True, particion = 'adestramento',  razon = 0.8, novo_tamano = (416,624), transform = None, semilla=1942, anade_canny=False, anade_sobel=False, anade_laplacian=False, anade_frangi=False):
+    def __init__(self, ruta, aumento_datos = False, particion = 'adestramento',  razon = 0.8, novo_tamano = (416,624), transform = None, semilla=1942, anade_canny=False, anade_sobel=False, anade_laplacian=False, anade_frangi=False):
         super().__init__()
         ruta_imaxes, ruta_mascaras = ruta + '/images', ruta + '/masks'
         self.rutas_imaxes = np.array(glob.glob(os.path.join(ruta_imaxes,'*.jpg')))

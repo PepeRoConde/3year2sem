@@ -1,9 +1,11 @@
-from RedeC import UNet
+from Rede import UNet
 from ConxuntoDatos import ConxuntoDatosOCT
 from adestramento import adestra, valida
-from utilidades import BCEWithLogitsLoss, BCEDiceLoss, plot_losses_and_dice, plot_images_and_predictions, redondea_a_tamano_valido 
+from utilidades import redondea_a_tamano_valido
+from graficas import grafica_curvas, grafica_prediccions
+from Perdidas import Perdidas
 
-
+import gc
 import argparse
 import numpy as np
 from torch.utils.data import DataLoader
@@ -31,6 +33,7 @@ def parsea_argumentos():
 
     parser.add_argument('--dispositivo', type=str, choices=['mps', 'cuda', 'cpu', 'gpu'], default='mps', help=f'Dispositivo, por defecto mps.')
     parser.add_argument('--aumento_datos', action='store_true')
+    parser.add_argument('--postprocesado', action='store_true')
     parser.add_argument('--verboso', action='store_true')
     parser.add_argument('--mostra', action='store_true')
     parser.add_argument('--redondea_antes', action='store_true')
@@ -45,6 +48,7 @@ if __name__ == "__main__":
     args = parsea_argumentos()
 
     nome = (
+        f"ad{args.aumento_datos}_"
         f"batch{args.tamano_batch}_"
         f"proc{args.procesos}_"
         f"canles{args.canles_base}_"
@@ -107,24 +111,55 @@ if __name__ == "__main__":
     optimizador = optim.AdamW(modelo.parameters(), lr=args.paso, weight_decay=1e-2) 
     planificador_paso = ReduceLROnPlateau(optimizador, mode='min', factor=args.factor_paso, patience=args.paciencia_paso)
     #funcion_perdida = BCEWithLogitsLoss() 
-    funcion_perdida = BCEDiceLoss()
+    pesos_perdidas = {
+        'bce': 0.5,
+        'dice': 0.5,
+        'focal': 0.2,
+        'iou': 0.2
+    }
+    perdida_compuesta = lambda logits, mascaras: Perdidas.perdida_combinada(
+        logits, 
+        mascaras, 
+        pesos=pesos_perdidas
+    )
+    
+    # Training
+    historia_perdidas, historia_metricas = adestra(
+        modelo=modelo, 
+        cargador_adestramento=cargador_adestramento, 
+        cargador_validacion=cargador_validacion, 
+        perdida_compuesta=perdida_compuesta,
+        optimizador=optimizador, 
+        dispositivo=args.dispositivo, 
+        epocas=args.epocas,
+        paciencia=args.paciencia,
+        planificador_paso=planificador_paso,
+        verboso=args.verboso,
+        nome=nome
+    )
 
-    perdidas, perdidas_validacion, dices, dices_p, bces = adestra(modelo=modelo, 
-            cargador_adestramento=cargador_adestramento, 
-            cargador_validacion=cargador_validacion, 
-            funcion_perdida=funcion_perdida, 
-            optimizador=optimizador, 
-            dispositivo=args.dispositivo, 
-            epocas=args.epocas,
-            paciencia=args.paciencia,
-            planificador_paso=planificador_paso,
-            verboso=args.verboso,
-            nome=nome)
-    
+    perdidas_proba, metricas_proba = valida(
+        modelo=modelo, 
+        cargador=cargador_proba, 
+        perdida_compuesta=perdida_compuesta,
+        dispositivo=args.dispositivo, 
+        verboso=args.verboso, 
+        tipo='PROBA'
+    )
 
-    _, dice_medio, _, _ = valida(modelo=modelo, cargador=cargador_proba, funcion_perdida=funcion_perdida, dispositivo=args.dispositivo, verboso=args.verboso, tipo='PROBA')
+    # Use the appropriate metric
+    dice_proba = metricas_proba['dice']
+    nome = nome + f'diceProba{dice_proba:.3f}' 
+    grafica_curvas(
+        perdidas=historia_perdidas,  # Your entire losses dictionary
+        metricas=historia_metricas,  # Your entire metrics dictionary
+        nome=nome, 
+        mostra=args.mostra
+    )
+    grafica_prediccions(modelo, cargador_proba, dispositivo=args.dispositivo, filas=5, nome=nome, mostra=args.mostra, postprocesado=args.postprocesado)
     
-    nome = nome + f'diceProba{dice_medio:.3f}'
-    
-    plot_losses_and_dice(perdidas, perdidas_validacion, dices, dices_p, bces, nome=nome, mostra=args.mostra)
-    plot_images_and_predictions(modelo, cargador_proba, dispositivo=args.dispositivo, n_rows=5, nome=nome, mostra=args.mostra)
+    del cargador_adestramento
+    del cargador_validacion
+    del cargador_proba
+
+    gc.collect()

@@ -1,62 +1,69 @@
+from utilidades import axusta_tamano
+
+import torch
 import torch.nn as nn
 from torch import cat
 
 class UNet(nn.Module):
-
-    def __init__(self, canles_entrada=1, num_clases=1):
+    def __init__(self, canles_entrada=1, num_clases=1, canles_base=64, profundidade=4, probabilidade_dropout=0.0):
         super().__init__()
-        
-        self.contrainte1 = self.doble_convolucion(canles_entrada, 2**6)
-        self.contrainte2 = self.doble_convolucion(2**6, 2**7)
-        self.contrainte3 = self.doble_convolucion(2**7, 2**8)
-        self.contrainte4 = self.doble_convolucion(2**8, 2**9)
-        self.contrainte5 = self.doble_convolucion(2**9, 2**10) # difire do exemplo do notebook pero así é igual (en canto a canles) ó paper
-    
-        self.maxpool = nn.MaxPool2d(2) # deste xeito a dimension espacial decrece a razon de 1/4
-        
-        self.expansivo4 = self.doble_convolucion(2**9 + 2**10, 2**9) 
-        self.expansivo3 = self.doble_convolucion(2**8 + 2**9, 2**8)
-        self.expansivo2 = self.doble_convolucion(2**7 + 2**8, 2**7)
-        self.expansivo1 = self.doble_convolucion(2**6 + 2**7, 2**6)
-        
-        self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True) # para que coincidan ca reduccion do MaxPool2d
+        self.profundidade = profundidade
+        self.probabilidade_dropout = probabilidade_dropout
+        self.camino_contraente = nn.ModuleList()
+        self.camino_expansivo = nn.ModuleList()
+        self.maxpool = nn.MaxPool2d(2)
+        self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
 
-        self.derradeira_convolucion = nn.Conv2d(2**6, num_clases, 1)
-            
+        canles = canles_entrada
+
+        # Camiño contraente
+        for i in range(profundidade):
+            canles_saida = canles_base * 2 ** i
+            self.camino_contraente.append(self.doble_convolucion(canles, canles_saida))
+            canles = canles_saida
+
+        # Fondo da U
+        self.fondo = self.doble_convolucion(canles, canles * 2)
+        canles = canles * 2
+
+        # Camiño expansivo
+        for i in reversed(range(profundidade)):
+            canles_atallo = canles_base * 2 ** i
+            self.camino_expansivo.append(self.doble_convolucion(canles + canles_atallo, canles_atallo))
+            canles = canles_atallo
+
+        self.derradeira_convolucion = nn.Conv2d(canles_base, num_clases, 1)
+
     def doble_convolucion(self, canles_entrada, canles_saida):
-        return nn.Sequential(
-            nn.Conv2d(canles_entrada, canles_saida, 3, padding=1),
-            nn.ReLU(inplace=True), # deste xeito aforramos memoria
-            nn.Conv2d(canles_saida, canles_saida, 3, padding=1),
-            nn.ReLU(inplace=True))   
+        capas = [
+            nn.Conv2d(canles_entrada, canles_saida, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True)
+        ]
+        if self.probabilidade_dropout > 0:
+            capas.append(nn.Dropout2d(p=self.probabilidade_dropout))
+        capas += [
+            nn.Conv2d(canles_saida, canles_saida, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True)
+        ]
+        return nn.Sequential(*capas)
 
     def forward(self, x):
+        atallos = []
 
-        c1 = self.contrainte1(x) #-- camiño contrainte
-        x = self.maxpool(c1)
+        # Camiño contraente
+        for capa in self.camino_contraente:
+            x = capa(x)
+            atallos.append(x)
+            x = self.maxpool(x)
 
-        c2 = self.contrainte2(x)
-        x = self.maxpool(c2)
+        # Fondo
+        x = self.fondo(x)
 
-        c3 = self.contrainte3(x)
-        x = self.maxpool(c3)
+        # Camiño expansivo
+        for capa, atallo in zip(self.camino_expansivo, reversed(atallos)):
+            x = self.upsample(x)
+            x = axusta_tamano(atallo, x)
+            x = cat([atallo, x], dim=1)
+            x = capa(x)
 
-        x = self.contrainte4(x) # c4
-        #x = self.maxpool(c4)
-        
-        #x = self.contrainte5(x)
-        #x = self.upsample(x) #-- camiño expansivo
-
-        #x = self.expansivo4(cat([c4, x], dim=1))
-        x = self.upsample(x)
-       
-        x = self.expansivo3(cat([c3, x], dim=1))
-        x = self.upsample(x)
-
-        x = self.expansivo2(cat([c2, x], dim=1))
-        x = self.upsample(x)
-
-        x = self.expansivo1(cat([c1, x], dim=1))
-        saida = self.derradeira_convolucion(x)
-        
-        return saida 
+        return self.derradeira_convolucion(x)

@@ -6,6 +6,8 @@ import torch
 import numpy as np
 import cv2
 from skimage.filters import frangi
+from skimage.morphology import remove_small_objects
+
 
 class Transformacions:
     def __init__(self,
@@ -15,12 +17,11 @@ class Transformacions:
                  anade_sobel=False,
                  anade_laplacian=False,
                  anade_frangi=False,
-                 volteo_horizotal=False,
-                 rotacion_aleatoria=True,
-                 escalado_aleatorio=True,
+                 volteo_horizotal=True,
                  anade_ruido_gaussiano=True,
                  jitter_color=True,
                  variar_enfoque=True,
+                 transformacion_afin=True,
                  deformacion_elastica=True):
         
         self.novo_tamano = novo_tamano
@@ -32,11 +33,10 @@ class Transformacions:
         self.anade_frangi = anade_frangi
 
         self.volteo_horizotal = volteo_horizotal
-        self.rotacion_aleatoria = rotacion_aleatoria
-        self.escalado_aleatorio = escalado_aleatorio
         self.anade_ruido_gaussiano = anade_ruido_gaussiano
         self.jitter_color = jitter_color
         self.variar_enfoque = variar_enfoque
+        self.transformacion_afin = transformacion_afin
         self.deformacion_elastica = deformacion_elastica
 
     def __call__(self, imaxe, mascara):
@@ -56,8 +56,6 @@ class Transformacions:
         if self.aumento_datos: # en numpy
 
             if self.volteo_horizotal: imaxe, mascara = self.volteo_horizotal_fn(imaxe, mascara)
-            if self.rotacion_aleatoria: imaxe, mascara = self.rotacion_aleatoria_fn(imaxe, mascara)
-            if self.escalado_aleatorio: imaxe, mascara = self.escalado_aleatorio_fn(imaxe, mascara)
             if self.jitter_color: imaxe = self.jitter_color_fn(imaxe)
             if self.variar_enfoque: imaxe = self.variar_enfoque_fn(imaxe)
 
@@ -66,6 +64,7 @@ class Transformacions:
 
         if self.aumento_datos: # en torch
             if self.anade_ruido_gaussiano: imaxe = self.anade_ruido_gaussiano_fn(imaxe)
+            if self.transformacion_afin: imaxe, mascara = self.transformacion_afin_fn(imaxe,mascara)
             if self.deformacion_elastica: imaxe, mascara = self.deformacion_elastica_fn(imaxe, mascara)
 
         # -----------------
@@ -96,22 +95,6 @@ class Transformacions:
             mascara = transforms.functional.hflip(mascara)
         return imaxe, mascara
 
-    def rotacion_aleatoria_fn(self, imaxe, mascara):
-        angle = torch.empty(1).uniform_(-45, 45).item()
-        imaxe = transforms.functional.rotate(imaxe, angle, interpolation=InterpolationMode.BILINEAR)
-        mascara = transforms.functional.rotate(mascara, angle, interpolation=InterpolationMode.NEAREST)
-        return imaxe, mascara
-
-    def escalado_aleatorio_fn(self, imaxe, mascara):
-        scale = torch.empty(1).uniform_(0.8, 1.6).item()
-        h, w = imaxe.size[1], imaxe.size[0]
-        new_size = (int(h * scale), int(w * scale))
-        imaxe = transforms.Resize(new_size, interpolation=InterpolationMode.BILINEAR)(imaxe)
-        mascara = transforms.Resize(new_size, interpolation=InterpolationMode.NEAREST)(mascara)
-        imaxe = transforms.CenterCrop(self.novo_tamano)(imaxe)
-        mascara = transforms.CenterCrop(self.novo_tamano)(mascara)
-        return imaxe, mascara
-
     def jitter_color_fn(self, imaxe):
         jitter = transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.02)
         return jitter(imaxe)
@@ -122,31 +105,56 @@ class Transformacions:
         else:
             return transforms.functional.gaussian_blur(imaxe, kernel_size=3)
 
+    def transformacion_afin_fn(self, imaxe, mascara):
+        if torch.rand(1) > 0.5:
+            angle = torch.empty(1).uniform_(-25, 25).item()  # Rotation angle
+            translate = (torch.empty(2).uniform_(-0.3, 0.3).tolist())  # Translation (dx, dy)
+            scale = torch.empty(1).uniform_(0.7, 1.5).item()  # Scaling factor
+            shear = torch.empty(1).uniform_(-0.4, 0.4).item()  # Shear factor
+            
+            imaxe = transforms.functional.affine(imaxe, angle=angle, translate=translate, scale=scale, shear=shear, interpolation=InterpolationMode.BILINEAR)
+            mascara = transforms.functional.affine(mascara, angle=angle, translate=translate, scale=scale, shear=shear, interpolation=InterpolationMode.NEAREST)
+    
+        return imaxe, mascara
+
+
     def anade_ruido_gaussiano_fn(self, imaxe):
         noise = torch.randn_like(imaxe) * 0.05
         return torch.clamp(imaxe + noise, 0.0, 1.0)
 
-    def deformacion_elastica_fn(self, imaxe, mascara, alpha=60, sigma=10):
-        # Simple elastic deformation
+    def deformacion_elastica_fn(self, imaxe, mascara, alpha=200, sigma=25):
         c, h, w = imaxe.shape
-        dx = torch.from_numpy(cv2.GaussianBlur((np.random.rand(h, w) * 2 - 1), (0, 0), sigma) * alpha).float()
-        dy = torch.from_numpy(cv2.GaussianBlur((np.random.rand(h, w) * 2 - 1), (0, 0), sigma) * alpha).float()
-
+        
+        # Step 1: Generate random displacement fields (dx, dy)
+        dx = np.random.rand(h, w) * 2 - 1  # Random values in the range [-1, 1]
+        dy = np.random.rand(h, w) * 2 - 1  # Random values in the range [-1, 1]
+        
+        # Step 2: Apply Gaussian blur to the displacement fields to smooth them
+        dx = cv2.GaussianBlur(dx, (0, 0), sigma)
+        dy = cv2.GaussianBlur(dy, (0, 0), sigma)
+        
+        # Step 3: Scale by alpha to control the magnitude of displacement
+        dx = torch.from_numpy(dx.astype(np.float32)) * alpha
+        dy = torch.from_numpy(dy.astype(np.float32)) * alpha
+        
+        # Step 4: Create a mesh grid of coordinates
         x, y = torch.meshgrid(torch.arange(h), torch.arange(w), indexing='ij')
         x = x.float() + dx
         y = y.float() + dy
-
+    
+        # Step 5: Clamp the displacements to ensure they stay within the bounds of the image
         x = torch.clamp(x, 0, h - 1)
         y = torch.clamp(y, 0, w - 1)
-
+        
+        # Step 6: Normalize to [-1, 1] for grid_sample
         grid = torch.stack((y / (w - 1) * 2 - 1, x / (h - 1) * 2 - 1), dim=-1).unsqueeze(0)
-
+    
+        # Step 7: Apply the grid to the image and mask
         imaxe = F.grid_sample(imaxe.unsqueeze(0), grid, mode='bilinear', padding_mode='border', align_corners=True).squeeze(0)
         mascara = F.grid_sample(mascara.unsqueeze(0), grid, mode='nearest', padding_mode='border', align_corners=True).squeeze(0)
-
+    
         return imaxe, mascara
-
-    # Funcions de Aumento de Canles
+        # Funcions de Aumento de Canles
 
     def canny(self, gris):
         canny = cv2.Canny(gris, 100, 200)
@@ -168,39 +176,84 @@ class Transformacions:
     def frangi_fn(self, gris):
         gris_norm = gris.astype(np.float32) / 255.0
         frangi_imx = frangi(gris_norm)
-        frangi_imx = (frangi_imx / frangi_imx.max() if frangi_imx.max() > 0 else frangi_img).astype(np.float32)
+        frangi_imx = (frangi_imx / frangi_imx.max() if frangi_imx.max() > 0 else frangi_imx).astype(np.float32)
         return torch.tensor(frangi_imx).unsqueeze(0)
 
 
+class PostProcesado:
+    def __init__(self,
+                 aplicar_umbral=True,
+                 valor_umbral=0.5,
+                 aplicar_opening=True,
+                 tamano_kernel_opening=3,
+                 eliminar_objetos_pequenos=True,
+                 tamano_minimo_objeto=100,
+                 suavizado=True,
+                 realce_bordes=False):
+        
+        self.aplicar_umbral = aplicar_umbral
+        self.valor_umbral = valor_umbral
 
-def axusta_tamano(atallo, x, mode='pad'):
-    """
-    Aligns tensor `x` to match the spatial size of `atallo` using the specified mode.
+        self.aplicar_opening = aplicar_opening
+        self.tamano_kernel_opening = tamano_kernel_opening
 
-    Args:
-        atallo (Tensor): The reference tensor for size (C, H, W).
-        x (Tensor): The tensor to align.
-        mode (str): Either 'pad' or 'crop'.
-    Returns:
-        Tensor: Aligned tensor with the same H and W as `atallo`.
-    """
-    
-    if atallo.size(2) == x.size(2) and atallo.size(3) == x.size(3):
-        return x  # Already aligned
+        self.eliminar_objetos_pequenos = eliminar_objetos_pequenos
+        self.tamano_minimo_objeto = tamano_minimo_objeto
 
-    print('.',sep='')
+        self.suavizado = suavizado
+        self.realce_bordes = realce_bordes
 
-    diffY = atallo.size(2) - x.size(2)
-    diffX = atallo.size(3) - x.size(3)
+    def __call__(self, prediccion):
+        pred_np = self.preparar_prediccion(prediccion)
 
-    if mode == 'pad':
-        x = F.pad(x, [diffX // 2, diffX - diffX // 2,
-                      diffY // 2, diffY - diffY // 2])
-    elif mode == 'crop':
-        x = x[:, :,
-              diffY // 2 : x.size(2) + diffY // 2,
-              diffX // 2 : x.size(3) + diffX // 2]
-    else:
-        raise ValueError("mode must be 'pad' or 'crop'")
+        if self.aplicar_umbral:
+            pred_np = self.umbral(pred_np)
 
-    return x
+        if self.aplicar_opening:
+            pred_np = self.apertura(pred_np)
+
+        if self.eliminar_objetos_pequenos:
+            pred_np = self.limpiar_objetos_pequenos(pred_np)
+
+        if self.suavizado:
+            pred_np = self.suavizar(pred_np)
+
+        if self.realce_bordes:
+            pred_np = self.resaltar_bordes(pred_np)
+
+        #return self.tensorizar(pred_np)
+        return pred_np
+
+    def preparar_prediccion(self, tensor):
+        if isinstance(tensor, torch.Tensor): arr = tensor.detach().cpu().numpy()
+        else: arr = tensor
+
+        if arr.ndim == 4: arr = arr[0, 0]
+        elif arr.ndim == 3: arr = arr[0]
+        
+        return np.clip(arr, 0, 1)
+
+    def umbral(self, pred):
+        return (pred > self.valor_umbral).astype(np.uint8)
+
+    def apertura(self, binaria):
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,
+                                           (self.tamano_kernel_opening, self.tamano_kernel_opening))
+        return cv2.morphologyEx(binaria, cv2.MORPH_OPEN, kernel)
+
+    def limpiar_objetos_pequenos(self, binaria):
+        limpia = remove_small_objects(binaria.astype(bool), min_size=self.tamano_minimo_objeto)
+        return limpia.astype(np.uint8)
+
+    def suavizar(self, binaria):
+        suav = cv2.GaussianBlur(binaria.astype(np.float32), (3, 3), 0)
+        return (suav > 0.5).astype(np.uint8)
+
+    def resaltar_bordes(self, binaria):
+        bordes = cv2.Canny((binaria * 255).astype(np.uint8), 50, 150)
+        return np.maximum(binaria, bordes // 255)
+
+    def tensorizar(self, arr):
+        return torch.tensor(arr, dtype=torch.float32).unsqueeze(0).unsqueeze(0)
+
+
