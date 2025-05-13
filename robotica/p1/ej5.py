@@ -7,8 +7,8 @@ import time
 SPEED = 5 
 TIME = 2
 VERY_SHORT = 45 
-IP = '10.20.28.140'
-#IP = 'localhost'
+# IP = '10.20.28.140'
+IP = 'localhost'
 task_completed = False
 
 def moveToAColor(speed, distance):

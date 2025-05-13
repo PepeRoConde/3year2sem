@@ -1,0 +1,2 @@
+2025-05-11 22:00:23,028 - websocket - ERROR - error from callback <function Remote.wsStartup.<locals>.on_error at 0x1013dd6c0>: [Errno 61] Connection refused
+2025-05-11 22:00:23,028 - websocket - INFO - tearing down on exception [Errno 61] Connection refused

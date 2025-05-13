@@ -4,8 +4,8 @@ import time
 
 SPEED = 5 
 TIME = 2
-IP = '10.20.28.140'
-#IP = 'localhost'
+# IP = '10.20.28.140'
+IP = 'localhost'
 NEW_DETECTION = 5 
 
 # Evitamos estar constantemente viendo el mismo color con un counter
