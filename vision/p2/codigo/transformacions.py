@@ -106,10 +106,10 @@ class Transformacions:
             return transforms.functional.gaussian_blur(imaxe, kernel_size=3)
 
     def transformacion_afin_fn(self, imaxe, mascara):
-        if torch.rand(1) > 0.5:
-            angle = torch.empty(1).uniform_(-25, 25).item()  # Rotation angle
-            translate = (torch.empty(2).uniform_(-0.3, 0.3).tolist())  # Translation (dx, dy)
-            scale = torch.empty(1).uniform_(0.7, 1.5).item()  # Scaling factor
+        if torch.rand(1) > 0.7:
+            angle = torch.empty(1).uniform_(-15, 15).item()  # Rotation angle
+            translate = (torch.empty(2).uniform_(-0.4, 0.4).tolist())  # Translation (dx, dy)
+            scale = torch.empty(1).uniform_(0.8, 1.1).item()  # Scaling factor
             shear = torch.empty(1).uniform_(-0.4, 0.4).item()  # Shear factor
             
             imaxe = transforms.functional.affine(imaxe, angle=angle, translate=translate, scale=scale, shear=shear, interpolation=InterpolationMode.BILINEAR)
@@ -122,39 +122,37 @@ class Transformacions:
         noise = torch.randn_like(imaxe) * 0.05
         return torch.clamp(imaxe + noise, 0.0, 1.0)
 
-    def deformacion_elastica_fn(self, imaxe, mascara, alpha=200, sigma=25):
-        c, h, w = imaxe.shape
+    def deformacion_elastica_fn(self, imaxe, mascara, alpha=600, sigma=17):
+        if torch.rand(1) > 0.7:
+            c, h, w = imaxe.shape
+            
+           
+            dx = np.random.rand(h, w) * 2 - 1  # Desplazamentos aleatorios
+            dy = np.random.rand(h, w) * 2 - 1
+            
+            dx = cv2.GaussianBlur(dx, (0, 0), sigma) # suavizado dos dx e dy
+            dy = cv2.GaussianBlur(dy, (0, 0), sigma)
+            
+            dx = torch.from_numpy(dx.astype(np.float32)) * alpha # escalado
+            dy = torch.from_numpy(dy.astype(np.float32)) * alpha
+            
+            x, y = torch.meshgrid(torch.arange(h), torch.arange(w), indexing='ij')
+            x = x.float() + dx
+            y = y.float() + dy
         
-        # Step 1: Generate random displacement fields (dx, dy)
-        dx = np.random.rand(h, w) * 2 - 1  # Random values in the range [-1, 1]
-        dy = np.random.rand(h, w) * 2 - 1  # Random values in the range [-1, 1]
+            x = torch.clamp(x, 0, h - 1) # [0,1]
+            y = torch.clamp(y, 0, w - 1)
+            
+            grid = torch.stack((y / (w - 1) * 2 - 1, x / (h - 1) * 2 - 1), dim=-1).unsqueeze(0)
+            
+                # Aplicar á imaxxe e á mascara
+            imaxe = F.grid_sample(imaxe.unsqueeze(0), grid, mode='bilinear', padding_mode='border', align_corners=True).squeeze(0)
+            mascara = F.grid_sample(mascara.unsqueeze(0), grid, mode='nearest', padding_mode='border', align_corners=True).squeeze(0)
         
-        # Step 2: Apply Gaussian blur to the displacement fields to smooth them
-        dx = cv2.GaussianBlur(dx, (0, 0), sigma)
-        dy = cv2.GaussianBlur(dy, (0, 0), sigma)
-        
-        # Step 3: Scale by alpha to control the magnitude of displacement
-        dx = torch.from_numpy(dx.astype(np.float32)) * alpha
-        dy = torch.from_numpy(dy.astype(np.float32)) * alpha
-        
-        # Step 4: Create a mesh grid of coordinates
-        x, y = torch.meshgrid(torch.arange(h), torch.arange(w), indexing='ij')
-        x = x.float() + dx
-        y = y.float() + dy
-    
-        # Step 5: Clamp the displacements to ensure they stay within the bounds of the image
-        x = torch.clamp(x, 0, h - 1)
-        y = torch.clamp(y, 0, w - 1)
-        
-        # Step 6: Normalize to [-1, 1] for grid_sample
-        grid = torch.stack((y / (w - 1) * 2 - 1, x / (h - 1) * 2 - 1), dim=-1).unsqueeze(0)
-    
-        # Step 7: Apply the grid to the image and mask
-        imaxe = F.grid_sample(imaxe.unsqueeze(0), grid, mode='bilinear', padding_mode='border', align_corners=True).squeeze(0)
-        mascara = F.grid_sample(mascara.unsqueeze(0), grid, mode='nearest', padding_mode='border', align_corners=True).squeeze(0)
-    
         return imaxe, mascara
-        # Funcions de Aumento de Canles
+
+        
+    # Funcions de Aumento de Canles
 
     def canny(self, gris):
         canny = cv2.Canny(gris, 100, 200)
@@ -255,5 +253,3 @@ class PostProcesado:
 
     def tensorizar(self, arr):
         return torch.tensor(arr, dtype=torch.float32).unsqueeze(0).unsqueeze(0)
-
-

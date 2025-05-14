@@ -28,3 +28,7 @@ hacer:
 
 hacer:
 - traducir y poner bien metricas.py y adestramento y grafica curvas  
+- graficas cu t ashfakshfa sno esaarfndas j awipuh
+
+
+https://eyeguru.org/essentials/interpreting-octs/

@@ -5,7 +5,7 @@ import cv2
 
 from transformacions import PostProcesado
 
-def grafica_prediccions(modelo, cargador, dispositivo, nome, filas=3 ,mostra=False, postprocesado=True):
+def grafica_prediccions(modelo, cargador, dispositivo, nome, filas=2 ,mostra=False, postprocesado=True):
     modelo.eval()
     fig, axs = plt.subplots(filas, 5 if postprocesado else 4, figsize=(20, 5 * filas))
 
@@ -100,12 +100,12 @@ def grafica_aumento_datos(ConxuntoDatos, n, m, ruta='../OCT-dataset'):
         aumentada, _ = datos_aumentados[i]
 
         ax = axes[i // m, (i % m) * 2]
-        ax.imshow(orixinal.permute(1, 2, 0).numpy())
+        ax.imshow(orixinal.permute(1, 2, 0).numpy(), cmap='plasma')
         ax.set_title(f"Orixinal {i+1}")
         ax.axis('off')
 
         ax = axes[i // m, (i % m) * 2 + 1]
-        ax.imshow(aumentada.permute(1, 2, 0).numpy())
+        ax.imshow(aumentada.permute(1, 2, 0).numpy(), cmap='plasma')
         ax.set_title(f"Aumentada {i+1}")
         ax.axis('off')
 
@@ -127,16 +127,16 @@ def grafica_curvas(perdidas, metricas, nome, mostra):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
     # Perdidas
-    for nome, valores in perdidas.items():
-        ax1.plot(epocas, valores, label=nome)
+    for perdida, valores in perdidas.items():
+        ax1.plot(epocas, valores, label=perdida)
     ax1.set_title('Perdidas')
     ax1.set_xlabel('Epoca')
     ax1.legend()
     ax1.grid(True)
 
     # Metricas
-    for nome, valores in metricas.items():
-        ax2.plot(epocas, valores, label=nome)
+    for metrica, valores in metricas.items():
+        ax2.plot(epocas, valores, label=metrica)
     ax2.set_title('Metricas')
     ax2.set_xlabel('Epoca')
     ax2.set_ylim(0, 1)
@@ -146,5 +146,6 @@ def grafica_curvas(perdidas, metricas, nome, mostra):
     plt.tight_layout()
     if mostra:
         plt.show()
-    plt.savefig('../figuras/CU_' + nome + '.jpg')
+    plt.savefig('../figuras/CU_'+nome+'.jpg')
     plt.close()
+
