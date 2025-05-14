@@ -3,7 +3,7 @@
 mkdir -p logs
 
 # Fixed params
-FIXED_ARGS="--anade_canny --tamano_batch 10 --procesos 7 --paciencia 60 --paciencia_paso 15 --razon 0.8"
+FIXED_ARGS="--anade_canny --tamano_batch 10 --procesos 7 --epocas 2000 --paciencia 60 --paciencia_paso 15 --razon 0.8"
 SIZE="--novo_tamano 400 500"
 DEVICE="--dispositivo cuda:0"
 LR=1e-3
