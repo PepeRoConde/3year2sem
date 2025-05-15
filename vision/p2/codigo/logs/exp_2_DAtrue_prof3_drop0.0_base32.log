@@ -1,8 +1,13 @@
-Traceback (most recent call last):
-  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/main.py", line 2, in <module>
-    from ConxuntoDatosC import ConxuntoDatosOCT
-  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/ConxuntoDatosC.py", line 1, in <module>
-    from transformacions import Transformacions
-  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/transformacions.py", line 7, in <module>
-    import cv2
-ModuleNotFoundError: No module named 'cv2'
+usage: main.py [-h] [--razon RAZON] [--tamano_batch TAMANO_BATCH]
+               [--procesos PROCESOS] [--epocas EPOCAS]
+               [--canles_base CANLES_BASE] [--profundidade PROFUNDIDADE]
+               [--paso PASO] [--factor_paso FACTOR_PASO]
+               [--probabilidade_dropout PROBABILIDADE_DROPOUT]
+               [--peso_bce PESO_BCE] [--peso_dice PESO_DICE]
+               [--peso_focal PESO_FOCAL] [--peso_iou PESO_IOU]
+               [--paciencia PACIENCIA] [--paciencia_paso PACIENCIA_PASO]
+               [--novo_tamano ancho alto] [--dispositivo {mps,cuda,cpu,gpu}]
+               [--aumento_datos] [--postprocesado] [--verboso] [--mostra]
+               [--redondea_antes] [--anade_canny] [--anade_sobel]
+               [--anade_laplacian] [--anade_frangi]
+main.py: error: argument --dispositivo: invalid choice: 'cuda:0' (choose from 'mps', 'cuda', 'cpu', 'gpu')

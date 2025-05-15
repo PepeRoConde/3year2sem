@@ -1,8 +1,12 @@
 Traceback (most recent call last):
-  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/main.py", line 2, in <module>
-    from ConxuntoDatosC import ConxuntoDatosOCT
-  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/ConxuntoDatosC.py", line 1, in <module>
-    from transformacions import Transformacions
-  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/transformacions.py", line 7, in <module>
-    import cv2
-ModuleNotFoundError: No module named 'cv2'
+  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/main.py", line 1, in <module>
+    from Rede import UNet
+  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/Rede.py", line 1, in <module>
+    from utilidades import axusta_tamano
+  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/utilidades.py", line 1, in <module>
+    import torch
+  File "/home/clown/2-semester/3year2sem/vision/vision_env/lib/python3.11/site-packages/torch/__init__.py", line 367, in <module>
+    from torch._C import *  # noqa: F403
+    ^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 216, in _lock_unlock_module
+KeyboardInterrupt

@@ -1,8 +1,27 @@
 Traceback (most recent call last):
-  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/main.py", line 2, in <module>
-    from ConxuntoDatosC import ConxuntoDatosOCT
-  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/ConxuntoDatosC.py", line 1, in <module>
-    from transformacions import Transformacions
-  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/transformacions.py", line 7, in <module>
-    import cv2
-ModuleNotFoundError: No module named 'cv2'
+  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/main.py", line 1, in <module>
+    from Rede import UNet
+  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/Rede.py", line 1, in <module>
+    from utilidades import axusta_tamano
+  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/utilidades.py", line 1, in <module>
+    import torch
+  File "/home/clown/2-semester/3year2sem/vision/vision_env/lib/python3.11/site-packages/torch/__init__.py", line 2475, in <module>
+    from torch import (
+  File "/home/clown/2-semester/3year2sem/vision/vision_env/lib/python3.11/site-packages/torch/export/__init__.py", line 67, in <module>
+    from .unflatten import FlatArgsAdapter, unflatten, UnflattenedModule
+  File "/home/clown/2-semester/3year2sem/vision/vision_env/lib/python3.11/site-packages/torch/export/unflatten.py", line 28, in <module>
+    from ._remove_effect_tokens_pass import _remove_effect_tokens
+  File "/home/clown/2-semester/3year2sem/vision/vision_env/lib/python3.11/site-packages/torch/export/_remove_effect_tokens_pass.py", line 6, in <module>
+    from torch._higher_order_ops.effects import _get_schema, with_effects
+  File "/home/clown/2-semester/3year2sem/vision/vision_env/lib/python3.11/site-packages/torch/_higher_order_ops/effects.py", line 10, in <module>
+    from torch._higher_order_ops.torchbind import call_torchbind
+  File "/home/clown/2-semester/3year2sem/vision/vision_env/lib/python3.11/site-packages/torch/_higher_order_ops/torchbind.py", line 136, in <module>
+    @call_torchbind.py_functionalize_impl
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/clown/2-semester/3year2sem/vision/vision_env/lib/python3.11/site-packages/torch/_ops.py", line 162, in py_functionalize_impl
+    self.py_impl(DispatchKey.Functionalize)(functionalize_dk_fn)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/clown/2-semester/3year2sem/vision/vision_env/lib/python3.11/site-packages/torch/_ops.py", line 275, in py_impl
+    def py_impl(self, k):
+
+KeyboardInterrupt
