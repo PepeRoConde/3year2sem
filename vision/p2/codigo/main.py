@@ -26,6 +26,7 @@ def parsea_argumentos():
     parser.add_argument('--profundidade', type=int, default=3, help='Profundidade da UNet (No artigo 4).')
     parser.add_argument('--paso', type=float, default=1e-3, help='Paso de aprendizaxe.')
     parser.add_argument('--factor_paso', type=float, default=0.7, help='Cando o paso reduzacase; paso(t+1) := paso(t) * factor ')
+    parser.add_argument('--probabilidade_dropout', type=float, default=0.01, help='Profundidade de Dropout')
     parser.add_argument('--peso_bce', type=float, default=0.7, help='Importancia do BCE na funcion de perdida')
     parser.add_argument('--peso_dice', type=float, default=0.4, help='Importancia do DICE na funcion de perdida')
     parser.add_argument('--peso_focal', type=float, default=0.2, help='Importancia do Focal na funcion de perdida')
