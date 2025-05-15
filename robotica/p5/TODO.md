@@ -1,3 +1,0 @@
-- Limpiar
-- Criterio de parada -> cantidad de luz
-- Intentar hacer otro comportamiento ?

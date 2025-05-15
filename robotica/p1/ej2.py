@@ -11,7 +11,7 @@ import time
 SHORT = 30
 SPEED = 5
 TIME = .1
-IP = '10.20.28.140'
+IP = "10.56.43.179"
 #IP = 'localhost'
 
 def normal_state():

@@ -5,7 +5,7 @@ from robobopy.utils.IR import IR
 from robobosim.RoboboSim import RoboboSim
 
 #IP = "localhost"
-IP = '10.20.28.140'
+IP = "10.56.43.179"
 LONG = 3
 MEDIUM = 5 
 SHORT = 10
