@@ -1,4 +1,8 @@
 Traceback (most recent call last):
   File "/home/clown/2-semester/3year2sem/vision/p2/codigo/main.py", line 2, in <module>
     from ConxuntoDatosC import ConxuntoDatosOCT
-ModuleNotFoundError: No module named 'ConxuntoDatosC'
+  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/ConxuntoDatosC.py", line 1, in <module>
+    from transformacions import Transformacions
+  File "/home/clown/2-semester/3year2sem/vision/p2/codigo/transformacions.py", line 7, in <module>
+    import cv2
+ModuleNotFoundError: No module named 'cv2'
