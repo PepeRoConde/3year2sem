@@ -12,7 +12,6 @@ def main():
     """
     Función principal que inicializa y ejecuta el robot con arquitectura subsumida.
     """
-    ip = "10.56.43.193"
 
     #----------------------------------------
     # INICIALIZACIÓN
@@ -20,7 +19,7 @@ def main():
     
     # Inicializar cámara y sensores
     robobo.setActiveBlobs(True, False, False, False)  # Activar detección de blob verde
-    robobo.moveTiltTo(105, 10)  
+    # robobo.moveTiltTo(105, 10)  
     # Desactivar led's para evitar reflejos
     robobo.setLedColorTo(LED.All, Color.OFF)
     # Establecer el color objetivo 
@@ -34,7 +33,7 @@ def main():
         "push_count": 0,
         "last_push_time": 0,
         "color": target_color,  
-        "light_threshold": 175,
+        "light_threshold": 800,
         "mission_complete": False
     }
 
@@ -71,10 +70,12 @@ def main():
         thread.start()
         time.sleep(0.2)  # Pequeña pausa entre inicios para evitar conflictos
 
+    robobo.moveTiltTo(105 , 100)
+
     # Mantener el programa principal en ejecución
     try:
         print("\nRobot listo. Presiona Ctrl+C para finalizar.")
-        
+        robobo.wait(3)
         # Tiempo máximo que permitimos que el robot esté sin cambios
         max_inactive_time = 20.0  # Segundos
         last_ir_values = [0, 0, 0]
@@ -168,13 +169,8 @@ def main():
             print("Programa finalizado correctamente. Misión incompleta")
 
 if __name__ == "__main__":
-    # Conectar al robot
-    if len(sys.argv) > 1:
-        IP = "10.56.43.221"
-    else:
-        IP = "localhost"
 
-    IP = "10.56.43.193"
+    IP = "10.56.43.36"
 
     robobo = Robobo(IP)
     robobo.connect()

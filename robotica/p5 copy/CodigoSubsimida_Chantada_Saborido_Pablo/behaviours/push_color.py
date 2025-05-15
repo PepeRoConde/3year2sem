@@ -24,7 +24,7 @@ class PushColor(Behaviour):
         self.prev_error = 0
         
         # Parámetros de movimiento
-        self.base_speed = 15  # Velocidad base moderada para movimiento más seguro
+        self.base_speed = 10  # Velocidad base moderada para movimiento más seguro
         self.movement_duration = 2.0  
         
         # Seguimiento de conteo de empujones

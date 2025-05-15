@@ -75,18 +75,18 @@ class FindColor(Behaviour):
                 if abs(error) <= self.center_threshold:
                     # Blob está centrado, moverse hacia él con aceleración suave
                     for speed_factor in [0.6, 0.8, 1.0]:
-                        current_speed = int(20 * speed_factor)
+                        current_speed = int(10 * speed_factor)
                         # Usar orden correcto: moveWheels(derecha, izquierda)
                         self.robot.moveWheels(current_speed, current_speed)
                         time.sleep(0.1)
                 elif error < 0:
                     # Blob está a la izquierda, girar a la izquierda con velocidad proporcional al error
-                    turn_speed = min(15, max(5, abs(error) / 4))
-                    self.robot.moveWheels(turn_speed, -turn_speed)
+                    turn_speed = min(10, max(5, abs(error) / 4))
+                    self.robot.moveWheels(-turn_speed, turn_speed)
                 else:
                     # Blob está a la derecha, girar a la derecha con velocidad proporcional al error
-                    turn_speed = min(15, max(5, abs(error) / 4))
-                    self.robot.moveWheels(-turn_speed, turn_speed)
+                    turn_speed = min(10, max(5, abs(error) / 4))
+                    self.robot.moveWheels(turn_speed, -turn_speed)
             else:  # Blob no detectado
                 if not search_mode:
                     print("Blob perdido, iniciando búsqueda simplificada")

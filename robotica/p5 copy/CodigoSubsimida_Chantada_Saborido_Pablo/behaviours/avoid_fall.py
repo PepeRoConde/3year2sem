@@ -9,7 +9,7 @@ class AvoidFall(Behaviour):
     def __init__(self, robot, supress_list, params):
         super().__init__(robot, supress_list, params)
         # Parámetros de configuración
-        self.safe_distance = 45  # Valor mínimo de IR que indica un posible borde, mayores valores reconecen el suelo
+        self.safe_distance = 15  # Valor mínimo de IR que indica un posible borde, mayores valores reconecen el suelo
         self.backup_time = 1.5   # Tiempo de retroceso
         self.turn_time = 1.2     # Tiempo de giro
         self.backup_speed = 20   # Velocidad de retroceso
@@ -63,6 +63,8 @@ class AvoidFall(Behaviour):
                 # 1. Detener motores
                 self.robot.stopMotors()
                 time.sleep(0.1)
+
+                self.robot.moveWheelsByTime(-self.backup_speed, -self.backup_speed, self.backup_time)
                 
                 # 2. Escanear dirección de la luz
                 light_angle, light_brightness = self.scan_for_light()
