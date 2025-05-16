@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex informe"] 0 "informe.aux" "informe.bbl" "informe" 1747424273.88701 -1
+["bibtex informe"] 0 "informe.aux" "informe.bbl" "informe" 1747425063.02343 -1
   "./referencias.bib" 1747407345.42178 2082 3024d6793e88d5a7c5e07c16b2a22a35 ""
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/base/plain.bst" 1292289607 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "informe.aux" 1747424273.56074 1961 8d0bfa1ab345a9b373f2aee287ff40cc "pdflatex"
+  "informe.aux" 1747425062.72476 2318 bb59a8670b35937b54305ec6e0b26411 "pdflatex"
   (generated)
   "informe.bbl"
   "informe.blg"
   (rewritten before read)
-["pdflatex"] 1747424271.70738 "informe.tex" "informe.pdf" "informe" 1747424273.88715 2
+["pdflatex"] 1747425060.86803 "informe.tex" "informe.pdf" "informe" 1747425063.02355 2
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc" 1202520719 2405 5dcf2c1b967ee25cc46c58cd52244aed ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc" 1202520719 2840 216e6e45ad352e2456e1149f28885bee ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc" 1202520719 2327 9d6df24f9c4f7368395224341a95523a ""
@@ -248,14 +248,15 @@
   "figuras/CU_adTrue_batch10_proc7_canles32_prof4_lr0.001_factocurva_perdida.jpg" 1747330036 77411 d2907c9852788e114c9520bc1a76ec66 ""
   "figuras/aumento_datos.png" 1747240169.58455 2684041 021a2eb923ba185f6b7d782e17aaacd0 ""
   "figuras/canles.png" 1747239076.8658 682232 333da0c6f1badc87f97a33fef3befeaf ""
+  "figuras/conclusion.jpg" 1747327091 189650 3b03bd147f95c4e5689f8b04ccd5eb24 ""
   "figuras/defecto_medico.png" 1747389239.03659 363762 f20e981c9369eb2a1a4e3e5eb25e13f4 ""
   "figuras/peche.png" 1747241117.24718 44818 169f0a4678b8e38a5319935b0432cfb3 ""
   "figuras/portada.jpg" 1541287874 134914 f00ec91e1c64decac5c1a1ea00c68cf9 ""
-  "informe.aux" 1747424273.56074 1961 8d0bfa1ab345a9b373f2aee287ff40cc "pdflatex"
+  "informe.aux" 1747425062.72476 2318 bb59a8670b35937b54305ec6e0b26411 "pdflatex"
   "informe.bbl" 1747407607.17706 1643 239bd478957f68dd4428ce6691831923 "bibtex informe"
-  "informe.out" 1747424273.56185 346 8f4df0ea470fb5a668cb9c153e956057 "pdflatex"
-  "informe.tex" 1747424270.91727 18304 ee7b6db5b9349165faa5ae6d1d05662a ""
-  "informe.toc" 1747424273.56205 242 ec9cb3caaff78cc70afee21989e27cfe "pdflatex"
+  "informe.out" 1747425062.72594 346 8f4df0ea470fb5a668cb9c153e956057 "pdflatex"
+  "informe.tex" 1747425060.1351 18657 a9c971d9162e344657f7ce7304903a8a ""
+  "informe.toc" 1747425062.72616 242 b4846d551530551794d77acc84250d44 "pdflatex"
   (generated)
   "informe.aux"
   "informe.log"

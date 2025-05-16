@@ -206,9 +206,15 @@ Os mesmos resultados poden dicirse da profundidade, ademáis, a profundidade ten
 
 \section{Conclusións}
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{figuras/conclusion.jpg}
+	\caption{Resultados de unha execución con Aumento de Datos, 32 canles iniciais, 4 niveles de profundidade, ningún Dropout e un DICE en proba de 0.9 (Para proba usáronse 5 imaxes, tendo destinadas outras 5 a validación e 40 ó adestramento). }
+\end{figure}
+
 Malia seren un Conxunto de datos máis difícil do que estamos acostumados, o reto valeunos para esforzarnos e, especialmente, atender ás características vernaculares do mesmo. Vimos que o aumento de datos é importante, pero sen pasarse, e sempre co domio en mente. Dado que non decidimos usar unha Rede preentrenada, o preprocesado xugou un papel importante nas primeriras épocas do adestramento. Ademáis, por ser a tarea de Segmentación, vimos de primeria man o comportamento cambiante das funcións de pérdida, de feito poderíamos ter implementado un xestor dos $\alpha_i$ que dependa do tempo \footnote{por exemplo, facer que $\alpha_{BCE}$ sexa alto ó principio e logo decaiga por ser unha boa medida de en xeral o rendemento do segmentador ó longo da imaxe pero no tan fina, e o inverso con $\alpha_{DICE}$ que brilla máis cando a segmentación e regular pero non é tan útil ó principio}
 
-
+.
 ---
 
 ahora una conclusion de claude 

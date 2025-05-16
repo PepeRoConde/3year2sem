@@ -437,6 +437,11 @@ INPUT ./figuras/ADF.jpg
 INPUT ./figuras/ADF.jpg
 INPUT ./figuras/ADF.jpg
 INPUT ./figuras/ADF.jpg
+INPUT ./figuras/conclusion.jpg
+INPUT ./figuras/conclusion.jpg
+INPUT ./figuras/conclusion.jpg
+INPUT ./figuras/conclusion.jpg
+INPUT ./figuras/conclusion.jpg
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/rm-lmr8.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/rm-lmr6.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/lmmi8.tfm

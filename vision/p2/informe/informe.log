@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.2.18)  16 MAY 2025 21:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.2.18)  16 MAY 2025 21:51
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -897,112 +897,118 @@ File: figuras/ADF.jpg Graphic file (type jpg)
 <use figuras/ADF.jpg>
 Package pdftex.def Info: figuras/ADF.jpg  used on input line 198.
 (pdftex.def)             Requested size: 195.12767pt x 81.30023pt.
+<figuras/conclusion.jpg, id=138, 1445.4pt x 1084.05pt>
+File: figuras/conclusion.jpg Graphic file (type jpg)
+<use figuras/conclusion.jpg>
+Package pdftex.def Info: figuras/conclusion.jpg  used on input line 211.
+(pdftex.def)             Requested size: 433.62001pt x 325.21751pt.
+ [7 <./figuras/ADT.jpg> <./figuras/ADF.jpg>]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 209.
+(Font)              <8> on input line 215.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 209.
+(Font)              <6> on input line 215.
+ [8 <./figuras/conclusion.jpg>]
 
-
-./informe.tex:221: LaTeX Error: Unicode character α (U+03B1)
+./informe.tex:227: LaTeX Error: Unicode character α (U+03B1)
                not set up for use with LaTeX.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.221 ...plicadas con parámetros específicos (α
+l.227 ...plicadas con parámetros específicos (α
                                                    = 500 e σ = 20) e probab...
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
 
-./informe.tex:221: LaTeX Error: Unicode character σ (U+03C3)
+./informe.tex:227: LaTeX Error: Unicode character σ (U+03C3)
                not set up for use with LaTeX.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.221 ...n parámetros específicos (α = 500 e σ
+l.227 ...n parámetros específicos (α = 500 e σ
                                                    = 20) e probabilidades ax...
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
 
-./informe.tex:223: LaTeX Error: Unicode character α (U+03B1)
+./informe.tex:229: LaTeX Error: Unicode character α (U+03B1)
                not set up for use with LaTeX.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.223 ...e + IOU) con coeficientes optimizados (α
+l.229 ...e + IOU) con coeficientes optimizados (α
                                                   _BCE = 0.7, α_FOCAL = 0.2...
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
-./informe.tex:223: Missing $ inserted.
+./informe.tex:229: Missing $ inserted.
 <inserted text> 
                 $
-l.223 ... + IOU) con coeficientes optimizados (α_
+l.229 ... + IOU) con coeficientes optimizados (α_
                                                   BCE = 0.7, α_FOCAL = 0.2,...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-./informe.tex:223: LaTeX Error: Unicode character α (U+03B1)
+./informe.tex:229: LaTeX Error: Unicode character α (U+03B1)
                not set up for use with LaTeX.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.223 ...oeficientes optimizados (α_BCE = 0.7, α
+l.229 ...oeficientes optimizados (α_BCE = 0.7, α
                                                   _FOCAL = 0.2, α_DICE = 0....
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
 
-./informe.tex:223: LaTeX Error: Unicode character α (U+03B1)
+./informe.tex:229: LaTeX Error: Unicode character α (U+03B1)
                not set up for use with LaTeX.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.223 ...mizados (α_BCE = 0.7, α_FOCAL = 0.2, α
+l.229 ...mizados (α_BCE = 0.7, α_FOCAL = 0.2, α
                                                   _DICE = 0.4, α_IOU = 0.7)...
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
 
-./informe.tex:223: LaTeX Error: Unicode character α (U+03B1)
+./informe.tex:229: LaTeX Error: Unicode character α (U+03B1)
                not set up for use with LaTeX.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.223 ... = 0.7, α_FOCAL = 0.2, α_DICE = 0.4, α
+l.229 ... = 0.7, α_FOCAL = 0.2, α_DICE = 0.4, α
                                                   _IOU = 0.7) permitiu un ad...
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 223.
+LaTeX Warning: Command \' invalid in math mode on input line 229.
 
-./informe.tex:223: Please use \mathaccent for accents in math mode.
+./informe.tex:229: Please use \mathaccent for accents in math mode.
 \add@accent ... \let \ignorespaces \relax \accent 
                                                   #1 #2\egroup \ifmmode \els...
-l.223 ...�_IOU = 0.7) permitiu un adestramento má
+l.229 ...�_IOU = 0.7) permitiu un adestramento má
                                                   is robusto, abordando dife...
 I'm changing \accent to \mathaccent here; wish me luck.
 (Accents are not the same in formulas as they are in text.)
 
-./informe.tex:223: You can't use `\spacefactor' in math mode.
+./informe.tex:229: You can't use `\spacefactor' in math mode.
 <argument> ...cefactor \spacefactor }\spacefactor 
                                                   \accent@spacefactor 
-l.223 ...�_IOU = 0.7) permitiu un adestramento má
+l.229 ...�_IOU = 0.7) permitiu un adestramento má
                                                   is robusto, abordando dife...
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1010,20 +1016,20 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 223.
+LaTeX Warning: Command \' invalid in math mode on input line 229.
 
-./informe.tex:223: Please use \mathaccent for accents in math mode.
+./informe.tex:229: Please use \mathaccent for accents in math mode.
 \add@accent ... \let \ignorespaces \relax \accent 
                                                   #1 #2\egroup \ifmmode \els...
-l.223 ...ntes aspectos da calidade da segmentació
+l.229 ...ntes aspectos da calidade da segmentació
                                                   n.
 I'm changing \accent to \mathaccent here; wish me luck.
 (Accents are not the same in formulas as they are in text.)
 
-./informe.tex:223: You can't use `\spacefactor' in math mode.
+./informe.tex:229: You can't use `\spacefactor' in math mode.
 <argument> ...cefactor \spacefactor }\spacefactor 
                                                   \accent@spacefactor 
-l.223 ...ntes aspectos da calidade da segmentació
+l.229 ...ntes aspectos da calidade da segmentació
                                                   n.
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1031,20 +1037,20 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 224.
+LaTeX Warning: Command \' invalid in math mode on input line 230.
 
-./informe.tex:224: Please use \mathaccent for accents in math mode.
+./informe.tex:230: Please use \mathaccent for accents in math mode.
 \add@accent ... \let \ignorespaces \relax \accent 
                                                   #1 #2\egroup \ifmmode \els...
-l.224 Postprocesado: A aplicació
+l.230 Postprocesado: A aplicació
                                  n de operadores morfolóxicos como o peche ...
 I'm changing \accent to \mathaccent here; wish me luck.
 (Accents are not the same in formulas as they are in text.)
 
-./informe.tex:224: You can't use `\spacefactor' in math mode.
+./informe.tex:230: You can't use `\spacefactor' in math mode.
 <argument> ...cefactor \spacefactor }\spacefactor 
                                                   \accent@spacefactor 
-l.224 Postprocesado: A aplicació
+l.230 Postprocesado: A aplicació
                                  n de operadores morfolóxicos como o peche ...
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1052,20 +1058,20 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 224.
+LaTeX Warning: Command \' invalid in math mode on input line 230.
 
-./informe.tex:224: Please use \mathaccent for accents in math mode.
+./informe.tex:230: Please use \mathaccent for accents in math mode.
 \add@accent ... \let \ignorespaces \relax \accent 
                                                   #1 #2\egroup \ifmmode \els...
-l.224 ...ado: A aplicación de operadores morfoló
+l.230 ...ado: A aplicación de operadores morfoló
                                                   xicos como o peche sobre a...
 I'm changing \accent to \mathaccent here; wish me luck.
 (Accents are not the same in formulas as they are in text.)
 
-./informe.tex:224: You can't use `\spacefactor' in math mode.
+./informe.tex:230: You can't use `\spacefactor' in math mode.
 <argument> ...cefactor \spacefactor }\spacefactor 
                                                   \accent@spacefactor 
-l.224 ...ado: A aplicación de operadores morfoló
+l.230 ...ado: A aplicación de operadores morfoló
                                                   xicos como o peche sobre a...
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1073,20 +1079,20 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 224.
+LaTeX Warning: Command \' invalid in math mode on input line 230.
 
-./informe.tex:224: Please use \mathaccent for accents in math mode.
+./informe.tex:230: Please use \mathaccent for accents in math mode.
 \add@accent ... \let \ignorespaces \relax \accent 
                                                   #1 #2\egroup \ifmmode \els...
-l.224 ...s morfolóxicos como o peche sobre as má
+l.230 ...s morfolóxicos como o peche sobre as má
                                                   scaras xeradas pola Rede p...
 I'm changing \accent to \mathaccent here; wish me luck.
 (Accents are not the same in formulas as they are in text.)
 
-./informe.tex:224: You can't use `\spacefactor' in math mode.
+./informe.tex:230: You can't use `\spacefactor' in math mode.
 <argument> ...cefactor \spacefactor }\spacefactor 
                                                   \accent@spacefactor 
-l.224 ...s morfolóxicos como o peche sobre as má
+l.230 ...s morfolóxicos como o peche sobre as má
                                                   scaras xeradas pola Rede p...
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1094,20 +1100,20 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 224.
+LaTeX Warning: Command \' invalid in math mode on input line 230.
 
-./informe.tex:224: Please use \mathaccent for accents in math mode.
+./informe.tex:230: Please use \mathaccent for accents in math mode.
 \add@accent ... \let \ignorespaces \relax \accent 
                                                   #1 #2\egroup \ifmmode \els...
-l.224 ...iu mellorar a coherencia das segmentació
+l.230 ...iu mellorar a coherencia das segmentació
                                                   ns finais, corrixindo arte...
 I'm changing \accent to \mathaccent here; wish me luck.
 (Accents are not the same in formulas as they are in text.)
 
-./informe.tex:224: You can't use `\spacefactor' in math mode.
+./informe.tex:230: You can't use `\spacefactor' in math mode.
 <argument> ...cefactor \spacefactor }\spacefactor 
                                                   \accent@spacefactor 
-l.224 ...iu mellorar a coherencia das segmentació
+l.230 ...iu mellorar a coherencia das segmentació
                                                   ns finais, corrixindo arte...
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1115,20 +1121,20 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 224.
+LaTeX Warning: Command \' invalid in math mode on input line 230.
 
-./informe.tex:224: Please use \mathaccent for accents in math mode.
+./informe.tex:230: Please use \mathaccent for accents in math mode.
 \add@accent ... \let \ignorespaces \relax \accent 
                                                   #1 #2\egroup \ifmmode \els...
-l.224 ...corrixindo artefactos menores que poderí
+l.230 ...corrixindo artefactos menores que poderí
                                                   an interferir coa interpre...
 I'm changing \accent to \mathaccent here; wish me luck.
 (Accents are not the same in formulas as they are in text.)
 
-./informe.tex:224: Missing { inserted.
+./informe.tex:230: Missing { inserted.
 <to be read again> 
                    \begingroup 
-l.224 ...corrixindo artefactos menores que poderí
+l.230 ...corrixindo artefactos menores que poderí
                                                   an interferir coa interpre...
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
@@ -1136,12 +1142,12 @@ so that I will find a matching right brace soon.
 (If you're confused by all this, try typing `I}' now.)
 
 
-LaTeX Warning: Command \i invalid in math mode on input line 224.
+LaTeX Warning: Command \i invalid in math mode on input line 230.
 
-./informe.tex:224: You can't use `\spacefactor' in math mode.
+./informe.tex:230: You can't use `\spacefactor' in math mode.
 <argument> ...cefactor \spacefactor }\spacefactor 
                                                   \accent@spacefactor 
-l.224 ...corrixindo artefactos menores que poderí
+l.230 ...corrixindo artefactos menores que poderí
                                                   an interferir coa interpre...
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1149,20 +1155,20 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 224.
+LaTeX Warning: Command \' invalid in math mode on input line 230.
 
-./informe.tex:224: Please use \mathaccent for accents in math mode.
+./informe.tex:230: Please use \mathaccent for accents in math mode.
 \add@accent ... \let \ignorespaces \relax \accent 
                                                   #1 #2\egroup \ifmmode \els...
-l.224 ...e poderían interferir coa interpretació
+l.230 ...e poderían interferir coa interpretació
                                                   n clínica.
 I'm changing \accent to \mathaccent here; wish me luck.
 (Accents are not the same in formulas as they are in text.)
 
-./informe.tex:224: You can't use `\spacefactor' in math mode.
+./informe.tex:230: You can't use `\spacefactor' in math mode.
 <argument> ...cefactor \spacefactor }\spacefactor 
                                                   \accent@spacefactor 
-l.224 ...e poderían interferir coa interpretació
+l.230 ...e poderían interferir coa interpretació
                                                   n clínica.
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1170,20 +1176,20 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 224.
+LaTeX Warning: Command \' invalid in math mode on input line 230.
 
-./informe.tex:224: Please use \mathaccent for accents in math mode.
+./informe.tex:230: Please use \mathaccent for accents in math mode.
 \add@accent ... \let \ignorespaces \relax \accent 
                                                   #1 #2\egroup \ifmmode \els...
-l.224 ...rían interferir coa interpretación clí
+l.230 ...rían interferir coa interpretación clí
                                                   nica.
 I'm changing \accent to \mathaccent here; wish me luck.
 (Accents are not the same in formulas as they are in text.)
 
-./informe.tex:224: Missing { inserted.
+./informe.tex:230: Missing { inserted.
 <to be read again> 
                    \begingroup 
-l.224 ...rían interferir coa interpretación clí
+l.230 ...rían interferir coa interpretación clí
                                                   nica.
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
@@ -1191,30 +1197,30 @@ so that I will find a matching right brace soon.
 (If you're confused by all this, try typing `I}' now.)
 
 
-LaTeX Warning: Command \i invalid in math mode on input line 224.
+LaTeX Warning: Command \i invalid in math mode on input line 230.
 
-./informe.tex:224: You can't use `\spacefactor' in math mode.
+./informe.tex:230: You can't use `\spacefactor' in math mode.
 <argument> ...cefactor \spacefactor }\spacefactor 
                                                   \accent@spacefactor 
-l.224 ...rían interferir coa interpretación clí
+l.230 ...rían interferir coa interpretación clí
                                                   nica.
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
 If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
-./informe.tex:225: Missing $ inserted.
+./informe.tex:231: Missing $ inserted.
 <inserted text> 
                 $
-l.225 
+l.231 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-./informe.tex:225: Missing } inserted.
+./informe.tex:231: Missing } inserted.
 <inserted text> 
                 }
-l.225 
+l.231 
       
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -1222,10 +1228,10 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-./informe.tex:225: Missing } inserted.
+./informe.tex:231: Missing } inserted.
 <inserted text> 
                 }
-l.225 
+l.231 
       
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -1243,16 +1249,16 @@ Missing character: There is no � in font lmex10!
 Missing character: There is no � in font lmex10!
 Missing character: There is no � in font lmex10!
 
-Overfull \hbox (77.65952pt too wide) in paragraph at lines 220--225
+Overfull \hbox (77.65952pt too wide) in paragraph at lines 226--231
 \OT1/lmr/m/n/10 0[]7)\OML/lmm/m/it/10 permitiuunadestramentom[]isrobusto; abordandodiferentesaspectosdacalidadedasegmentaci[]n:Postprocesado \OT1/lmr/m/n/10 :
  []
 
 
-Overfull \hbox (533.52054pt too wide) in paragraph at lines 220--225
+Overfull \hbox (533.52054pt too wide) in paragraph at lines 226--231
 \OML/lmm/m/it/10 Aaplicaci[]ndeoperadoresmorfol[]xicoscomoopechesobreasm[]scarasxeradaspolaRedepermitiumelloraracoherenciadassegmentaci[]nsfinais; corrixindoartefactosmenoresquepoder[]$ 
  []
 
-[7 <./figuras/ADT.jpg> <./figuras/ADF.jpg>] [8] (./informe.bbl) [9] (./informe.aux)
+[9] (./informe.bbl) [10] (./informe.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
@@ -1265,18 +1271,18 @@ Package rerunfilecheck Info: File `informe.out' has not changed.
 (rerunfilecheck)             Checksum: 8F4DF0EA470FB5A668CB9C153E956057;346.
  ) 
 Here is how much of TeX's memory you used:
- 30652 strings out of 474116
- 613815 string characters out of 5743682
- 1942187 words of memory out of 5000000
- 52454 multiletter control sequences out of 15000+600000
+ 30663 strings out of 474116
+ 614078 string characters out of 5743682
+ 1941187 words of memory out of 5000000
+ 52463 multiletter control sequences out of 15000+600000
  605662 words of font info for 74 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 93i,12n,99p,1576b,537s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,13n,99p,1576b,537s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbxi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmtt9.pfb>
-Output written on informe.pdf (9 pages, 4520563 bytes).
+Output written on informe.pdf (10 pages, 4710991 bytes).
 PDF statistics:
- 245 PDF objects out of 1000 (max. 8388607)
- 158 compressed objects within 2 object streams
- 32 named destinations out of 1000 (max. 500000)
- 246 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 251 PDF objects out of 1000 (max. 8388607)
+ 162 compressed objects within 2 object streams
+ 34 named destinations out of 1000 (max. 500000)
+ 251 words of extra memory for PDF output out of 10000 (max. 10000000)
 
