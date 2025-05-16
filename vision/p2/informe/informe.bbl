@@ -1,0 +1,36 @@
+\begin{thebibliography}{1}
+
+\bibitem{canny1986computational}
+John Canny.
+\newblock A computational approach to edge detection.
+\newblock {\em IEEE Transactions on pattern analysis and machine intelligence}, (6):679--698, 1986.
+
+\bibitem{frangi1998multiscale}
+Alejandro~F Frangi, Wiro~J Niessen, Koen~L Vincken, and Max~A Viergever.
+\newblock Multiscale vessel enhancement filtering.
+\newblock In {\em Medical Image Computing and Computer-Assisted Intervention—MICCAI'98}, pages 130--137. Springer, 1998.
+
+\bibitem{paxinaOCT}
+https://eyeguru.org/essentials/interpreting\ octs/.
+
+\bibitem{imagenet}
+Alex Krizhevsky, Ilya Sutskever, and Geoffrey~E. Hinton.
+\newblock Imagenet classification with deep convolutional neural networks.
+\newblock In {\em Advances in Neural Information Processing Systems}, volume~25, pages 1097--1105. Curran Associates, Inc., 2012.
+
+\bibitem{loshchilov2019decoupled}
+Ilya Loshchilov and Frank Hutter.
+\newblock Decoupled weight decay regularization.
+\newblock {\em arXiv preprint arXiv:1711.05101}, 2019.
+
+\bibitem{ronneberger2015u}
+Olaf Ronneberger, Philipp Fischer, and Thomas Brox.
+\newblock U-net: Convolutional networks for biomedical image segmentation.
+\newblock In {\em International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI)}, pages 234--241. Springer, 2015.
+
+\bibitem{srivastava2014dropout}
+Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan Salakhutdinov.
+\newblock Dropout: A simple way to prevent neural networks from overfitting.
+\newblock {\em Journal of Machine Learning Research}, 15(1):1929--1958, 2014.
+
+\end{thebibliography}
