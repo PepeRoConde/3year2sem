@@ -14,7 +14,7 @@
 \usepackage{lmodern}
 \usepackage{xcolor}
 \usepackage{caption}
-
+\usepackage{pgfornament}
 
 \newtcolorbox{clibox}{
   colback=gray!10,    % light gray background
@@ -44,7 +44,10 @@
 	\begin{center}
 		\LARGE\bfseries PRÁCTICA II\\
 		\small Pablo Chantada Saborido \& José Romero Conde
-		\line(1,0)A{430}
+	\end{center}
+	
+	\begin{center}
+		\pgfornament[width=0.8\linewidth,color=black]{88}
 	\end{center}
 	
 \vspace*{300pt}
@@ -136,7 +139,7 @@ Despois de ter feito a práctica anterior, reconocemos das vantaxes dun bo plant
 \begin{tcolorbox}[colback=gray!10!white, colframe=gray!50!black, 
   boxrule=0.5pt, arc=2pt, left=4pt, right=4pt, top=2pt, bottom=2pt,
   fontupper=\ttfamily\small]
-\$ identify * | awk '\{print \$3\}' | awk -F'x' '\{suma += \$1/\$2; n++\} END \{print "Razon ancho-alto media:", suma/n\}' \\
+\$ identify * | awk '\{print \$3\}' | awk -F'x' '\{suma += \$1\$2; n++\} END \{print "Razon ancho-alto media:", suma/n\}' \\
 \>>Razon ancho-alto media: 2.6163
 \end{tcolorbox}
 
@@ -175,14 +178,54 @@ Posteriormente decatámonos que para que a Rede percibira propiamente as paredes
         \includegraphics[width=\linewidth]{figuras/64D.jpg}
 	\caption*{64 canles base, DP = 0.1}
     \end{minipage}
-    \label{fig:five-images}
 \end{figure}
 
+Os mesmos resultados poden dicirse da profundidade, ademáis, a profundidade ten que ver co tamaño do campo receptivo, o cal tamén encontramos beneficioso.
+
+\item \textbf{Aumento de datos.} Definir o aumento de datos como o temos feito tamén pode considerarse unha extensión sobre o \emph{baseline}. Abaixo mostranse dous adestramentos da mesma Rede (64 canles base, 3 niveles de profundidade na UNet e Dropout de 0.05) e pódese ver que o aumento de datos esencialmente permite adestramentos máis longos, nos que o aprendizaxe ata converxencia sexa maior.
+
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+    \centering
+        \includegraphics[width=\linewidth]{figuras/ADT.jpg}
+        \caption*{Con aumento de datos}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+    \centering
+        \includegraphics[width=\linewidth]{figuras/ADF.jpg}
+        \caption*{Sin aumento de datos}
+    \end{minipage}
+\end{figure}
 
 \end{itemize}
 
+\section*{Como al tio le cundia así pues no me voy a rallar y todo lo que esta arriba es tal cual antes de hacer la defensa, si ves que falta algo dime}
 
 \section{Conclusións}
+
+Malia seren un Conxunto de datos máis difícil do que estamos acostumados, o reto valeunos para esforzarnos e, especialmente, atender ás características vernaculares do mesmo. Vimos que o aumento de datos é importante, pero sen pasarse, e sempre co domio en mente. Dado que non decidimos usar unha Rede preentrenada, o preprocesado xugou un papel importante nas primeriras épocas do adestramento. Ademáis, por ser a tarea de Segmentación, vimos de primeria man o comportamento cambiante das funcións de pérdida, de feito poderíamos ter implementado un xestor dos $\alpha_i$ que dependa do tempo \footnote{por exemplo, facer que $\alpha_{BCE}$ sexa alto ó principio e logo decaiga por ser unha boa medida de en xeral o rendemento do segmentador ó longo da imaxe pero no tan fina, e o inverso con $\alpha_{DICE}$ que brilla máis cando a segmentación e regular pero non é tan útil ó principio}
+
+
+---
+
+ahora una conclusion de claude 
+
+---
+
+Neste traballo abordamos o reto da segmentación automática de regións de fluído patolóxico en imaxes OCT, un problema complexo dada a escaseza de datos, a alta variabilidade das imaxes e a imperfección na supervisión. As nosas contribucións principais pódense resumir nos seguintes puntos:
+
+Preprocesado adaptado ao dominio: A incorporación de canles adicionais de entrada, especialmente o detector de bordes Canny, demostrou ser unha estratexia efectiva para mellorar a capacidade da Rede de identificar as estruturas do fluxo óptico sen requirir un gran volume de datos de adestramento.
+Aumento de datos controlado: Determinamos que as transformacións afíns e elásticas, aplicadas con parámetros específicos (α = 500 e σ = 20) e probabilidades axeitadas (0.7), ofrecen o mellor equilibrio entre diversidade e preservación das características anatómicas relevantes. Isto permitiu á Rede aprender de forma máis robusta a partir dun conxunto limitado de exemplos.
+Arquitectura optimizada: A través de numerosos experimentos, constatamos que unha UNet con maior número de canles base (64) e unha profundidade adecuada mellora significativamente o rendemento na segmentación de estruturas finas como as paredes do fluxo óptico. A regularización mediante Dropout (0.05-0.1) resultou ser crucial para evitar o sobreaxuste.
+Función de perda combinada: A nosa proposta dunha función de perda combinada (BCE + Focal + Dice + IOU) con coeficientes optimizados (α_BCE = 0.7, α_FOCAL = 0.2, α_DICE = 0.4, α_IOU = 0.7) permitiu un adestramento máis robusto, abordando diferentes aspectos da calidade da segmentación.
+Postprocesado: A aplicación de operadores morfolóxicos como o peche sobre as máscaras xeradas pola Rede permitiu mellorar a coherencia das segmentacións finais, corrixindo artefactos menores que poderían interferir coa interpretación clínica.
+
+Os resultados obtidos amosan que este enfoque integrado alcanza un bo equilibrio entre precisión e robustez na segmentación de fluxo patolóxico en imaxes OCT, incluso cun conxunto de datos limitado. As nosas métricas finais de avaliación mostran unha mellora significativa respecto ao baseline inicial, cunha precisión de X%, recall de Y% e IOU de Z%.
+Como liñas futuras de traballo, sería interesante explorar estratexias de adestramento semi-supervisado que poidan aproveitar imaxes non etiquetadas, así como implementar un sistema de ponderación dinámico para os coeficientes da función de perda ao longo do adestramento, favorecendo inicialmente métricas globais como BCE e progresivamente dando máis peso a métricas de precisión local como Dice e IOU.
+Este traballo demostra a importancia de adaptar tanto a arquitectura da Rede como as estratexias de adestramento ás características específicas do dominio médico e do problema a resolver, especialmente en contextos con datos limitados e estruturas anatómicas de alta variabilidade.
 
 \newpage
 
