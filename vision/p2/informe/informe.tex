@@ -69,11 +69,11 @@
 	
 \section{Introdución}
 
-Esta práctica supuso todo un reto para nos. O Conxunto de datos foi especialmente difícil polos seguintes motivos:
+Esta práctica supuxo todo un reto para nós. O conxunto de datos foi especialmente difícil polos seguintes motivos:
 \begin{itemize}
-	\item \textbf{Escaseza de datos.} Acostumados a miles (MNIST) ou centos (SmartPorts) de imaxes, contar con só decenas delas supuxo unha dificultade no problema a resolver. Isto débese a que a nosa Rede ten que aprender moito de cada imaxe, e saber extrapolar o aprendido a imaxes que nunca viu. Nada sixelo.
-	\item \textbf{Alta variabilidade.} Se foran poucos datos pero a realidade fosse sempre moi parecida, non habería tanto problema, a cuesstión é que de unha imaxe a outra pode haber pouco que teñan en común. As hai que a parede ocular é fina e ten unha fendidura, as hai sen fendidura mais con un gran vaso, as hai sen fendidura e con múltiples vasos... esto é para nos un problema porque o fluxo óptico \emph{existe} dun xeito distinto en cada imaxe de OCT. Polo tanto a nosa Rede debe aprender todas esas variacións con poucos exemplos.
-	\item \textbf{Imperfectude da supervision.} Aínda que poderíamos ter feito un AutoEncoder para cercionarnos de unha boa representación \emph{latente}, limitámonos ó uso das máscaras para propagar a sinal de error. Ó non seren perfectas e consistentes as etiquetas (zoas dun certo nivel de gris rodeadas dun capilar, en unhas máscaras representábase o capilar e noutras non), non podemos esperar que o noso algoritmo o sexa. Ademáis, está baseándose exclusivamente en exemplos mentras que un médico razona e delibera en base os seus coñecementos teóricos e de domino. A nosa Rede non pode facer tal cousa.
+	\item \textbf{Escaseza de datos.} Acostumados a miles (MNIST) ou centos (SmartPorts) de imaxes, contar con só decenas delas supuxo unha dificultade no problema a resolver. Isto débese a que a nosa rede ten que aprender moito de cada imaxe, e saber extrapolar o aprendido a imaxes que nunca viu. Nada sinxelo.
+	\item \textbf{Alta variabilidade.} Se foran poucos datos pero a realidade fose sempre moi parecida, non habería tanto problema, a cuestión é que dunha imaxe a outra pode haber pouco que teñan en común. As hai que a parede ocular é fina e ten unha fendedura, as hai sen fendedura mais cun gran vaso, as hai sen fendedura e con múltiples vasos... isto é para nós un problema porque o fluxo óptico \emph{existe} dun xeito distinto en cada imaxe de OCT. Polo tanto, a nosa rede debe aprender todas esas variacións con poucos exemplos.
+	\item \textbf{Imperfección da supervisión.} Aínda que poderíamos ter feito un AutoEncoder para cerciorarnos dunha boa representación \emph{latente}, limitámonos ao uso das máscaras para propagar o sinal de erro. Ao non seren perfectas e consistentes as etiquetas (zonas dun certo nivel de gris rodeadas dun capilar, en unhas máscaras representábase o capilar e noutras non), non podemos esperar que o noso algoritmo o sexa. Ademais, está baseándose exclusivamente en exemplos mentres que un médico razoa e delibera en base aos seus coñecementos teóricos e de dominio. A nosa rede non pode facer tal cousa.
 
 
 \begin{figure}[H]
@@ -82,13 +82,13 @@ Esta práctica supuso todo un reto para nos. O Conxunto de datos foi especialmen
 	\label{fig:defecto_medico}
 \end{figure}
 
-Arriba pode verse un exemplo que nos chamou a atención. Na area rodeada cun circulo violeta, na imaxe orixinal pódese ver tres \emph{paredes}, en cambio o GT só respetou á da dereita de todo e a do medio a suxeriu pero non a remetou e a da esquerda, o GT nin a asomou. En cambio a nosa Rede, sí tivo en conta a primeira parede. Este exemplo mostra que o GT non é perfecto e que, perseguilo pode ofrecer bos resultados pero só ate un punto. Por outro lado, no hospital cando fora a usarse a Rede, igoal non importa se segmenta ben esa parede, nos non podemos sabelo pero una revisión dun blog médico \cite{paxinaOCT} suxire que probablemente ese nivel de detalle non sexa importante.
+Arriba pode verse un exemplo que nos chamou a atención. Na área rodeada cun círculo violeta, na imaxe orixinal pódense ver tres \emph{paredes}, en cambio o GT só respectou a da dereita de todo e a do medio suxeriuna pero non a rematou, e a da esquerda, o GT nin a asomou. En cambio, a nosa rede si tivo en conta a primeira parede. Este exemplo mostra que o GT non é perfecto e que perseguilo pode ofrecer bos resultados pero só ata un punto. Por outro lado, no hospital cando for a usarse a rede, igual non importa se segmenta ben esa parede, nós non podemos sabelo pero unha revisión dun blog médico \cite{paxinaOCT} suxire que probablemente ese nivel de detalle non sexa importante.
 
 \end{itemize}
 
-Para afrotalo problema, por tanto, armamosnos con unha serie de técnicas e trucos aprendidos nesta asignatura, en Aprendizaxe Profundo e mais en Principios de Visión por Computador. Son os seguintes:
+Para afrontar o problema, por tanto, armámonos cunha serie de técnicas e trucos aprendidos nesta asignatura, en Aprendizaxe Profundo e mais en Principios de Visión por Computador. Son os seguintes:
 \begin{itemize}
-	\item \textbf{Canles adicionais de entrada.} A Rede ten que aprender que é o fluxo óptico dende cero, sen saber que é un borde ou un círculo. Non lle pasa o mesmo ós médicos, que cando empezan na oftalmoloxía xa teñen un adestrado sistema de percepción visual. Polo tanto, para axilizar este proceso, ademáis da imaxe en Blanco e Negro $\mathcal{I}$ (un canle) decidimos acompañala dos $\phi_i(\mathcal{I})$ onde os $\phi_i$ son algoritmos de procesado de imaxen. Inicialmente escollemos Canny \cite{canny1986computational}, Sobel, Laplaciano e Frangi \cite{frangi1998multiscale}. Do último tiñamos altas esperanzas por estar tamén orientado ó ambito médico máis aínda despoís dunha considerable búsqueda de hiperparámetros decidimos descartalo para, finalmente, só quedarnos con Canny. Unha xustificación desta decisión é a imaxe de abaixo. 
+	\item \textbf{Canles adicionais de entrada.} A rede ten que aprender que é o fluxo óptico desde cero, sen saber que é un bordo ou un círculo. Non lle pasa o mesmo aos médicos, que cando empezan na oftalmoloxía xa teñen un adestrado sistema de percepción visual. Polo tanto, para axilizar este proceso, ademais da imaxe en branco e negro $\mathcal{I}$ (unha canle) decidimos acompañala dos $\phi_i(\mathcal{I})$ onde os $\phi_i$ son algoritmos de procesado de imaxe. Inicialmente escollemos Canny \cite{canny1986computational}, Sobel, Laplaciano e Frangi \cite{frangi1998multiscale}. Do último tiñamos altas esperanzas por estar tamén orientado ao ámbito médico mais aínda despois dunha considerable procura de hiperparámetros decidimos descartalo para, finalmente, só quedarnos con Canny. Unha xustificación desta decisión é a imaxe de abaixo. 
 
 \begin{figure}[H]
 	\centering
@@ -97,7 +97,7 @@ Para afrotalo problema, por tanto, armamosnos con unha serie de técnicas e truc
 \end{figure}
 
 
-\item \textbf{Aumento de datos.} Fundamentalmente baseámonos nas suxerencias do propio artigo da UNet \cite{ronneberger2015u}  é dicir: transformacións afíns e elásticas. Cas primeiras foi realtivamente doado atopar hiperparámetros apropiados pero as segundas foi máis difícil, en cambio (ó estaren diseñadas para un contexto de segmentación médica) ofreceron moi bos resultados. Finalmente atopamos $\alpha = 500$ e $\sigma = 20$ axeitados. Ademáis, para estas dúas transformacións, ó seren realativamente \emph{agresivas}, atopamos que é millor non transformar sempre (para darlle á Rede uns poucos exemplos inalterados e aprenda deles). En concreto aplicamos cada unha delas cunha probabilidade de 0.7, polo tanto, para unha imaxen, a probabilidade de seren alterada por ambas transformacións é de $\approx 0.5$. Ademáis destas dous, aplicamos (malia observando pouca diferencia) volteos horizontais, deformacións na cor (\emph{color jitter}), variacións no enfoque e ruído gausiano aditivo. O efecto da totalidade das transformacións sobre un subconxunto das imaxes do conxunto de datos vése abaixo.
+\item \textbf{Aumento de datos.} Fundamentalmente baseámonos nas suxestións do propio artigo da UNet \cite{ronneberger2015u}, é dicir: transformacións afíns e elásticas. Coas primeiras foi relativamente doado atopar hiperparámetros apropiados pero as segundas foi máis difícil, en cambio (ao estaren deseñadas para un contexto de segmentación médica) ofreceron moi bos resultados. Finalmente atopamos $\alpha = 500$ e $\sigma = 20$ axeitados. Ademais, para estas dúas transformacións, ao seren relativamente \emph{agresivas}, atopamos que é mellor non transformar sempre (para darlle á rede uns poucos exemplos inalterados e aprenda deles). En concreto aplicamos cada unha delas cunha probabilidade de 0.7, polo tanto, para unha imaxe, a probabilidade de ser alterada por ambas transformacións é de $\approx 0.5$. Ademais destas dúas, aplicamos (malia observar pouca diferenza) volteos horizontais, deformacións na cor (\emph{color jitter}), variacións no enfoque e ruído gaussiano aditivo. O efecto da totalidade das transformacións sobre un subconxunto das imaxes do conxunto de datos vese abaixo.
 
 \begin{figure}[H]
 	\centering
@@ -106,9 +106,9 @@ Para afrotalo problema, por tanto, armamosnos con unha serie de técnicas e truc
 \end{figure}
 
 
-Se ben pode parecer \emph{leve}, aumentos de datos máis agresivos non veían a luz da converxencia. Podemos dicir que a configuración de hiperparámetros do Aumento de Datos está fortemente baseada na experimentación. Comentar que tamén probamos a recortar as imaxes contrando a máscara como forma de aumento de datos pero encontramos que empeoraba o rendemento; ese tipo de cousas poden ser útiles para tareas de clasificación pero como a segmentación depende da escala en concreto e no Conxunto de Datos sempre era realtivamente a mesma escala, facer grandes variacións nese sentido pode (como temos visto) empeorar o rendemento da Rede.
+Se ben pode parecer \emph{leve}, aumentos de datos máis agresivos non vían a luz da converxencia. Podemos dicir que a configuración de hiperparámetros do aumento de datos está fortemente baseada na experimentación. Comentar que tamén probamos a recortar as imaxes centrando a máscara como forma de aumento de datos pero encontramos que empeoraba o rendemento; ese tipo de cousas poden ser útiles para tarefas de clasificación pero como a segmentación depende da escala en concreto e no conxunto de datos sempre era relativamente a mesma escala, facer grandes variacións nese sentido pode (como temos visto) empeorar o rendemento da rede.
 
-\item \textbf{PostProcesado das máscaras.} Aínda que non-diferenciables, e por tanto non contribuían á sinal de error do adestramento do algoritmo, decidimos aplicar unha serie de transformacións sobre as máscaras para acercarse máis ás reais. Pulindo detalles de xeito que, se un oftalmólogo tivera que usar o noso sistema, certas impurezas corrixibles non o molestarían. En concreto nos axudamos do operador morfolóxico de peche.
+\item \textbf{Posprocesado das máscaras.} Aínda que non diferenciables, e por tanto non contribuían ao sinal de erro do adestramento do algoritmo, decidimos aplicar unha serie de transformacións sobre as máscaras para achegarse máis ás reais. Pulindo detalles de xeito que, se un oftalmólogo tivera que usar o noso sistema, certas impurezas corrixibles non o molestarían. En concreto, axudámonos do operador morfolóxico de peche.
 
 \begin{figure}[H]
 	\centering
@@ -116,9 +116,9 @@ Se ben pode parecer \emph{leve}, aumentos de datos máis agresivos non veían a 
 	\label{fig:peche}
 \end{figure}
 
-Comentar, non obstante, que por non ser o obxectivo da práctica o resultado final senón o adestramento da Rede en sí mesma, limitámonos a unha primeira idea de só aplicar peche, máis de seguro poderíanse implementarse máis e mellores alternativas.
+Comentar, non obstante, que por non ser o obxectivo da práctica o resultado final senón o adestramento da rede en si mesma, limitámonos a unha primeira idea de só aplicar peche, mais de seguro poderían implementarse máis e mellores alternativas.
 
-\item \textbf{\emph{Trucos} no adestrado da Rede.} Para asegurar converxencia e acelerar o adestramento usamos Dropout \cite{srivastava2014dropout} como regularización e AdamW \cite{loshchilov2019decoupled} como optimizador que tamén implementa regularización a través dos pesos. Estos dous elementos permitiron que se propagase axeitadamente a sinal de error na Rede, que nalgúns experimentos fixemos moi grande. Adicionalmente, adicando un subconxunto dos datos a \emph{validación}, implentamos \emph{EarlyStopping} con paciencia na pérdida en validación e máis un xestor do paso de aprendizaxe que, tamén, tiña paciencia ca pérdida en valida ción. Estos dous compoñentes fixeron dinámicos parámetros que, de ser éstaticos e sempre iguais, non permitirian aprender con éxito ás Redes porque as Redes máis grandes precisan (en xeral) máis épocas, e un único paso de aprendizaxe pode estar ben pero non adoita explotar todo o potencial dunha Rede dada. Como última consideración, implentamos unha función de pérdida combinada, do seguinte xeito: \[\mathcal{L} = \alpha_{BCE} \times \mathcal{L}_{BCE} + \alpha_{FOCAL} \times \mathcal{L}_{FOCAL} + \alpha_{DICE} \times \mathcal{L}_{DICE} + \alpha_{IOU} \times \mathcal{L}_{IOU}\] onde nos fixamos $\alpha_{BCE} = 0.7$, $\alpha_{FOCAL} = 0.2$, $\alpha_{DICE} = 0.4$, $\alpha_{IOU} = 0.7$. Esos coeficientes fixáronse a partires de observar as primeiras gráficas de adestramento. Abaixo pódese ver unha grafica ca función de pérdida aquí descrita. 
+\item \textbf{\emph{Trucos} no adestramento da rede.} Para asegurar converxencia e acelerar o adestramento usamos Dropout \cite{srivastava2014dropout} como regularización e AdamW \cite{loshchilov2019decoupled} como optimizador que tamén implementa regularización a través dos pesos. Estes dous elementos permitiron que se propagase axeitadamente o sinal de erro na rede, que nalgúns experimentos fixemos moi grande. Adicionalmente, adicando un subconxunto dos datos a \emph{validación}, implementamos \emph{EarlyStopping} con paciencia na perda en validación e máis un xestor do paso de aprendizaxe que, tamén, tiña paciencia coa perda en validación. Estes dous compoñentes fixeron dinámicos parámetros que, de seren estáticos e sempre iguais, non permitirían aprender con éxito ás redes porque as redes máis grandes precisan (en xeral) máis épocas, e un único paso de aprendizaxe pode estar ben pero non adoita explotar todo o potencial dunha rede dada. Como última consideración, implementamos unha función de perda combinada, do seguinte xeito: \[\mathcal{L} = \alpha_{BCE} \times \mathcal{L}_{BCE} + \alpha_{FOCAL} \times \mathcal{L}_{FOCAL} + \alpha_{DICE} \times \mathcal{L}_{DICE} + \alpha_{IOU} \times \mathcal{L}_{IOU}\] onde nós fixamos $\alpha_{BCE} = 0.7$, $\alpha_{FOCAL} = 0.2$, $\alpha_{DICE} = 0.4$, $\alpha_{IOU} = 0.7$. Eses coeficientes fixáronse a partir de observar as primeiras gráficas de adestramento. Abaixo pódese ver unha gráfica coa función de perda aquí descrita. 
 
 \begin{figure}[H]
 	\centering
@@ -128,24 +128,24 @@ Comentar, non obstante, que por non ser o obxectivo da práctica o resultado fin
 
 \end{itemize}
 
-\section{O noso planteamento}
+\section{O noso formulamento}
 
-Despois de ter feito a práctica anterior, reconocemos das vantaxes dun bo planteamento inicial, tanto no nivel conceptual e máis de \emph{visión} como no nivel técnico e máis de \emph{programación}. É por isto que dende un primeiro momento planteamos a práctica como un todo, por tanto, non fixemos primero un \emph{Baseline} e logo experimentos e melloras sobre iso; en vez, dende un primeiro momento planteamos na parte de programación a interfaz necesaria para, logo, facer experimentos e atopar que combinación ofrecen bos resultados. Comentamos agora, aspectos nos que fixemos probas e as nosas conclusións:
+Despois de ter feito a práctica anterior, recoñecemos as vantaxes dun bo formulamento inicial, tanto no nivel conceptual e máis de \emph{visión} como no nivel técnico e máis de \emph{programación}. É por isto que desde un primeiro momento formulamos a práctica como un todo, por tanto, non fixemos primeiro un \emph{Baseline} e logo experimentos e melloras sobre iso; en vez diso, desde un primeiro momento formulamos na parte de programación a interface necesaria para, logo, facer experimentos e atopar que combinación ofrecen bos resultados. Comentamos agora, aspectos nos que fixemos probas e as nosas conclusións:
 
 \begin{itemize}
-	\item \textbf{Tamaño das imaxes.} As primeiras Redes que adestramos (poderíamos consideralas en parte, \emph{baselines}) empregaban imaxes relativamente pequenas (por custo compacional) e moi rectangulares (200 pixeles por 500), porque observando as imaxes vimos que tiñan un ratio moi pronunciado. Isto pódese comprobar cos seguintes comandos de UNIX (no directorio das imaxes):
+	\item \textbf{Tamaño das imaxes.} As primeiras redes que adestramos (poderíamos consideralas en parte, \emph{baselines}) empregaban imaxes relativamente pequenas (por custo computacional) e moi rectangulares (200 píxeles por 500), porque observando as imaxes vimos que tiñan un ratio moi pronunciado. Isto pódese comprobar cos seguintes comandos de UNIX (no directorio das imaxes):
 
 
 \begin{tcolorbox}[colback=gray!10!white, colframe=gray!50!black, 
   boxrule=0.5pt, arc=2pt, left=4pt, right=4pt, top=2pt, bottom=2pt,
   fontupper=\ttfamily\small]
-\$ identify * | awk '\{print \$3\}' | awk -F'x' '\{suma += \$1\$2; n++\} END \{print "Razon ancho-alto media:", suma/n\}' \\
-\>>Razon ancho-alto media: 2.6163
+\$ identify * | awk '\{print \$3\}' | awk -F'x' '\{suma += \$1\$2; n++\} END \{print "Razón ancho-alto media:", suma/n\}' \\
+\>>Razón ancho-alto media: 2.6163
 \end{tcolorbox}
 
-Posteriormente decatámonos que para que a Rede percibira propiamente as paredes do Fluxo Óptico, estas non podían ter de ancho 2 ou 3 píxeles, entón, malia seren máis computacionalmente costosos, os modelos adestrados con imaxes máis grandes ofreceros mellores resultados. Tamén decatámonos de que malia seren as imaxes moi rectangulares, a mascara sempre estaba no centro e non pagaba a pena o borde, entón, malia saber que as imaxes eran moi rectangulares, a  nosa decisión final foi de 400 por 500. 
+Posteriormente decatámonos de que para que a rede percibira propiamente as paredes do Fluxo Óptico, estas non podían ter de ancho 2 ou 3 píxeles, entón, malia seren máis computacionalmente custosos, os modelos adestrados con imaxes máis grandes ofreceron mellores resultados. Tamén decatámonos de que malia seren as imaxes moi rectangulares, a máscara sempre estaba no centro e non pagaba a pena o bordo, entón, malia saber que as imaxes eran moi rectangulares, a nosa decisión final foi de 400 por 500. 
 
-\item \textbf{Profundidade e canles base da UNet.} Despois da lectura ó artigo \cite{ronneberger2015u}, decatámonos que a UNet, máis que un modelo en concreto, é unha concepción que pode instanciarse no xeito que o fixeron os autores, é dicir, 3 niveles de profundidade 64 canles de saída na primeira convolución, pero que fácilmente pode mutar a outras configuracións. Abaixo probamos a adestrar a Rede ca mesma configuración variando só os canles de entrada (4 primeiras imaxes) e vemos que, (como suxeriuse xa no 2012 \cite{imagenet}) canto máis grande é a Rede mellores resultados. Tamén aprobeitamos para mostrar o efecto do Dropout \cite{srivastava2014dropout} (recomendado no artigo orixinal \cite{ronneberger2015u}), que é o único que varía nas dúas imaxes de abaixo. 
+\item \textbf{Profundidade e canles base da UNet.} Despois da lectura do artigo \cite{ronneberger2015u}, decatámonos de que a UNet, máis que un modelo en concreto, é unha concepción que pode instanciarse no xeito que o fixeron os autores, é dicir, 3 niveis de profundidade 64 canles de saída na primeira convolución, pero que facilmente pode mutar a outras configuracións. Abaixo probamos a adestrar a rede coa mesma configuración variando só as canles de entrada (4 primeiras imaxes) e vemos que, (como se suxeriu xa no 2012 \cite{imagenet}) canto máis grande é a rede mellores resultados. Tamén aproveitamos para mostrar o efecto do Dropout \cite{srivastava2014dropout} (recomendado no artigo orixinal \cite{ronneberger2015u}), que é o único que varía nas dúas imaxes de abaixo. 
 
 \begin{figure}[htbp]
     \centering
@@ -180,9 +180,9 @@ Posteriormente decatámonos que para que a Rede percibira propiamente as paredes
     \end{minipage}
 \end{figure}
 
-Os mesmos resultados poden dicirse da profundidade, ademáis, a profundidade ten que ver co tamaño do campo receptivo, o cal tamén encontramos beneficioso.
+Os mesmos resultados poden dicirse da profundidade, ademais, a profundidade ten que ver co tamaño do campo receptivo, o cal tamén encontramos beneficioso.
 
-\item \textbf{Aumento de datos.} Definir o aumento de datos como o temos feito tamén pode considerarse unha extensión sobre o \emph{baseline}. Abaixo mostranse dous adestramentos da mesma Rede (64 canles base, 3 niveles de profundidade na UNet e Dropout de 0.05) e pódese ver que o aumento de datos esencialmente permite adestramentos máis longos, nos que o aprendizaxe ata converxencia sexa maior.
+\item \textbf{Aumento de datos.} Definir o aumento de datos como o temos feito tamén pode considerarse unha extensión sobre o \emph{baseline}. Abaixo móstranse dous adestramentos da mesma rede (64 canles base, 3 niveis de profundidade na UNet e Dropout de 0.05) e pódese ver que o aumento de datos esencialmente permite adestramentos máis longos, nos que a aprendizaxe ata converxencia sexa maior.
 
 
 \begin{figure}[htbp]
@@ -196,49 +196,30 @@ Os mesmos resultados poden dicirse da profundidade, ademáis, a profundidade ten
     \begin{minipage}{0.45\textwidth}
     \centering
         \includegraphics[width=\linewidth]{figuras/ADF.jpg}
-        \caption*{Sin aumento de datos}
+        \caption*{Sen aumento de datos}
     \end{minipage}
 \end{figure}
 
 \end{itemize}
-
-\section*{Como al tio le cundia así pues no me voy a rallar y todo lo que esta arriba es tal cual antes de hacer la defensa, si ves que falta algo dime}
 
 \section{Conclusións}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{figuras/conclusion.jpg}
-	\caption{Resultados de unha execución con Aumento de Datos, 32 canles iniciais, 4 niveles de profundidade, ningún Dropout e un DICE en proba de 0.9 (Para proba usáronse 5 imaxes, tendo destinadas outras 5 a validación e 40 ó adestramento). }
+	\caption{Resultados dunha execución con aumento de datos, 32 canles iniciais, 4 niveis de profundidade, ningún Dropout e un DICE en proba de 0.9 (Para proba usáronse 5 imaxes, tendo destinadas outras 5 a validación e 40 ao adestramento). }
 \end{figure}
 
-Malia seren un Conxunto de datos máis difícil do que estamos acostumados, o reto valeunos para esforzarnos e, especialmente, atender ás características vernaculares do mesmo. Vimos que o aumento de datos é importante, pero sen pasarse, e sempre co domio en mente. Dado que non decidimos usar unha Rede preentrenada, o preprocesado xugou un papel importante nas primeriras épocas do adestramento. Ademáis, por ser a tarea de Segmentación, vimos de primeria man o comportamento cambiante das funcións de pérdida, de feito poderíamos ter implementado un xestor dos $\alpha_i$ que dependa do tempo \footnote{por exemplo, facer que $\alpha_{BCE}$ sexa alto ó principio e logo decaiga por ser unha boa medida de en xeral o rendemento do segmentador ó longo da imaxe pero no tan fina, e o inverso con $\alpha_{DICE}$ que brilla máis cando a segmentación e regular pero non é tan útil ó principio}
+En primeiro lugar, o problema da segmentación en imaxes médicas presenta desafíos específicos que requiren dunha aproximación diferente dos casos aos que estamos acostumados. A escaseza de datos, a alta variabilidade entre imaxes e a imperfección das etiquetas foron os principais obstáculos que tivemos que afrontar.
 
-.
----
+A arquitectura UNet demostrou ser moi eficaz para esta tarefa, especialmente cando se configura adecuadamente en termos de profundidade e número de canles. Nos nosos experimentos, puidemos comprobar que as redes máis grandes obteñen mellores resultados, o cal está en liña co observado noutros traballos  do campo.
 
-ahora una conclusion de claude 
+O aumento de datos foi como unha técnica fundamental para mellorar o rendemento do modelo, especialmente as transformacións elásticas. Esta técnica permitiunos estender o conxunto de adestramento e mellorar a capacidade de xeneralización da rede.
 
----
+A combinación de diferentes funcións de perda proporcionou unha supervisión máis certera e permitiu obter mellores resultados que utilizando unha única métrica. 
 
-Neste traballo abordamos o reto da segmentación automática de regións de fluído patolóxico en imaxes OCT, un problema complexo dada a escaseza de datos, a alta variabilidade das imaxes e a imperfección na supervisión. As nosas contribucións principais pódense resumir nos seguintes puntos:
+A incorporación de canles adicionais de entrada, como o filtro Canny, permitiu á rede aprender características relevantes do fluxo óptico sen necesidade de partir desde cero, o que acelerou o proceso de aprendizaxe e mellorou os resultados finais.
 
-Preprocesado adaptado ao dominio: A incorporación de canles adicionais de entrada, especialmente o detector de bordes Canny, demostrou ser unha estratexia efectiva para mellorar a capacidade da Rede de identificar as estruturas do fluxo óptico sen requirir un gran volume de datos de adestramento.
-Aumento de datos controlado: Determinamos que as transformacións afíns e elásticas, aplicadas con parámetros específicos (α = 500 e σ = 20) e probabilidades axeitadas (0.7), ofrecen o mellor equilibrio entre diversidade e preservación das características anatómicas relevantes. Isto permitiu á Rede aprender de forma máis robusta a partir dun conxunto limitado de exemplos.
-Arquitectura optimizada: A través de numerosos experimentos, constatamos que unha UNet con maior número de canles base (64) e unha profundidade adecuada mellora significativamente o rendemento na segmentación de estruturas finas como as paredes do fluxo óptico. A regularización mediante Dropout (0.05-0.1) resultou ser crucial para evitar o sobreaxuste.
-Función de perda combinada: A nosa proposta dunha función de perda combinada (BCE + Focal + Dice + IOU) con coeficientes optimizados (α_BCE = 0.7, α_FOCAL = 0.2, α_DICE = 0.4, α_IOU = 0.7) permitiu un adestramento máis robusto, abordando diferentes aspectos da calidade da segmentación.
-Postprocesado: A aplicación de operadores morfolóxicos como o peche sobre as máscaras xeradas pola Rede permitiu mellorar a coherencia das segmentacións finais, corrixindo artefactos menores que poderían interferir coa interpretación clínica.
-
-Os resultados obtidos amosan que este enfoque integrado alcanza un bo equilibrio entre precisión e robustez na segmentación de fluxo patolóxico en imaxes OCT, incluso cun conxunto de datos limitado. As nosas métricas finais de avaliación mostran unha mellora significativa respecto ao baseline inicial, cunha precisión de X%, recall de Y% e IOU de Z%.
-Como liñas futuras de traballo, sería interesante explorar estratexias de adestramento semi-supervisado que poidan aproveitar imaxes non etiquetadas, así como implementar un sistema de ponderación dinámico para os coeficientes da función de perda ao longo do adestramento, favorecendo inicialmente métricas globais como BCE e progresivamente dando máis peso a métricas de precisión local como Dice e IOU.
-Este traballo demostra a importancia de adaptar tanto a arquitectura da Rede como as estratexias de adestramento ás características específicas do dominio médico e do problema a resolver, especialmente en contextos con datos limitados e estruturas anatómicas de alta variabilidade.
-
-\newpage
-
-\bibliographystyle{plain}
-\bibliography{referencias}
-
-
+En definitiva, este traballo demostra que as redes neuronais profundas, especificamente a arquitectura UNet con modificacións apropiadas, poden acadar resultados moi satisfactorios na segmentación do fluxo óptico en imaxes OCT, mesmo en escenarios con datos limitados e alta variabilidade. Os nosos mellores modelos acadaron un coeficiente DICE de 0.9 no conxunto de proba, o que suxire un alto grao de concordancia coas anotacións médicas e mostra o potencial desta aproximación para aplicacións clínicas reais.
 
 \end{document}
-
