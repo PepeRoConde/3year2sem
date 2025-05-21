@@ -1,4 +1,4 @@
 \babel@toc {galician}{}\relax 
 \contentsline {section}{\numberline {1}Introdución}{3}{section.1}%
-\contentsline {section}{\numberline {2}O noso planteamento}{6}{section.2}%
+\contentsline {section}{\numberline {2}O noso formulamento}{6}{section.2}%
 \contentsline {section}{\numberline {3}Conclusións}{8}{section.3}%

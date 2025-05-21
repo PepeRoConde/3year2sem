@@ -139,8 +139,8 @@ Despois de ter feito a práctica anterior, recoñecemos as vantaxes dun bo formu
 \begin{tcolorbox}[colback=gray!10!white, colframe=gray!50!black, 
   boxrule=0.5pt, arc=2pt, left=4pt, right=4pt, top=2pt, bottom=2pt,
   fontupper=\ttfamily\small]
-\$ identify * | awk '\{print \$3\}' | awk -F'x' '\{suma += \$1\$2; n++\} END \{print "Razón ancho-alto media:", suma/n\}' \\
-\>>Razón ancho-alto media: 2.6163
+\$ identify * | awk '\{print \$3\}' | awk -F'x' '\{suma += \$1/\$2; n++\} END \{print ``Razón ancho-alto media:'', suma/n\}' \\
+\string>>\ Razón ancho-alto media: 2.6163
 \end{tcolorbox}
 
 Posteriormente decatámonos de que para que a rede percibira propiamente as paredes do Fluxo Óptico, estas non podían ter de ancho 2 ou 3 píxeles, entón, malia seren máis computacionalmente custosos, os modelos adestrados con imaxes máis grandes ofreceron mellores resultados. Tamén decatámonos de que malia seren as imaxes moi rectangulares, a máscara sempre estaba no centro e non pagaba a pena o bordo, entón, malia saber que as imaxes eran moi rectangulares, a nosa decisión final foi de 400 por 500. 
@@ -202,24 +202,35 @@ Os mesmos resultados poden dicirse da profundidade, ademais, a profundidade ten 
 
 \end{itemize}
 
-\section{Conclusións}
-
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{figuras/conclusion.jpg}
 	\caption{Resultados dunha execución con aumento de datos, 32 canles iniciais, 4 niveis de profundidade, ningún Dropout e un DICE en proba de 0.9 (Para proba usáronse 5 imaxes, tendo destinadas outras 5 a validación e 40 ao adestramento). }
 \end{figure}
 
+\section{Conclusións}
+
+
 En primeiro lugar, o problema da segmentación en imaxes médicas presenta desafíos específicos que requiren dunha aproximación diferente dos casos aos que estamos acostumados. A escaseza de datos, a alta variabilidade entre imaxes e a imperfección das etiquetas foron os principais obstáculos que tivemos que afrontar.
 
-A arquitectura UNet demostrou ser moi eficaz para esta tarefa, especialmente cando se configura adecuadamente en termos de profundidade e número de canles. Nos nosos experimentos, puidemos comprobar que as redes máis grandes obteñen mellores resultados, o cal está en liña co observado noutros traballos  do campo.
+A arquitectura UNet demostrou ser moi eficaz para esta tarefa, especialmente cando se configura adecuadamente en termos de profundidade e número de canles. Nos nosos experimentos, puidemos comprobar que (por desfortuna para a nosa limitada capacidade de cómputo) as redes máis grandes obteñen mellores resultados, o cal está en liña co observado noutros traballos  do campo.
 
-O aumento de datos foi como unha técnica fundamental para mellorar o rendemento do modelo, especialmente as transformacións elásticas. Esta técnica permitiunos estender o conxunto de adestramento e mellorar a capacidade de xeneralización da rede.
+O aumento de datos foi unha técnica fundamental para mellorar o rendemento do modelo, especialmente as transformacións elásticas, que xustamente foron propostas para segmentación de imaxes médicas ca UNet. Esta técnica permitiunos estender o conxunto de adestramento e mellorar a capacidade de xeneralización da rede ante variacións que sabemos que son comúns en texidos biolóxicos.
 
-A combinación de diferentes funcións de perda proporcionou unha supervisión máis certera e permitiu obter mellores resultados que utilizando unha única métrica. 
+A combinación de diferentes funcións de perda proporcionou unha supervisión máis certera e permitiu obter mellores resultados que utilizando unha única métrica. Unha investigación máis exhaustiva podería usar xestores dos hiperparámetros $\alpha_i$ co tempo, pero os nosos resultados, para o tempo e alcance da práctica, resultaron ser suficientes.
 
-A incorporación de canles adicionais de entrada, como o filtro Canny, permitiu á rede aprender características relevantes do fluxo óptico sen necesidade de partir desde cero, o que acelerou o proceso de aprendizaxe e mellorou os resultados finais.
+A incorporación de canles adicionais de entrada, como o filtro Canny, permitiu á rede aprender características relevantes do fluxo óptico sen necesidade de partir desde cero, o que acelerou o proceso de aprendizaxe e mellorou os resultados finais. En outras palabras, permituinos non ter que empezar de cero.
 
-En definitiva, este traballo demostra que as redes neuronais profundas, especificamente a arquitectura UNet con modificacións apropiadas, poden acadar resultados moi satisfactorios na segmentación do fluxo óptico en imaxes OCT, mesmo en escenarios con datos limitados e alta variabilidade. Os nosos mellores modelos acadaron un coeficiente DICE de 0.9 no conxunto de proba, o que suxire un alto grao de concordancia coas anotacións médicas e mostra o potencial desta aproximación para aplicacións clínicas reais.
+En definitiva, este traballo demostra que as redes neuronais profundas, especificamente a arquitectura UNet con modificacións apropiadas, poden acadar resultados moi satisfactorios na segmentación do fluxo óptico en imaxes OCT, mesmo en escenarios con datos limitados e alta variabilidade. Os nosos mellores modelos acadaron un coeficiente DICE de 0.9 no conxunto de proba, o que suxire un alto grao de concordancia coas anotacións médicas, sobretodo considerando que seguramente un médico non consiga un 1 (e posiblemente un oftalmólogo de prácticas consiga menos ca nos) e mostra o potencial desta aproximación para aplicacións clínicas reais.
+
+
+
+\newpage
+
+\bibliographystyle{plain}  % or alpha, ieee, etc.
+\bibliography{referencias} % No .bib extension
+
+
+
 
 \end{document}
